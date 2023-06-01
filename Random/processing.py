@@ -1,6 +1,6 @@
 # Processing Audio Files
 
-from Acoustic_1 import Audio
+from Acoustic_MC import Audio
 
 data_base_folder = '../Data/Test Mic/USB Noise/'
 file = '18.wav'
