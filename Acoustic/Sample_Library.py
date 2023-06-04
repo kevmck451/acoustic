@@ -6,9 +6,11 @@ import Utils
 
 # If using this module, change these variables to match your own computer layout / metadata
 SAMPLE_LIBRARY_DIRECTORY = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Sample Library'
-SAMPLE_DIRECTORY = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Sample Library/Samples'
-VISUALIZE_SAVE_DIRECTORY = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Sample Library/Overview'
+SAMPLE_DIRECTORY = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Sample Library/Samples/Originals'
+VISUALIZE_SAVE_DIRECTORY = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Sample Library/Overview/Originals'
 SAMPLE_LIBRARY_LIST = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Sample Library/Info Files/SampleList.csv'
+
+NORMALIZED_SAVE_DIRECTORY = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Sample Library/Samples/Normalized'
 
 SAMPLE_CATEGORIES = ['Ambient', 'Flight', 'Flying', 'Full Flights', 'Hover', 'Hovering',
                      'Idle', 'Landings', 'Takeoffs', 'Vehicle Sounds']

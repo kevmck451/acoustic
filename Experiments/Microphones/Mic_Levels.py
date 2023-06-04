@@ -1,10 +1,11 @@
 # Testing Values from Mic Circuit Variations
 
-from Acoustic_MC import Audio
+from Acoustic import Audio_MC
+from Acoustic import Audio
 import os
 
 # data_base_folder = '../Data/Test Mic/USB Noise/'
-data_base_folder = '../../Data/Mic Level/'
+data_base_folder = '../../Data/Mic Calibration/'
 
 
 def main(directory):
@@ -21,7 +22,7 @@ def main(directory):
 
     file = f'{max_number}.wav'
 
-    mic_level = Audio(directory+file, False)
+    mic_level = Audio_MC(directory+file, False)
     mic_level.stats(display=True)
     # mic_level.visualize_4ch()
     # mic_test.spectro_4ch(log=True)

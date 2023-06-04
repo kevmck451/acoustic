@@ -11,6 +11,7 @@ It imports the necessary files and defines the module's interface.
 """
 
 from .Audio import *
+from .Audio_MultiCh import *
 from .Metadata import *
 from .Process import *
 from .Utils import *

@@ -6,6 +6,8 @@ import Process
 import Sample_Library
 import Utils
 
+FIG_SIZE_SMALL = (14, 4)
+FIG_SIZE_FULL = (14, 8)
 
 # Function to Display the Waveform
 def waveform(Audio_Object):
@@ -40,7 +42,7 @@ def stats(Audio_Object):
     colors = ['red', 'blue', 'green', 'orange', 'purple']  # colors for each statistic
 
     # Create the figure and subplots for Max, Min, and Mean
-    fig, (ax1, ax4, ax5) = plt.subplots(1, 3, figsize=(14, 4))
+    fig, (ax1, ax4, ax5) = plt.subplots(1, 3, figsize=FIG_SIZE_SMALL)
 
     for i, stat_name in enumerate(stat_names[:3]):
         values = [channel_stats[stat_name]]
@@ -79,32 +81,12 @@ def stats(Audio_Object):
     plt.show()
 
 # Function to Display the Spectral Plot
-def spectral_plot(Audio_Object, normalize=True):
+def spectral_plot(Audio_Object):
 
-    if normalize:
-        data = Process.normalize(Audio_Object).data
-    else:
-        data = Audio_Object.data
+    average_spectrum, frequency_bins = Audio_Object.average_spectrum()
 
-        # Define the desired frequency range
-    frequency_range = (0, 2000)
-
-    fig, ax = plt.subplots(figsize=(14, 4))
-
-    spectrum = np.fft.fft(data)  # Apply FFT to the audio data
-    magnitude = np.abs(spectrum)
-
-    # Calculate frequency bins and positive frequency mask for each sample
-    frequency_bins = np.fft.fftfreq(len(data), d=1 / Audio_Object.SAMPLE_RATE)
-    positive_freq_mask = (frequency_bins >= frequency_range[0]) & (frequency_bins <= frequency_range[1])
-
-    channel_spectrums = [magnitude[positive_freq_mask][:len(frequency_bins)]]
-
-    # Average across all channels
-    average_spectrum = np.mean(channel_spectrums, axis=0)
-
+    fig, ax = plt.subplots(figsize=FIG_SIZE_SMALL)
     ax.plot(frequency_bins[:len(average_spectrum)], average_spectrum, color='b')
-
     ax.set_xlabel('Frequency (Hz)', fontweight='bold')
     ax.set_ylabel('Magnitude', fontweight='bold')
     ax.set_title(f'Spectral Plot: {Audio_Object.filepath.name}')
@@ -117,7 +99,7 @@ def overview(Audio_Object, save=False, override=False):
     channel_stats = Audio_Object.stats()
 
     # Create the figure
-    fig = plt.figure(figsize=(14, 8))
+    fig = plt.figure(figsize=FIG_SIZE_FULL)
 
     # Waveform plot
     ax1 = plt.subplot2grid((3, 3), (0, 0), colspan=3)
@@ -156,26 +138,19 @@ def overview(Audio_Object, save=False, override=False):
     ax3.set_ylabel('Value')
 
     # Dynamic Range plot
-    values_dyn_range = [channel_stats['Dynamic Range']]
+    values_dyn_range = [channel_stats['Range']]
     ax4 = plt.subplot2grid((3, 3), (1, 2))
-    values = [channel_stats['Dynamic Range']]
-    ax4.bar(['Dynamic Range'], values, color='purple')
+    values = [channel_stats['Range']]
+    ax4.bar(['Range'], values, color='purple')
     ax4.set_ylim([0, 2])
     ax4.axhline(y=0, color='black', linewidth=0.5, linestyle='--')
     ax4.text(index, values_dyn_range[0], str(round(values_dyn_range[0], 2)), ha='center', va='bottom')
-    ax4.set_title('Dynamic Range')
+    ax4.set_title('Range')
     ax4.set_ylabel('Value')
 
     # Spectral plot
     ax5 = plt.subplot2grid((3, 3), (2, 0), colspan=3)
-    data = Process.normalize(Audio_Object).data
-    frequency_range = (0, 2000)
-    spectrum = np.fft.fft(data)
-    magnitude = np.abs(spectrum)
-    frequency_bins = np.fft.fftfreq(len(data), d=1 / Audio_Object.SAMPLE_RATE)
-    positive_freq_mask = (frequency_bins >= frequency_range[0]) & (frequency_bins <= frequency_range[1])
-    channel_spectrums = [magnitude[positive_freq_mask][:len(frequency_bins)]]
-    average_spectrum = np.mean(channel_spectrums, axis=0)
+    average_spectrum, frequency_bins = Audio_Object.average_spectrum()
     ax5.plot(frequency_bins[:len(average_spectrum)], average_spectrum, color='black')
     ax5.set_xlabel('Frequency (Hz)')
     ax5.set_ylabel('Magnitude')
@@ -203,4 +178,16 @@ def overview(Audio_Object, save=False, override=False):
             print('file saved')
     else:
         plt.show()
+
+# Function to calculate spectrogram of audio
+def spectrogram(Audio_Object):
+    spectrogram_matrix = Audio_Object.spectrogram()
+    plt.figure(figsize=FIG_SIZE_SMALL)
+    plt.imshow(spectrogram_matrix, aspect='auto', origin='lower', cmap='viridis')
+    plt.colorbar(format='%+2.0f dB')
+    plt.xlabel('Time Frame')
+    plt.ylabel('Frequency Bin')
+    plt.title(f'Spectral Plot: {Audio_Object.filepath.name}')
+    plt.tight_layout(pad=1)
+    plt.show()
 

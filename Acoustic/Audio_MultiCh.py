@@ -8,8 +8,6 @@ import numpy as np
 import librosa
 
 
-
-
 from prettytable import PrettyTable
 
 from tabulate import tabulate
@@ -55,8 +53,8 @@ class Audio_MC:
             # print()
             # print(self.data[0])
 
-    def export(self):
-        pass
+    def __str__(self):
+        return f'Audio MultiCh: {self.filename}'
 
     def stats(self, display=False):
         # Compute various statistics for each channel
@@ -194,192 +192,16 @@ class Audio_MC:
         plt.show()
 
 
-class Compare:
-    def __init__(self, directory):
-        self.directory = directory
-        self.sample_list = []
-        self.channels = 4
 
-        for filename in os.listdir(directory):
-            # Check if the file is a file (not a subfolder)
-            self.filepath = os.path.join(directory, filename)
-            if os.path.isfile(self.filepath):
-                if filename.endswith('.wav'):
-                    self.sample_list.append(Audio_MC(self.filepath))
-                    # print(self.filepath)
 
-        # print(self.files_list)
-        self.sample_list.sort(key=lambda x: x.filename)
 
-    def RMS(self, title):
 
-        # Prepare data for plotting
-        # Sort the sample list by sample names
-        # self.sample_list.sort(key=lambda x: x.filename)
 
-        sample_names = [sample.filename for sample in self.sample_list]
-        channel_labels = ['Channel 1', 'Channel 2', 'Channel 3', 'Channel 4', 'Average']
 
-        # Transpose the RMS values
-        rms_values = []
 
-        for i in range(len(channel_labels)):
-            rms_values.append([sample.stats()[i]['RMS'] for sample in self.sample_list])
 
-        # Create bar plot
-        barWidth = 0.15
-        r1 = np.arange(len(sample_names))  # positions of bars on x-axis
 
-        fig, ax = plt.subplots(figsize=(10, 5))
 
-        colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
 
-        # Plot bars for each channel
-        for i, rms in enumerate(rms_values):
-            plt.bar([p + barWidth * i for p in r1], rms, color=colors[i % len(colors)], width=barWidth,
-                    edgecolor='grey', label=channel_labels[i])
 
-        # Adding xticks
-        plt.xlabel('Samples', fontweight='bold')
-        plt.ylabel('RMS', fontweight='bold')
-        plt.xticks([r + barWidth for r in range(len(sample_names))], sample_names)
-        plt.title(f'{title} RMS Comparison')
-        plt.legend()
-        plt.show()
 
-        for sample in self.sample_list:
-            sample_stats = sample.stats()
-            print(f'Sample: {sample.filename}')
-            for stats in sample_stats:
-                channel = stats['Channel']
-                rms = stats['RMS']
-                print(f"Channel {channel}: RMS={rms}")
-            print()
-
-    def Peak(self, title):
-        # Prepare data for plotting
-        # Sort the sample list by sample names
-        # self.sample_list.sort(key=lambda x: x.filename)
-
-        sample_names = [sample.filename for sample in self.sample_list]
-        channel_labels = ['Channel 1', 'Channel 2', 'Channel 3', 'Channel 4', 'Average']
-
-        # Transpose the peak level values
-        peak_values = []
-
-        for i in range(len(channel_labels)):
-            peak_values.append([sample.stats()[i]['Max Value'] for sample in self.sample_list])
-
-        # Create bar plot
-        barWidth = 0.15
-        r1 = np.arange(len(sample_names))  # positions of bars on x-axis
-
-        fig, ax = plt.subplots(figsize=(10, 5))
-
-        colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
-
-        # Plot bars for each channel
-        for i, peak in enumerate(peak_values):
-            plt.bar([p + barWidth * i for p in r1], peak, color=colors[i % len(colors)], width=barWidth,
-                    edgecolor='grey', label=channel_labels[i])
-
-        # Adding xticks
-        plt.xlabel('Samples', fontweight='bold')
-        plt.ylabel('Peak Level', fontweight='bold')
-        plt.xticks([r + barWidth for r in range(len(sample_names))], sample_names)
-        plt.title(f'{title} Peak Level Comparison')
-        plt.legend()
-        plt.show()
-
-        for sample in self.sample_list:
-            sample_stats = sample.stats()
-            print(f'Sample: {sample.filename}')
-            for stats in sample_stats:
-                channel = stats['Channel']
-                peak = stats['Max Value']
-                print(f"Channel {channel}: Peak Level={peak}")
-            print()
-
-    def Range(self, title):
-        # Prepare data for plotting
-        # Sort the sample list by sample names
-        # self.sample_list.sort(key=lambda x: x.filename)
-
-        sample_names = [sample.filename for sample in self.sample_list]
-        channel_labels = ['Channel 1', 'Channel 2', 'Channel 3', 'Channel 4', 'Average']
-
-        # Calculate the dynamic range values
-        dynamic_range_values = []
-
-        for i in range(len(channel_labels)):
-            dynamic_range_values.append([sample.stats()[i]['Dynamic Range'] for sample in self.sample_list])
-
-        # Create bar plot
-        barWidth = 0.15
-        r1 = np.arange(len(sample_names))  # positions of bars on x-axis
-
-        fig, ax = plt.subplots(figsize=(10, 5))
-
-        colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
-
-        # Plot bars for each channel
-        for i, dynamic_range in enumerate(dynamic_range_values):
-            plt.bar([p + barWidth * i for p in r1], dynamic_range, color=colors[i % len(colors)], width=barWidth,
-                    edgecolor='grey', label=channel_labels[i])
-
-        # Adding xticks
-        plt.xlabel('Samples', fontweight='bold')
-        plt.ylabel('Dynamic Range', fontweight='bold')
-        plt.xticks([r + barWidth for r in range(len(sample_names))], sample_names)
-        plt.title(f'{title} Dynamic Range Comparison')
-        plt.legend()
-        plt.show()
-
-        for sample in self.sample_list:
-            sample_stats = sample.stats()
-            print(f'Sample: {sample.filename}')
-            for stats in sample_stats:
-                channel = stats['Channel']
-                dynamic_range = stats['Dynamic Range']
-                print(f"Channel {channel}: Dynamic Range={dynamic_range}")
-            print()
-
-    def Spectral(self, title):
-        # Prepare data for plotting
-        # self.sample_list.sort(key=lambda x: x.filename)
-
-        sample_names = [sample.filename for sample in self.sample_list]
-
-        # Define the desired frequency range
-        frequency_range = (0, 2000)
-
-        fig, ax = plt.subplots(figsize=(10, 5))
-
-        colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
-
-        for i, sample in enumerate(self.sample_list):
-            channel_spectrums = []
-            for channel_data in sample.data:
-                spectrum = np.fft.fft(channel_data)  # Apply FFT to the audio data
-                magnitude = np.abs(spectrum)
-
-                # Calculate frequency bins and positive frequency mask for each sample
-                frequency_bins = np.fft.fftfreq(len(channel_data), d=1 / sample.sample_rate)
-                positive_freq_mask = (frequency_bins >= frequency_range[0]) & (frequency_bins <= frequency_range[1])
-
-                channel_spectrums.append(magnitude[positive_freq_mask][:len(frequency_bins)])
-
-            # Average across all channels
-            average_spectrum = np.mean(channel_spectrums, axis=0)
-
-            ax.plot(frequency_bins[:len(average_spectrum)], average_spectrum, color=colors[i % len(colors)],
-                    label=sample_names[i])
-
-        ax.set_xlabel('Frequency (Hz)', fontweight='bold')
-        ax.set_ylabel('Magnitude', fontweight='bold')
-        ax.set_title(f'{title} Spectral Analysis')
-        ax.legend()
-        ax.grid(True)
-
-        plt.tight_layout()
-        plt.show()

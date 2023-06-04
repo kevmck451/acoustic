@@ -6,7 +6,8 @@ import numpy as np
 import librosa
 import Sample_Library
 from Utils import CSVFile
-
+import Process
+import soundfile as sf
 
 class Audio:
 
@@ -73,5 +74,60 @@ class Audio:
 
         return channel_stats
 
+    # Function to compute the average spectrum across a sample
+    def average_spectrum(self, range=(0, 2000)):
+
+        Audio_Object = Process.normalize(self)
+        data = Audio_Object.data
+
+        # Define the desired frequency range
+        frequency_range = range
+        spectrum = np.fft.fft(data)  # Apply FFT to the audio data
+        magnitude = np.abs(spectrum)
+
+        # Calculate frequency bins and positive frequency mask for each sample
+        frequency_bins = np.fft.fftfreq(len(data), d=1 / self.SAMPLE_RATE)
+        positive_freq_mask = (frequency_bins >= frequency_range[0]) & (frequency_bins <= frequency_range[1])
+
+        channel_spectrums = [magnitude[positive_freq_mask][:len(frequency_bins)]]
+
+        # Average across all channels
+        average_spectrum = np.mean(channel_spectrums, axis=0)
+
+        return average_spectrum, frequency_bins
+
+    # Function to calculate spectrogram of audio
+    def spectrogram(self, range=(0, 2000), stats=False):
+        window_size = 32768
+        hop_length = 512
+        frequency_range = range
+
+        Audio_Object = Process.normalize(self)
+        data = Audio_Object.data
+
+        # Calculate the spectrogram using Short-Time Fourier Transform (STFT)
+        spectrogram = np.abs(librosa.stft(data, n_fft=window_size, hop_length=hop_length)) ** 2
+
+        # Convert to decibels (log scale) for better visualization
+        spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
+
+        # Calculate frequency range and resolution
+        nyquist_frequency = self.SAMPLE_RATE / 2
+        frequency_resolution = nyquist_frequency / (window_size / 2)
+        frequency_range = np.arange(0, window_size // 2 + 1) * frequency_resolution
+        self.freq_range_low = int(frequency_range[0])
+        self. freq_range_high = int(frequency_range[-1])
+        self.freq_resolution = round(frequency_resolution, 2)
 
 
+        if stats:
+            print(f'Spectro_dB: {spectrogram_db}')
+            print(f'Freq Range: ({self.freq_range_low},{self. freq_range_high}) Hz')
+            print(f'Freq Resolution: {self.freq_resolution} Hz')
+
+        return spectrogram_db
+
+    # Function to export an object
+    def export(self, file_path):
+        # Save/export the audio object
+        sf.write(f'{file_path}.wav', self.data, self.SAMPLE_RATE)
