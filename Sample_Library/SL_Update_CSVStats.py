@@ -16,7 +16,6 @@ def process_directory(directory_path):
             # Perform action on the file
             process_file(item)
 
-
 def process_file(filepath):
 
     try:

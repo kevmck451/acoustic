@@ -1,6 +1,6 @@
 # Comparing UAV Loudness on common mission events
 
-from Audio_MultiCh import Compare
+from Comparisons import Compare
 
 directory_idle = '../Data/Sample Library/Samples/UAV Loudness/Idle'
 directory_takeoff = '../Data/Sample Library/Samples/UAV Loudness/Takeoff'

@@ -95,7 +95,7 @@ def spectral_plot(Audio_Object):
     plt.show()
 
 # Function to Display Waveform, Stats, and Spectral Plot
-def overview(Audio_Object, save=False, override=False):
+def overview(Audio_Object, save=False, override=False, save_dir = None):
     channel_stats = Audio_Object.stats()
 
     # Create the figure
@@ -160,10 +160,7 @@ def overview(Audio_Object, save=False, override=False):
     # Adjust layout and show the plots
     fig.tight_layout()
     if save:
-        save_directory = Sample_Library.VISUALIZE_SAVE_DIRECTORY
-        filename = f'{Audio_Object.filepath.stem}.pdf'
-        save_as = f'{save_directory}/{filename}'
-        Utils.create_directory_if_not_exists(save_directory)
+        save_as = f'{save_dir}.pdf'
 
         if Utils.check_file_exists(save_as):
             if override:

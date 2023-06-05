@@ -1,24 +1,44 @@
 # Functions to Process Audio
 
 import numpy as np
+import copy
+import Utils
+import Sample_Library
 
 
 class Process:
-    def __init__(self, Audio_Object):
-        self.Audio_Object = Audio_Object
+    def __init__(self, source_directory, dest_directory):
+
+        Utils.copy_directory_structure(source_directory, dest_directory)
+
+
+
+
+
 
 
 
 # Function to Increase or Decrease Sample Gain
-def amplify(Audio_Object):
-    return Audio_Object
+def amplify(Audio_Object, gain_db):
+    Audio_Object_amp = copy.deepcopy(Audio_Object)
+
+    # convert gain from decibels to linear scale
+    gain_linear = 10 ** (gain_db / 20)
+
+    # multiply the audio data by the gain factor
+    Audio_Object_amp.data *= gain_linear
+
+    return Audio_Object_amp
+
 
 
 # Function to Normalize Data
-def normalize(Audio_Object):
-    max_value = np.max(np.abs(Audio_Object.data))  # Maximum absolute value
-    normalized_data = Audio_Object.data / max_value
+def normalize(Audio_Object, percentage=95):
+    # make a deep copy of the audio object to preserve the original
+    audio_normalized = copy.deepcopy(Audio_Object)
+    max_value = np.max(np.abs(audio_normalized.data))
+    normalized_data = audio_normalized.data / max_value * (percentage / 100.0)
 
-    Audio_Object.data = normalized_data
+    audio_normalized.data = normalized_data
 
-    return Audio_Object
+    return audio_normalized

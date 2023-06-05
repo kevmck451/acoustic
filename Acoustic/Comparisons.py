@@ -222,8 +222,11 @@ class Mount_Compare:
                         exp_list.append(Audio_MC(self.filepath))
                         # print(self.filepath)
 
+            try:
+                exp_list.sort(key=lambda x: int(os.path.splitext(os.path.basename(x.filename))[0]))
+            except:
+                self.sample_list.sort(key=lambda x: x.filename)
 
-            exp_list.sort(key=lambda x: int(os.path.splitext(os.path.basename(x.filename))[0]))
             # for exp in exp_list:
             #     print(exp)
             self.sample_list.append(exp_list)
@@ -251,8 +254,8 @@ class Mount_Compare:
                 # print(mount)
                 # print(samp)
                 # print(samp.filename)
-                cutoff = samp.filename.split('.')
-                cutoff = int(cutoff[0])
+                # cutoff = samp.filename.split('.')
+                # cutoff = int(cutoff[0])
 
 
                 driver = mount.channel_position[0][0]
@@ -308,8 +311,9 @@ class Mount_Compare:
             # axis labels and title
             plt.xlabel('Position')
             plt.ylabel('Average RMS')
-            plt.ylim((0, 1200))
+            plt.ylim((0, 2200)) # Wind Tunnel: (0, 1200)
             plt.title(f'Comparison of Average RMS by Position for Exp {i + 1}')
+            # plt.title(f'Comparison of Average RMS by Position for Orlando')
 
             # loop over bars and add the value on top
             for bar in bars:
@@ -318,7 +322,6 @@ class Mount_Compare:
 
             # display the chart
             plt.show()
-
 
     def position_comparison_average(self, cutoff=0):
 
@@ -333,8 +336,8 @@ class Mount_Compare:
                 # print(mount)
                 # print(samp)
                 # print(samp.filename)
-                cutoff = samp.filename.split('.')
-                cutoff = int(cutoff[0])
+                # cutoff = samp.filename.split('.')
+                # cutoff = int(cutoff[0])
 
                 if cutoff >= cutoff_speed:
                     driver = mount.channel_position[0][0]
@@ -392,8 +395,6 @@ class Mount_Compare:
 
         # Display the chart
         plt.show()
-
-
 
     def fleece_with_without(self):
         pass

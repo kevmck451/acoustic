@@ -2,7 +2,6 @@
 
 
 
-
 class Mount:
     def __init__(self, number_of_mics, mount_geometry, channel_positions, name):
         self.number_of_mics = number_of_mics
@@ -13,3 +12,6 @@ class Mount:
 
     def __str__(self):
         return f'Name: {self.name}\nPos: {self.channel_position}'
+
+
+

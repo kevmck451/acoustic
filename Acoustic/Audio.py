@@ -26,6 +26,9 @@ class Audio:
         self.time = CSV.get_value(self.filepath.stem, 'Time')
         self.vehicle = CSV.get_value(self.filepath.stem, 'Vehicle')
         self.recorder = CSV.get_value(self.filepath.stem, 'Recorder')
+        self.mount = CSV.get_value(self.filepath.stem, 'Mount')
+        self.cover = CSV.get_value(self.filepath.stem, 'Cover')
+        self.position = CSV.get_value(self.filepath.stem, 'Position')
         self.raw = CSV.get_value(self.filepath.stem, 'RAW')
         self.category = CSV.get_value(self.filepath.stem, 'Category')
         self.temp = CSV.get_value(self.filepath.stem, 'Temp')
@@ -45,6 +48,9 @@ class Audio:
             print(f'Time: {self.time}')
             print(f'Vehicle: {self.vehicle}')
             print(f'Recorder: {self.recorder}')
+            print(f'Mount: {self.mount}')
+            print(f'Cover: {self.cover}')
+            print(f'Position: {self.position}')
             print(f'RAW: {self.raw}')
             print(f'Type: {self.category}')
             print(f'Temperature: {self.temp} F')
@@ -130,4 +136,4 @@ class Audio:
     # Function to export an object
     def export(self, file_path):
         # Save/export the audio object
-        sf.write(f'{file_path}.wav', self.data, self.SAMPLE_RATE)
+        sf.write(f'{file_path}', self.data, self.SAMPLE_RATE)

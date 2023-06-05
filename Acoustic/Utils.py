@@ -1,7 +1,9 @@
-# Functions for random stuff
+# Functions for utilities
+
 from pathlib import Path
 import csv
-
+import os
+import shutil
 
 
 
@@ -23,7 +25,20 @@ def check_file_exists(file_path):
     else:
         return False
 
+# Copy directory structure
+def copy_directory_structure(src_dir, dest_dir):
 
+    # Make sure destination directory exists
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+
+    for dirpath, dirnames, filenames in os.walk(src_dir):
+        # construct the destination directory path
+        dest_path = dirpath.replace(src_dir, dest_dir)
+        # create directory if it doesn't exist
+        if not os.path.exists(dest_path):
+            os.makedirs(dest_path)
+            print('New Directory Structure Created')
 
 
 class CSVFile:
