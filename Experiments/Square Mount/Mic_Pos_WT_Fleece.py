@@ -1,7 +1,7 @@
 # Comparing Wind Loudness on foam & dead cat vs foam & dead cat & fleece
 
-from Comparisons import Mount_Compare
-from Mic_Mount import Mount
+from comparisons import Mount_Compare
+from mic_mount import Mount
 
 ''' Mount Position Comparisons'''
 

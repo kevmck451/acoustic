@@ -1,7 +1,7 @@
 # Testing Values from Mic Circuit Variations
 
 from Acoustic import Audio_MC
-from Acoustic import Audio
+from Acoustic import audio
 import os
 
 # data_base_folder = '../Data/Test Mic/USB Noise/'

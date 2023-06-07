@@ -1,6 +1,6 @@
 # Classes for comparisons
 
-from Audio_MultiCh import Audio_MC
+from audio_multich import Audio_MC
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft
 from scipy.fft import fft
@@ -238,6 +238,10 @@ class Mount_Compare:
         #     print('---------------')
 
     def position_comparison_individual(self):
+        '''
+
+        :return:
+        '''
 
         driver_RMS = []
         passenger_RMS = []
@@ -324,6 +328,10 @@ class Mount_Compare:
             plt.show()
 
     def position_comparison_average(self, cutoff=0):
+        '''
+        idk compare positions or whatever
+        first param is the cutoff which blah
+        '''
 
         cutoff_speed = cutoff
         driver_RMS = []

@@ -1,8 +1,8 @@
 # Comparing Wind Loudness on foam & dead cat vs foam & dead cat & fleece
 
-from Comparisons import Compare
-from Comparisons import Mount_Compare
-from Mic_Mount import Mount
+from comparisons import Compare
+from comparisons import Mount_Compare
+from mic_mount import Mount
 
 ''' RMS Comparison'''
 directory = '../../../Data/Wind Tunnel/Fleece/Exp 1/4Ch'

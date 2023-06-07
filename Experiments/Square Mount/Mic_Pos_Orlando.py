@@ -1,7 +1,7 @@
 # Comparing Mic Position RMS for Hex Flights from Orlando
 
-from Comparisons import Mount_Compare
-from Mic_Mount import Mount
+from comparisons import Mount_Compare
+from mic_mount import Mount
 
 directories = ['../../../Data/Field Tests/Orlando 23/Samples/Full Flight']
 # directories = ['../../../Data/Field Tests/Orlando 23/Samples/Flight']
@@ -15,4 +15,4 @@ mount = Mount(4, 'square', mic_position_exp1, 'Orlando')
 
 mount_comparison = Mount_Compare(directories, [mount])
 mount_comparison.position_comparison_individual()
-# mount_comparison.position_comparison_average()
+mount_comparison.position_comparison_average()

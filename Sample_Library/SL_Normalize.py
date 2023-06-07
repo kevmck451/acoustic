@@ -1,11 +1,11 @@
 # Audio Sample Processing
 
-from Acoustic import Audio
-import Sample_Library
+from audio import Audio
+import sample_library
 from pathlib import Path
-import Utils
-from Process import Process
-import Process as Pro
+import utils
+from process import Process
+import process as Pro
 
 
 def process_directory(directory_path):
@@ -32,22 +32,22 @@ def process_file(filepath):
     if sample_created:
         category = sample.category
         print(category)
-        save_directory = Sample_Library.NORMALIZED_DIRECTORY
+        save_directory = sample_library.NORMALIZED_DIRECTORY
         filename = f'{sample.filepath.stem}_norm.wav'
         save_as = f'{save_directory}/{category}/{filename}'
 
-        if Utils.check_file_exists(save_as):
+        if utils.check_file_exists(save_as):
             pass
         else:
             samp_norm = Pro.normalize(sample)
             samp_norm.export(save_as)
 
 if __name__ == '__main__':
-    source_directory = Sample_Library.ORIGINAL_DIRECTORY
-    dest_directory = Sample_Library.NORMALIZED_DIRECTORY
+    source_directory = sample_library.ORIGINAL_DIRECTORY
+    dest_directory = sample_library.NORMALIZED_DIRECTORY
     Process(source_directory, dest_directory)
 
-    Directory = Sample_Library.ORIGINAL_DIRECTORY
+    Directory = sample_library.ORIGINAL_DIRECTORY
     process_directory(Directory)
 
 

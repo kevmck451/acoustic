@@ -2,11 +2,11 @@
 
 # THIS FILE CHANGES THE ORIGINAL DIRECTORY, RUN CAUTIOUSLY
 
-from Acoustic import Audio
-import Sample_Library
+from Acoustic import audio
+import sample_library
 from pathlib import Path
-import Utils
-import Process as Pro
+import utils
+import process as Pro
 
 
 def process_directory(directory_path):
@@ -24,7 +24,7 @@ def process_file(filepath):
     path = Path(filepath)
     sample_created = False
     try:
-        sample = Audio(filepath, stats=False)
+        sample = audio(filepath, stats=False)
         sample_created = True
 
     except:
@@ -33,7 +33,7 @@ def process_file(filepath):
     if sample_created:
         category = sample.category
         # print(category)
-        save_directory = Sample_Library.ORIGINAL_DIRECTORY
+        save_directory = sample_library.ORIGINAL_DIRECTORY
         filename = f'{sample.filepath.stem}.wav'
         save_as = f'{save_directory}/{category}/{filename}'
         print(save_as)
@@ -43,5 +43,5 @@ def process_file(filepath):
 
 if __name__ == '__main__':
 
-    Directory = Sample_Library.ORIGINAL_DIRECTORY
+    Directory = sample_library.ORIGINAL_DIRECTORY
     process_directory(Directory)

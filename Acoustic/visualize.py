@@ -2,9 +2,9 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import Process
-import Sample_Library
-import Utils
+import process
+import sample_library
+import utils
 
 FIG_SIZE_SMALL = (14, 4)
 FIG_SIZE_FULL = (14, 8)
@@ -162,7 +162,7 @@ def overview(Audio_Object, save=False, override=False, save_dir = None):
     if save:
         save_as = f'{save_dir}.pdf'
 
-        if Utils.check_file_exists(save_as):
+        if utils.check_file_exists(save_as):
             if override:
                 plt.savefig(save_as)
                 plt.close(fig)

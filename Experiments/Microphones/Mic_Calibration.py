@@ -1,6 +1,6 @@
 # Script to compare levels of mono files from calibration device
 
-from Acoustic import Audio
+from Acoustic import audio
 import os
 
 directory = '../../../Data/Test Files/Mic Calibration/Test 1/'

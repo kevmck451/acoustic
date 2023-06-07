@@ -103,6 +103,16 @@ class CSVFile:
                 row[sample_index] = value
                 break
 
+    def add_column(self, header_name, column_data):
+        self.header.append(header_name)
+        for i in range(len(self.data)):
+            self.data[i].append(column_data[i] if i < len(column_data) else "")
+
+    def replace_column(self, header_name, new_column_data):
+        column_index = self.header.index(header_name)
+        for i in range(len(self.data)):
+            self.data[i][column_index] = new_column_data[i] if i < len(new_column_data) else ""
+
     def save_changes(self):
         with open(self.file_path, 'w', newline='', encoding='utf-8-sig') as csvfile:
             csvwriter = csv.writer(csvfile)

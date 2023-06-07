@@ -1,7 +1,7 @@
 # References for the User Specific Sample Library
 
 from pathlib import Path
-import Utils
+import utils
 
 
 # If using this module, change these variables to match your own computer layout / metadata
@@ -17,6 +17,11 @@ NORMALIZED_DIRECTORY = BASE_DIRECTORY + '/Data/Sample Library/Samples/Normalized
 OVERVIEW_DIRECTORY = BASE_DIRECTORY + '/Data/Sample Library/Overview'
 OVERVIEW_ORIGINAL_DIRECTORY = BASE_DIRECTORY + '/Data/Sample Library/Overview/Originals'
 OVERVIEW_NORMALIZE_DIRECTORY = BASE_DIRECTORY + '/Data/Sample Library/Overview/Normalized'
+FLIGHT_PATH_SAVE_DIRECTORY = BASE_DIRECTORY + '/Data/Sample Library/Overview/Flights Paths'
+TARGET_DISTANCE_DIRECTORY = BASE_DIRECTORY + '/Data/Sample Library/Overview/Target Distance'
+
+TARGET_FLIGHT_DIRECTORY = BASE_DIRECTORY + '/Data/Sample Library/Info Files/Flights'
+
 
 SAMPLE_CATEGORIES = ['Ambient', 'Flight', 'Flying', 'Full Flights', 'Hover',
                      'Idle', 'Landings', 'Takeoffs', 'Vehicle Sounds']
@@ -32,7 +37,7 @@ class Samp_Lib:
         self.SampLib = Path(SAMPLE_LIBRARY_DIRECTORY)
 
         # Initialize the Sample Library CSV File
-        self.CSV = Utils.CSVFile(SAMPLE_LIBRARY_LIST)
+        self.CSV = utils.CSVFile(SAMPLE_LIBRARY_LIST)
 
         print('Sample Library Initialized')
 

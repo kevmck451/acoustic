@@ -4,14 +4,14 @@
 from pathlib import Path
 import numpy as np
 import librosa
-import Sample_Library
-from Utils import CSVFile
-import Process
+import sample_library
+from utils import CSVFile
+import process
 import soundfile as sf
 
 class Audio:
 
-    def __init__(self, filepath, SR=Sample_Library.SAMPLE_LIBRARY_SAMPLE_RATE, stats=False):
+    def __init__(self, filepath, SR=sample_library.SAMPLE_LIBRARY_SAMPLE_RATE, stats=False):
         self.filepath = Path(filepath)
         self.SAMPLE_RATE = SR
         self.CHANNEL_NUMBER = 1
@@ -20,7 +20,7 @@ class Audio:
         self.sample_length = round((self.data.shape[0] / self.SAMPLE_RATE), 2)
 
         # Initial Conditions of Audio File
-        CSV = CSVFile(Sample_Library.SAMPLE_LIBRARY_LIST)
+        CSV = CSVFile(sample_library.SAMPLE_LIBRARY_LIST)
         self.location = CSV.get_value(self.filepath.stem, 'Location')
         self.date = CSV.get_value(self.filepath.stem, 'Date')
         self.time = CSV.get_value(self.filepath.stem, 'Time')
@@ -83,7 +83,7 @@ class Audio:
     # Function to compute the average spectrum across a sample
     def average_spectrum(self, range=(0, 2000)):
 
-        Audio_Object = Process.normalize(self)
+        Audio_Object = process.normalize(self)
         data = Audio_Object.data
 
         # Define the desired frequency range
@@ -108,7 +108,7 @@ class Audio:
         hop_length = 512
         frequency_range = range
 
-        Audio_Object = Process.normalize(self)
+        Audio_Object = process.normalize(self)
         data = Audio_Object.data
 
         # Calculate the spectrogram using Short-Time Fourier Transform (STFT)

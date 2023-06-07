@@ -43,7 +43,7 @@ class extracted:
     spatial_characteristics: list
 
 @dataclass(frozen=True)
-class target:
+class Target:
     type: str
     subtype: str
     name: str
@@ -53,7 +53,7 @@ class target:
     # intensity:
 
 @dataclass(frozen=True)
-class microphones:
+class Microphones:
     type: str
     subtype: str
     name: str

@@ -1,9 +1,9 @@
 # Process to update stats in Sample Library CSV
 
-from Acoustic import Audio
-import Sample_Library
+from audio import Audio
+import sample_library
 from pathlib import Path
-from Utils import CSVFile
+from utils import CSVFile
 
 def process_directory(directory_path):
     path = Path(directory_path)
@@ -19,7 +19,7 @@ def process_directory(directory_path):
 def process_file(filepath):
 
     try:
-        CSV = CSVFile(Sample_Library.SAMPLE_LIBRARY_LIST)
+        CSV = CSVFile(sample_library.SAMPLE_LIBRARY_LIST)
 
         sample = Audio(filepath, stats=False)
         stats = sample.stats()
@@ -32,6 +32,6 @@ def process_file(filepath):
         pass
 
 if __name__ == '__main__':
-    Directory = Sample_Library.SAMPLE_DIRECTORY
+    Directory = sample_library.SAMPLE_DIRECTORY
     process_directory(Directory)
 

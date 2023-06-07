@@ -2,14 +2,14 @@
 
 import numpy as np
 import copy
-import Utils
-import Sample_Library
+import utils
+import sample_library
 
 
 class Process:
     def __init__(self, source_directory, dest_directory):
 
-        Utils.copy_directory_structure(source_directory, dest_directory)
+        utils.copy_directory_structure(source_directory, dest_directory)
 
 
 
