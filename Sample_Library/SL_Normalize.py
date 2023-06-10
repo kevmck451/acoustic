@@ -31,16 +31,15 @@ def process_file(filepath):
 
     if sample_created:
         category = sample.category
-        print(category)
+        # print(category)
         save_directory = sample_library.NORMALIZED_DIRECTORY
         filename = f'{sample.filepath.stem}_norm.wav'
         save_as = f'{save_directory}/{category}/{filename}'
 
-        if utils.check_file_exists(save_as):
-            pass
-        else:
+        if not utils.check_file_exists(save_as):
             samp_norm = Pro.normalize(sample)
             samp_norm.export(save_as)
+            print(f'{sample.filepath.stem} Normalized')
 
 if __name__ == '__main__':
     source_directory = sample_library.ORIGINAL_DIRECTORY

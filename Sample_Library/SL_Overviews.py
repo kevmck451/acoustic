@@ -35,10 +35,7 @@ def process_file(filepath):
         save_as = save_as.replace('Samples', 'Overview')
         save_as = save_as[:-len('.wav')]
 
-
-        if utils.check_file_exists(save_as+'.pdf'):
-            pass
-        else:
+        if not utils.check_file_exists(save_as+'.pdf'):
             visualize.overview(sample, save=True, save_dir=save_as)
 
 if __name__ == '__main__':
