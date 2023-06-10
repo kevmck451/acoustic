@@ -22,6 +22,7 @@ TARGET_DISTANCE_DIRECTORY = BASE_DIRECTORY + '/Data/Sample Library/Overview/Targ
 
 TARGET_FLIGHT_DIRECTORY = BASE_DIRECTORY + '/Data/Sample Library/Info Files/Flights'
 
+FLIGHT_LOG = ['Hex 1', 'Hex 2', 'Hex 3', 'Hex 4', 'Hex 5', 'Hex 6', 'Hex 7']
 
 SAMPLE_CATEGORIES = ['Ambient', 'Flight', 'Flying', 'Full Flights', 'Hover',
                      'Idle', 'Landings', 'Takeoffs', 'Vehicle Sounds']

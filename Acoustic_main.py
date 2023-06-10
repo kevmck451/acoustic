@@ -6,29 +6,34 @@ from utils import CSVFile
 import process
 import visualize
 import Sample_Library
+from sample_library import *
 from sample_library import Samp_Lib
 from process import Process
+from target import Target
+from flight_path import Flight_Path
 from target import Target
 
 
 
 def main():
     # Initialize Sample Library
-    SampleLibrary = Samp_Lib()
-    SampleLibrary.CSV.print_entries()
+    # SampleLibrary = Samp_Lib()
+    # SampleLibrary.CSV.print_entries()
+    #
+    # filepath = '../Data/Sample Library/Samples/Originals/Full Flights/Hex_1_FullFlight_a.wav'
+    # filepath = '../Data/Sample Library/Samples/Originals/Takeoff/Angel_3_Takeoff_a.wav'
+    #
+    # sample = Audio(filepath, stats=False)
+    #
+    # visualize.overview(sample)
+    # visualize.spectrogram(sample)
+    #
+    # amp_sample = process.amplify(sample, 6)
+    # visualize.overview(amp_sample)
 
-    filepath = '../Data/Sample Library/Samples/Originals/Full Flights/Hex_1_FullFlight_a.wav'
-    filepath = '../Data/Sample Library/Samples/Originals/Takeoff/Angel_3_Takeoff_a.wav'
-
-    sample = Audio(filepath, stats=False)
-
-    visualize.overview(sample)
-    visualize.spectrogram(sample)
-
-    amp_sample = process.amplify(sample, 6)
-    visualize.overview(amp_sample)
-
-
+    flight = Flight_Path(FLIGHT_LOG[4])
+    flight.display_target_distance(display=True)
+    # flight.plot_flight_path()
 
 
 

@@ -5,12 +5,15 @@ import matplotlib.pyplot as plt
 from sample_library import *
 import utils
 from utils import CSVFile
-import pyproj
 import ast
 import math
+from target import Target
 
 class Flight_Path:
     def __init__(self, file_name, target_object=None):
+        self.FIG_SIZE_LARGE = (14, 8)
+        self.FIG_SIZE_SMALL = (14, 4)
+
         self.file_name = file_name
 
         csv_file = TARGET_FLIGHT_DIRECTORY + '/' + file_name + '.csv'
@@ -42,6 +45,8 @@ class Flight_Path:
                     self.target_type = type
                     break
 
+
+
         self.position_file = CSVFile(csv_file)
 
         self.time = np.array(self.position_file.get_column('Time'), dtype=float)
@@ -68,15 +73,16 @@ class Flight_Path:
             self.position_file.save_changes()
             print(f'Changes Made to {self.file_name} CSV')
 
-        self.FIG_SIZE_LARGE = (14, 8)
-        self.FIG_SIZE_SMALL = (14, 4)
-
         if 'None' in self.target:
             # print('No Target')
             pass
 
         else:
-            self._calculate_distance(target_object)
+            tar = target_object
+            if target_object is None:
+                tar = Target(self.target_type)
+                tar.calculate_distance(55)
+            self._calculate_distance(tar)
 
     # Function to get distance from Target if one
     def _calculate_distance(self, target_object):
@@ -163,8 +169,6 @@ class Flight_Path:
             # print(self.closest_times_index)
             self.times_closest_to_target = self.time[self.closest_times_index]
             print(self.times_closest_to_target)
-
-
 
 
 
