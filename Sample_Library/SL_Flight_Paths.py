@@ -22,7 +22,8 @@ if __name__ == '__main__':
     # deocy = Target('decoy')
     # deocy.calculate_distance(55)
     #
-    # flight = Flight_Path(file_names[3], target_object=deocy)
+    # flight = Flight_Path(file_names[6], target_object=deocy)
     # flight.display_target_distance(display=True)
+    # flight.plot_flight_path()
 
 

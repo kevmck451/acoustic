@@ -12,6 +12,7 @@ import math
 class Flight_Path:
     def __init__(self, file_name, target_object=None):
         self.file_name = file_name
+
         csv_file = TARGET_FLIGHT_DIRECTORY + '/' + file_name + '.csv'
         target_directory = TARGET_FLIGHT_DIRECTORY + '/_flight targets.txt'
         target_location_directory = TARGET_FLIGHT_DIRECTORY + '/_target locations.txt'
@@ -71,7 +72,9 @@ class Flight_Path:
         self.FIG_SIZE_SMALL = (14, 4)
 
         if 'None' in self.target:
-            print('No Target')
+            # print('No Target')
+            pass
+
         else:
             self._calculate_distance(target_object)
 
@@ -105,12 +108,6 @@ class Flight_Path:
             distance_with_altitude = math.sqrt(distance ** 2 + alt ** 2)
             distance_from_target = round(distance_with_altitude, 3)
             self.distance_from_target.append(distance_from_target)
-
-            # V2
-            # Incorporate altitude into distance calculation
-            # distance_with_altitude = math.sqrt(distance ** 2 + (alt - target_object.target_altitude) ** 2)
-            # distance_from_target = round(distance_with_altitude, 3)
-            # self.distance_from_target.append(distance_from_target)
 
             # print(f'{distance_with_altitude} m')
 
@@ -238,6 +235,7 @@ class Flight_Path:
                 plt.imshow(space, origin='lower')
                 plt.title(self.file_name + f' Flight Path / Target: {self.target_type}')
                 plt.axis('off')
+                plt.tight_layout(pad=1)
                 plt.savefig(saveas, dpi=2000)
                 plt.close()
                 print(f'{self.file_name} Saved')
@@ -248,6 +246,7 @@ class Flight_Path:
             plt.imshow(space, origin='lower')
             plt.title(self.file_name + f' Flight Path / Target: {self.target_type}')
             plt.axis('off')
+            plt.tight_layout(pad=1)
             plt.show()
 
     # Function to get distance from Target if one
@@ -269,7 +268,7 @@ class Flight_Path:
 
             if self.target_object is not None:
                 plt.axhline(y=self.target_object.threshold_distance, color='blue',
-                            label=f'{self.target_object.target_type} threshold: {self.target_object.threshold_distance}m',
+                            label=f'{self.target_object.target_name} threshold: {self.target_object.threshold_distance}m',
                             linestyle='dotted')
 
                 if len(self.targeted_times) > 0:

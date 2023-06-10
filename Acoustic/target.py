@@ -1,23 +1,27 @@
 # File to characterize a sound source called "Target"
 
+from sample_library import *
 import math
+import ast
 
 class Target:
 
-    def __init__(self, target_type):
+    def __init__(self, target_name):
         """
         Constructs all the necessary attributes for the Target object.
         Parameters:
-            target_type (str): Type of the target. Expected values are 'tank' or 'generator'.
+            target_name (str): Type of the target. Expected values are 'tank' or 'generator'.
         """
 
         type_dict = {'tank': 88, 'decoy': 78}
 
-        self.target_type = target_type
-        self.SPL_at_10m_dB = type_dict.get(target_type)
+        self.target_name = target_name
+        self.SPL_at_10m_dB = type_dict.get(target_name)
 
         # convert decibels to intensity
         self.intensity_at_10m_Wm2 = 10 ** (self.SPL_at_10m_dB / 10) * 1e-12
+
+
 
     def propagation_projection_simple(self, distance_increments):
         """
@@ -97,6 +101,6 @@ class Target:
             if projections[i] < threshold_dB:
                 # Return the distance (in meters) at which the sound level drops below the threshold
                 self.threshold_distance = (i + 1) * 10
-                print(f'{(i + 1) * 10} m')
+                # print(f'{(i + 1) * 10} m')
                 break
 
