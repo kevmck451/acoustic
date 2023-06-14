@@ -6,10 +6,11 @@ import visualize
 import sample_library
 from pathlib import Path
 import utils
-from process import Process
 
-def process_directory(directory_path):
-    path = Path(directory_path)
+
+def process_directory(directory):
+
+    path = Path(directory)
     # print(directory_path)
     for item in path.iterdir():
         if item.is_dir():
@@ -39,9 +40,4 @@ def process_file(filepath):
             visualize.overview(sample, save=True, save_dir=save_as)
 
 if __name__ == '__main__':
-    source_directory = sample_library.SAMPLE_DIRECTORY
-    dest_directory = sample_library.OVERVIEW_DIRECTORY
-    Process(source_directory, dest_directory)
-
-    Directory = sample_library.SAMPLE_DIRECTORY
-    process_directory(Directory)
+    process_directory(sample_library.ORIGINAL_DIRECTORY)

@@ -4,13 +4,13 @@ from audio import Audio
 import sample_library
 from pathlib import Path
 import utils
-from process import Process
 import process as Pro
 
 
-def process_directory(directory_path):
-    path = Path(directory_path)
-    # print(directory_path)
+def process_directory(directory):
+
+    path = Path(directory)
+    # print(sample_library.ORIGINAL_DIRECTORY)
     for item in path.iterdir():
         if item.is_dir():
             # Recursive call if item is a directory
@@ -42,12 +42,7 @@ def process_file(filepath):
             print(f'{sample.filepath.stem} Normalized')
 
 if __name__ == '__main__':
-    source_directory = sample_library.ORIGINAL_DIRECTORY
-    dest_directory = sample_library.NORMALIZED_DIRECTORY
-    Process(source_directory, dest_directory)
-
-    Directory = sample_library.ORIGINAL_DIRECTORY
-    process_directory(Directory)
+    process_directory(sample_library.ORIGINAL_DIRECTORY)
 
 
 

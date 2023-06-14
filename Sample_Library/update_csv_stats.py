@@ -5,9 +5,9 @@ import sample_library
 from pathlib import Path
 from utils import CSVFile
 
-def process_directory(directory_path):
-    path = Path(directory_path)
-    print(directory_path)
+def process_directory(directory):
+    path = Path(directory)
+    # print(sample_library.SAMPLE_DIRECTORY)
     for item in path.iterdir():
         if item.is_dir():
             # Recursive call if item is a directory
@@ -32,6 +32,5 @@ def process_file(filepath):
         pass
 
 if __name__ == '__main__':
-    Directory = sample_library.SAMPLE_DIRECTORY
-    process_directory(Directory)
+    process_directory(sample_library.ORIGINAL_DIRECTORY)
 
