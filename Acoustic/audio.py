@@ -10,10 +10,9 @@ import process
 import soundfile as sf
 
 class Audio:
-
-    def __init__(self, filepath, SR=sample_library.SAMPLE_LIBRARY_SAMPLE_RATE, stats=False):
+    def __init__(self, filepath, channel_num = 1, stats=False):
         self.filepath = Path(filepath)
-        self.SAMPLE_RATE = SR
+        self.SAMPLE_RATE = sample_library.SAMPLE_LIBRARY_SAMPLE_RATE
         self.CHANNEL_NUMBER = 1
 
         self.data, _ = librosa.load(filepath, sr=self.SAMPLE_RATE)

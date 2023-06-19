@@ -4,8 +4,11 @@ from audio_multich import Audio_MC
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft
 from scipy.fft import fft
+import process
 import numpy as np
+from pathlib import Path
 import os
+import math
 
 
 class Compare:
@@ -200,7 +203,6 @@ class Compare:
 
         plt.tight_layout()
         plt.show()
-
 
 class Mount_Compare:
     def __init__(self, directories, Mount_Object_List):
@@ -407,5 +409,76 @@ class Mount_Compare:
     def fleece_with_without(self):
         pass
 
+class SNR_Compare:
+
+    def __init__(self, directory):
+        self.directory = directory
+        self.sample_list = []
+        self.channels = 4
+        self.FIG_SIZE_LARGE = (14, 8)
+        self.FIG_SIZE_SMALL = (14, 4)
+
+        for filename in os.listdir(self.directory):
+            # Check if the file is a file (not a subfolder)
+            self.filepath = os.path.join(self.directory, filename)
+            if os.path.isfile(self.filepath):
+                if filename.endswith('.wav'):
+                    self.sample_list.append(Audio_MC(self.filepath))
+                    # print(self.filepath)
+
+        try:
+            self.sample_list.sort(key=lambda x: int(os.path.splitext(os.path.basename(x.filename))[0]))
+        except:
+            self.sample_list.sort(key=lambda x: x.filename)
+
+        # for list in self.sample_list:
+        #     for samp in list:
+        #         print(samp)
+        #     print('---------------')
+
+    def psd_comp(self):
+        FIG_SIZE_FULL = (14, 8)
+
+        num_samples = len(self.sample_list)
+        num_cols = 2  # Change as desired
+        num_rows = math.ceil(num_samples / num_cols)
+
+        fig, axs = plt.subplots(num_rows, num_cols, figsize=FIG_SIZE_FULL, squeeze=False)
+
+        lin_scale = [0, .25, .5, .75, 1, 1.5, 2, 3, 4, 5, 6]
+        lin_labels = ['0', '.25', '.5', '.75', '1', '1.5', '2', '3', '4', '5', '6']
+
+        y_log_scale = [.001, .01, .1, 1, 10, 100, 1000, 10_000, 100_000, 1_000_000, 10_000_000]
+        y_log_labels = ['.001', '.01', '.1', '1', '10', '100', '1k', '10k', '100k', '1M', '10M']
+
+        for idx, audio_object in enumerate(self.sample_list):
+            print(audio_object)
+            row_idx = idx // num_cols
+            col_idx = idx % num_cols
+            ax = axs[row_idx, col_idx]
+
+            frequencies, psd = process.power_spectral_density(audio_object)
+            frequencies /= 1000
+
+            for i, channel in enumerate(psd):
+                ax.semilogy(frequencies, channel, label=f'Channel {i + 1}')  # Add label to each channel
+
+            ax.set_title(f'Power Spectral Density: {audio_object.filename}')
+            ax.set_xlabel('Frequency [Hz]')
+            ax.set_ylabel('PSD [V**2/Hz]')
+            ax.set_xticks(lin_scale)
+            ax.set_xticklabels(lin_labels)
+            ax.set_yticks(y_log_scale)
+            ax.set_yticklabels(y_log_labels)
+            ax.grid(True)
+            ax.legend()
+
+        # To handle cases where the total number of plots is not a multiple of the number of columns
+        if num_samples % num_cols != 0:
+            for idx in range(num_samples, num_rows * num_cols):
+                fig.delaxes(axs.flatten()[idx])
+
+        plt.tight_layout(pad=1)
+        plt.show()
 
 

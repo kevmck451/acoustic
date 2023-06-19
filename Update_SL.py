@@ -7,7 +7,7 @@ from process import Process
 
 if __name__ == '__main__':
 
-    # pd_csv(sample_library.ORIGINAL_DIRECTORY)
+    pd_csv(sample_library.ORIGINAL_DIRECTORY)
 
     source_directory = sample_library.ORIGINAL_DIRECTORY
     dest_directory = sample_library.NORMALIZED_DIRECTORY

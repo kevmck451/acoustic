@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import numpy as np
 import librosa
+import sample_library
 
 
 from prettytable import PrettyTable
@@ -30,7 +31,10 @@ class Audio_MC:
         self.directory = '/'.join(n[:-1]) + '/'
 
         # Open the wave file in read mode
-        self.data, self.sample_rate = sf.read(filepath, dtype='int16')
+        self.data, _ = sf.read(filepath, dtype='int16')
+        self.sample_rate = sample_library.SAMPLE_LIBRARY_SAMPLE_RATE
+        self.SAMPLE_RATE = sample_library.SAMPLE_LIBRARY_SAMPLE_RATE
+
 
         # The data array contains the audio data with four channels
         # Each row represents a single sample across all four channels
@@ -149,14 +153,14 @@ class Audio_MC:
     def spectro(self, channel=1, log=False, freq=(20, 2000)):
 
         # Define the frequency axis for the spectrogram
-        fft_size = 4096  # 1024
+        fft_size = 32768  # 1024
         freq_axis = np.fft.rfftfreq(fft_size, 1 / self.sample_rate)
 
         # Plot the spectrogram for the specified channel of the audio data
-        fig, ax = plt.subplots(figsize=(10, 12))
+        fig, ax = plt.subplots(figsize=(14, 8))
         spec_data, freq_axis, time_axis, img = ax.specgram(self.data[channel - 1, :], Fs=self.sample_rate,
                                                            NFFT=fft_size,
-                                                           noverlap=0, cmap='hot_r', vmin=-100, vmax=0)
+                                                           noverlap=0, cmap='nipy_spectral', vmin=-100, vmax=0)
         ax.set_ylabel(f'Freq (Hz)')
         if log:
             ax.set_yscale('log')
@@ -169,7 +173,7 @@ class Audio_MC:
     def spectro_4ch(self, log=False, freq=(20, 2000)):
 
         # Define the frequency axis for the spectrogram
-        fft_size = 4096 # 1024
+        fft_size = 32768 # 1024
         freq_axis = np.fft.rfftfreq(fft_size, 1 / self.sample_rate)
 
         # Plot the spectrogram for each channel of the audio data
@@ -177,7 +181,7 @@ class Audio_MC:
         plt.suptitle(f'Spectrogram: {self.filename}')
         for i in range(self.data.shape[0]):
             spec_data, freq_axis, time_axis, img = axs[i].specgram(self.data[i, :], Fs=self.sample_rate, NFFT=fft_size,
-                                                                   noverlap=0, cmap='hot_r', vmin=-100, vmax=0)
+                                                                   noverlap=0, cmap='hot', vmin=-20, vmax=0)
             axs[i].set_ylabel(f'CH{i + 1}: Freq (Hz)')
             if log:
                 axs[i].set_yscale('log')
