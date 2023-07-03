@@ -24,14 +24,15 @@ import os
 class Audio_MC:
     def __init__(self, filepath, stats=False):
 
+        self.path = filepath
+
         # File Name Processing
         self.filepath = filepath
-        n = filepath.split('/')
-        self.filename = n[-1]
-        self.directory = '/'.join(n[:-1]) + '/'
+        self.filename = self.path.stem
+        self.directory = self.path.parent
 
         # Open the wave file in read mode
-        self.data, _ = sf.read(filepath, dtype='int16')
+        self.data, _ = sf.read(str(filepath), dtype='float32') # was int16
         self.sample_rate = sample_library.SAMPLE_LIBRARY_SAMPLE_RATE
         self.SAMPLE_RATE = sample_library.SAMPLE_LIBRARY_SAMPLE_RATE
 

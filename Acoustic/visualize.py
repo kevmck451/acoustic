@@ -192,7 +192,7 @@ def spectrogram(audio_object):
 
 # Function to display the Power Spectral Density
 def power_spectral_density_log(audio_object):
-    frequencies, psd = process.power_spectral_density(audio_object, log=True)
+    frequencies, psd = process.power_spectral_density(audio_object)
     # print(frequencies)
     # frequencies /= 1000
 
@@ -227,7 +227,7 @@ def power_spectral_density_log(audio_object):
 
 # Function to display the Power Spectral Density
 def power_spectral_density_linear(audio_object):
-    frequencies, psd = process.power_spectral_density(audio_object, log=False)
+    frequencies, psd = process.power_spectral_density(audio_object)
     lin_scale = [0,.25,.5,.75,1,1.5,2,3,4,5,6]
     lin_labels = ['0','.25','.5','.75','1','1.5','2','3','4','5','6']
 
@@ -252,8 +252,8 @@ def power_spectral_density_linear(audio_object):
     plt.show()
 
 # Function to display the signal to noise ratio
-def signal_to_noise_ratio(signal, noise, type, title):
-    frequencies, snr = process.signal_noise_ratio(signal, noise, type)
+def signal_to_noise_ratio_psd(signal, noise, title):
+    frequencies, snr = process.signal_noise_ratio_psd(signal, noise)
     lin_scale = [0, .25, .5, .75, 1, 1.5, 2, 3, 4, 5, 6]
     lin_labels = ['0', '.25', '.5', '.75', '1', '1.5', '2', '3', '4', '5', '6']
 
@@ -277,7 +277,7 @@ def signal_to_noise_ratio(signal, noise, type, title):
     plt.show()
 
 # Function to display signal / noise PSD and their SNR
-def power_snr(signal, noise, title):
+def power_snr_psd(signal, noise, title, lowpass=2):
     FIG_SIZE_FULL = (14, 8)  # Adjust to your preferred figure size
     sample_list = [signal, noise]
 
@@ -287,14 +287,16 @@ def power_snr(signal, noise, title):
 
     fig, axs = plt.subplots(num_rows, num_cols, figsize=FIG_SIZE_FULL, squeeze=False)
 
-    lin_scale = [0, .25, .5, .75, 1, 1.5, 2, 3, 4, 5, 6]
-    lin_labels = ['0', '.25', '.5', '.75', '1', '1.5', '2', '3', '4', '5', '6']
+    lin_scale = [0, .25, .5, .75, 1, 1.25, 1.5, 1.75, 2]
+    lin_labels = ['0', '.25', '.5', '.75', '1', '1.25', '1.5', '1.75', '2']
 
     y_log_scale = [.001, .01, .1, 1, 10, 100, 1000, 10_000, 100_000, 1_000_000, 10_000_000]
     y_log_labels = ['.001', '.01', '.1', '1', '10', '100', '1k', '10k', '100k', '1M', '10M']
 
-    y_scale_snr = [-10, 0, 10, 20, 30, 40, 50, 60]
-    y_labels_snr = ['-10', '0', '10', '20', '30', '40', '50', '60']
+    y_scale_snr = [-10, 0, 10, 20]
+    y_labels_snr = ['-10', '0', '10', '20']
+
+    cutoff_index = 0
 
     for idx in range(num_samples):
         ax = axs[idx, 0]  # Indexing changes when num_cols is 1
@@ -304,20 +306,27 @@ def power_snr(signal, noise, title):
             frequencies, psd = process.power_spectral_density(audio_object)
             frequencies /= 1000
 
+            if idx == 0:
+                for i, freq in enumerate(frequencies):
+                    if freq.round(3) == float(lowpass):
+                        cutoff_index = i
+
+
             for i, channel in enumerate(psd):
-                ax.semilogy(frequencies, channel, label=f'Channel {i + 1}')
+                ax.semilogy(frequencies[0:cutoff_index], channel[0:cutoff_index], label=f'Channel {i + 1}')
 
             ax.set_title(f'Power Spectral Density: {audio_object.filename}')
             ax.set_xlabel('Frequency (kHz)')
             ax.set_ylabel('PSD (V^2/Hz)')
             ax.set_yticks(y_log_scale)
             ax.set_yticklabels(y_log_labels)
+
         else:
-            frequencies, snr = process.signal_noise_ratio(signal, noise, 'PSD')
+            frequencies, snr = process.signal_noise_ratio_psd(signal, noise)
             frequencies /= 1000
 
             for i, channel in enumerate(snr):
-                ax.plot(frequencies, channel, label=f'Channel {i + 1}')
+                ax.plot(frequencies[0:cutoff_index], channel[0:cutoff_index], label=f'Channel {i + 1}')
 
             ax.set_title(f'Signal Noise Ratio: {title}')
             ax.set_xlabel('Frequency (kHz)')
@@ -329,6 +338,27 @@ def power_snr(signal, noise, title):
         ax.set_xticklabels(lin_labels)
         ax.grid(True)
         ax.legend()
+        ax.axhline(y=0, color='black', linewidth=0.5, linestyle='--')
 
     plt.tight_layout(pad=1)
     plt.show()
+
+# Function to display the signal to noise ratio
+def signal_to_noise_ratio_rms(signal, noise, title):
+    snr = process.signal_noise_ratio_rms(signal, noise)
+
+    print(snr)
+
+    # plt.figure(figsize=FIG_SIZE_SMALL)
+    #
+    # for i, channel in enumerate(snr):
+    #     plt.plot(frequencies, channel, label=f'Channel {i + 1}')  # Add label to each channel
+    #
+    # plt.title(f'Signal Noise Ratio: {title}')
+    # plt.xlabel('Frequency (kHz)')
+    # plt.ylabel('dB')
+    # plt.xticks(lin_scale, lin_labels)
+    # plt.yticks(y_scale, y_labels)
+    # plt.grid(True)
+    # plt.legend()
+    # plt.show()
