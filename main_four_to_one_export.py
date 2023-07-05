@@ -26,6 +26,6 @@ def process_directory(input_path, output_path):
 
 if __name__ == '__main__':
 
-    input_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Static Tests/Samples/Engines/Noisy Signal'
-    output_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static/Contains'
+    input_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Campus/Static Tests/Samples/Engines/Signal'
+    output_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/1'
     process_directory(input_path, output_path)

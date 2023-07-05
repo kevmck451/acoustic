@@ -20,12 +20,18 @@ def load_and_preprocess_audio(audio_file_path):
 
 
 # epochs=50, batch_size=8 / feature=mfcc
-model = load_model('models/detection_model_1.h5')
+# model = load_model('models/detection_model_1.h5')
+
+# epochs=50, batch_size=12 / feature=mfcc
+# model = load_model('models/detection_model_2.h5')
+
+# epochs=50, batch_size=12 / feature=mfcc
+model = load_model('models/testing/detection_model_test_0.h5')
 
 truth = { '10m-D-DEIdle_b' : 1, '10m-D-TIdle_1_c' : 1, 'Hex_8_Hover_4_a' : 0, 'Hex_8_Hover_1_a' : 0, '10m-D-TIdle_2_c' : 1, 'Hex_1_Takeoff_a' : 0}
 accuracy = []
 
-for file in Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static/Test').iterdir():
+for file in Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/Test').iterdir():
     # Load and preprocess the new audio sample
     X_new = load_and_preprocess_audio(file)
     y_new_pred = model.predict(X_new)

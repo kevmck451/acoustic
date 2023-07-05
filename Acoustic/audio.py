@@ -8,6 +8,7 @@ import sample_library
 from utils import CSVFile
 import process
 import soundfile as sf
+from sklearn.preprocessing import StandardScaler
 
 class Audio:
     def __init__(self, filepath, channel_num = 1, stats=False):
@@ -131,6 +132,17 @@ class Audio:
             print(f'Freq Resolution: {self.freq_resolution} Hz')
 
         return spectrogram_db
+
+    # Function to calculate MFCC of audio
+    def mfcc(self, n_mfcc=13):
+        # Generate a fixed number of MFCCs
+        mfccs = librosa.feature.mfcc(y=self.data, sr=self.SAMPLE_RATE, n_mfcc=n_mfcc)
+
+        # Normalize mfccs
+        mfccs = StandardScaler().fit_transform(mfccs)
+
+        return mfccs
+
 
     # Function to export an object
     def export(self, file_path):

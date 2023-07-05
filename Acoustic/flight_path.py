@@ -16,6 +16,7 @@ class Flight_Path:
 
         self.file_name = file_name
 
+        # For Flights with Targets
         csv_file = TARGET_FLIGHT_DIRECTORY + '/' + file_name + '.csv'
         target_directory = TARGET_FLIGHT_DIRECTORY + '/_flight targets.txt'
         target_location_directory = TARGET_FLIGHT_DIRECTORY + '/_target locations.txt'
@@ -44,7 +45,6 @@ class Flight_Path:
                 if name == self.target:
                     self.target_type = type
                     break
-
 
 
         self.position_file = CSVFile(csv_file)
@@ -168,9 +168,7 @@ class Flight_Path:
             self.closest_times_index.append(middle)
             # print(self.closest_times_index)
             self.times_closest_to_target = self.time[self.closest_times_index]
-            print(self.times_closest_to_target)
-
-
+            print(f'Times Closest to Target: {self.times_closest_to_target}')
 
     # Function to Plot the FLight Path
     def plot_flight_path(self, offset=500, target_size=300, flight_path_size=40, save=False):
@@ -292,8 +290,6 @@ class Flight_Path:
             plt.tight_layout(pad=1)
 
 
-
-
             if save:
                 saveas = TARGET_DISTANCE_DIRECTORY + '/' + self.file_name + ' TarDis.pdf'
                 if not utils.check_file_exists(saveas):
@@ -305,7 +301,27 @@ class Flight_Path:
             if display:
                 plt.show()
 
+    # Function to label sections of mission based on position
+    def label_flight_sections(self):
+        # Labels:
+            # Ascent: when altitude is increasing and long/lat is the same
+            # Hover: when altitude, long, and lat are the same
+            # Flight Slow: when long or lat is changing and speed is between 1 - 6
+            # Flight Fast: when long or lat is changing and speed is between 6+
+            # Descent: when altitude is decreasing and long/lat is the same
 
+        print(f'Time: {self.time}')
+        print(f'Altitude: {self.altitude}')
+        print(f'Speed: {self.speed}')
+        print(f'Lat: {self.latitude}')
+        print(f'Long: {self.longitude}')
+
+        plt.figure(figsize=self.FIG_SIZE_LARGE)
+        plt.plot(self.time, self.altitude)
+        plt.plot(self.time, self.speed)
+        plt.axhline(1, c='black', linestyle='dotted')
+        plt.axhline(6, c='black', linestyle='dotted')
+        plt.show()
 
 
 
