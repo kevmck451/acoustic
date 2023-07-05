@@ -12,7 +12,7 @@ from sklearn.preprocessing import StandardScaler
 
 class Audio:
     def __init__(self, filepath, channel_num = 1, stats=False):
-        self.filepath = Path(filepath)
+        self.filepath = Path(str(filepath))
         self.SAMPLE_RATE = sample_library.SAMPLE_LIBRARY_SAMPLE_RATE
         self.CHANNEL_NUMBER = 1
 
@@ -103,7 +103,7 @@ class Audio:
         return average_spectrum, frequency_bins
 
     # Function to calculate spectrogram of audio
-    def spectrogram(self, range=(0, 2000), stats=False):
+    def spectrogram(self, range=(80, 2000), stats=False):
         window_size = 32768
         hop_length = 512
         frequency_range = range
@@ -125,13 +125,15 @@ class Audio:
         self. freq_range_high = int(frequency_range[-1])
         self.freq_resolution = round(frequency_resolution, 2)
 
+        bottom_index = int(np.round(range[0] / frequency_resolution))
+        top_index = int(np.round(range[1] / frequency_resolution))
 
         if stats:
             print(f'Spectro_dB: {spectrogram_db}')
-            print(f'Freq Range: ({self.freq_range_low},{self. freq_range_high}) Hz')
+            print(f'Freq Range: ({range[0]},{range[1]}) Hz')
             print(f'Freq Resolution: {self.freq_resolution} Hz')
 
-        return spectrogram_db
+        return spectrogram_db[bottom_index:top_index]
 
     # Function to calculate MFCC of audio
     def mfcc(self, n_mfcc=13):
@@ -142,7 +144,6 @@ class Audio:
         mfccs = StandardScaler().fit_transform(mfccs)
 
         return mfccs
-
 
     # Function to export an object
     def export(self, file_path):
