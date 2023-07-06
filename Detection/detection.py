@@ -9,7 +9,7 @@ from keras.models import load_model
 
 
 # Model List
-model = load_model('models/Spectral_Detection_Model.h5')
+model = load_model('models/Spectral_Model/Spectral_Detection_Model.h5')
 
 directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Orlando/dataset 4'
 truth = {'4_target_2_d': 1, '4_target_2_b': 1, '.DS_Store': 0, '4_target_2_c': 1,

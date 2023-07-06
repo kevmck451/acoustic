@@ -86,7 +86,7 @@ def test_model_accuracy(model, directory, truth, display=False):
 
         # Create subplots
         fig, axes = plt.subplots(1, 2, figsize=(12, 4))
-        fig.suptitle(f'Spectral Model Accuracy: {accuracy}%', size=14)
+        fig.suptitle(f'Spectral_Model Accuracy: {accuracy}%', size=14)
 
         # Plot negatives
         axes[0].bar(negatives['FileName'], negatives['Score'], color=negatives['Predicted'].apply(lambda x: 'g' if x == 0 else 'r'))
@@ -121,7 +121,7 @@ if __name__ == '__main__':
 
     # Model List
     # model = load_model('models/Spectral_Detection_Model.h5')
-    model = load_model('models/Spectral_Detection_Model.h5')
+    model = load_model('models/Spectral_Model/Spectral_Detection_Model.h5')
     directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/Test'
     truth = {
         '10m-D-DEIdle_b': 1,

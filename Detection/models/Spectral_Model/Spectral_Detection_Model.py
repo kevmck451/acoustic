@@ -1,13 +1,14 @@
 
 
 from Detection.test_model_accuracy import test_model_accuracy
-from Detection.feature_extraction import extract_features
+from Detection.models.Spectral_Model.Spectral_feature_extraction import extract_features
 
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Conv2D, Flatten, MaxPooling2D
 from pathlib import Path
 import numpy as np
+
 
 
 # Load Data from a Dataset with Labels and Extract Features
@@ -26,7 +27,7 @@ def load_audio_data(path, duration=10):
     X = X[..., np.newaxis]
     return X, np.array(y)
 
-# Train Spectral Model
+# Train Spectral_Model
 def spectral_detection_model():
     # Path to audio samples
     static_dataset = Path(

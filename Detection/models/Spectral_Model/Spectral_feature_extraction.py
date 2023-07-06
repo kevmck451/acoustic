@@ -2,7 +2,6 @@
 
 from Acoustic.audio import Audio
 
-from sklearn.preprocessing import StandardScaler
 import numpy as np
 import librosa
 import process
@@ -46,16 +45,6 @@ class Audio_Spectral_Model(Audio):
 
         return spectrogram_db[bottom_index:top_index]
 
-    # Function to calculate MFCC of audio
-    def mfcc(self, n_mfcc=13):
-        # Generate a fixed number of MFCCs
-        mfccs = librosa.feature.mfcc(y=self.data, sr=self.SAMPLE_RATE, n_mfcc=n_mfcc)
-
-        # Normalize mfccs
-        mfccs = StandardScaler().fit_transform(mfccs)
-
-        return mfccs
-
 
 def extract_features(path, duration):
     num_samples = 48000 * duration
@@ -70,8 +59,6 @@ def extract_features(path, duration):
         audio.data = audio.data[:num_samples]
 
     # Feature Extraction
-    # mfccs = audio.mfcc()
     spectro = audio.spectrogram()
 
-    # return mfccs
     return spectro

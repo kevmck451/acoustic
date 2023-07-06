@@ -8,17 +8,69 @@ from Detection.test_model_accuracy import test_model_accuracy
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Conv2D, Flatten, MaxPooling2D
+from sklearn.preprocessing import StandardScaler
 from keras.callbacks import EarlyStopping
 from keras.regularizers import l2
 from pathlib import Path
 import numpy as np
-from sklearn.metrics import accuracy_score
+import librosa
+import process
 
 
+# Inherit from Audio to preserve feature extraction settings
+class Audio_Template(Audio):
+    def __init__(self, path):
+        super().__init__(path)
+
+    # Function to calculate spectrogram of audio
+    def spectrogram(self, range=(80, 2000), stats=False):
+        # Do not change settings - ML Model depends on it as currently set
+        window_size = 32768
+        hop_length = 512
+        frequency_range = range
+
+        Audio_Object = process.normalize(self)
+        data = Audio_Object.data
+
+        # Calculate the spectrogram using Short-Time Fourier Transform (STFT)
+        spectrogram = np.abs(librosa.stft(data, n_fft=window_size, hop_length=hop_length)) ** 2
+
+        # Convert to decibels (log scale) for better visualization
+        spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
+
+        # Calculate frequency range and resolution
+        nyquist_frequency = self.SAMPLE_RATE / 2
+        frequency_resolution = nyquist_frequency / (window_size / 2)
+        frequency_range = np.arange(0, window_size // 2 + 1) * frequency_resolution
+        self.freq_range_low = int(frequency_range[0])
+        self.freq_range_high = int(frequency_range[-1])
+        self.freq_resolution = round(frequency_resolution, 2)
+
+        bottom_index = int(np.round(range[0] / frequency_resolution))
+        top_index = int(np.round(range[1] / frequency_resolution))
+
+        if stats:
+            print(f'Spectro_dB: {spectrogram_db}')
+            print(f'Freq Range: ({range[0]},{range[1]}) Hz')
+            print(f'Freq Resolution: {self.freq_resolution} Hz')
+
+        return spectrogram_db[bottom_index:top_index]
+
+    # Function to calculate MFCC of audio
+    def mfcc(self, n_mfcc=13):
+        # Generate a fixed number of MFCCs
+        mfccs = librosa.feature.mfcc(y=self.data, sr=self.SAMPLE_RATE, n_mfcc=n_mfcc)
+
+        # Normalize mfccs
+        mfccs = StandardScaler().fit_transform(mfccs)
+
+        return mfccs
+
+# Feature Extraction
 def extract_features(path, duration):
     num_samples = 48000 * duration
     # Load audio file with fixed sample rate
-    audio = Audio(path)
+    audio = Audio_Template(path)
 
     # If the audio file is too short, pad it with zeroes
     if len(audio.data) < num_samples:
@@ -103,7 +155,69 @@ model.fit(X_train, y_train, epochs=20, batch_size=12, validation_data=(X_test, y
 
 
 # Test accuracy of Model
-accuracy = test_model_accuracy(model, display=True)
+directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/Test'
+truth = {
+    '10m-D-DEIdle_b': 1,
+    '10m-D-TIdle_1_c': 1,
+    'Hex_8_Hover_4_a': 0,
+    'Hex_8_Hover_1_a': 0,
+    '10m-D-TIdle_2_c': 1,
+    'Hex_1_Takeoff_a': 0,
+    '30m-D-DEIdle_a': 1,
+    '30m-D-DEIdle_b': 1,
+    '30m-D-DEIdle_c': 1,
+    '30m-D-DEIdle_d': 1,
+    '30m-D-TIdle_1_a': 1,
+    '30m-D-TIdle_1_b': 1,
+    '30m-D-TIdle_1_c': 1,
+    '30m-D-TIdle_1_d': 1,
+    '30m-D-TIdle_2_a': 1,
+    '30m-D-TIdle_2_b': 1,
+    '30m-D-TIdle_2_c': 1,
+    '30m-D-TIdle_2_d': 1,
+    '40m-D-DEIdle_a': 1,
+    '40m-D-DEIdle_b': 1,
+    '40m-D-DEIdle_c': 1,
+    '40m-D-DEIdle_d': 1,
+    '30m-D-Rev_a': 1,
+    '30m-D-Rev_b': 1,
+    '30m-D-Rev_c': 1,
+    '30m-D-Rev_d': 1,
+    '40m-D-Rev_a': 1,
+    '40m-D-Rev_b': 1,
+    '40m-D-Rev_c': 1,
+    '40m-D-Rev_d': 1,
+    '40m-D-TIdle_1_a': 1,
+    '40m-D-TIdle_1_b': 1,
+    '40m-D-TIdle_1_c': 1,
+    '40m-D-TIdle_1_d': 1,
+    '40m-D-TIdle_2_a': 1,
+    '40m-D-TIdle_2_b': 1,
+    '40m-D-TIdle_2_c': 1,
+    '40m-D-TIdle_2_d': 1,
+    'Hex_6_Flight1_a': 0,
+    'Hex_6_Flight2_a': 0,
+    'Hex_8_Hover_2_b': 0,
+    'Hex_8_Hover_3_c': 0,
+    'Hex_Hover_1_a': 0,
+    'Hex_Hover_1_b': 0,
+    'Hex_Hover_1_c': 0,
+    'Hex_Hover_1_d': 0,
+    'Hex_Hover_1b_a': 0,
+    'Hex_Hover_1b_b': 0,
+    'Hex_Hover_1b_c': 0,
+    'Hex_Hover_1b_d': 0,
+    'Hex_Hover_2_a': 0,
+    'Hex_Hover_2_b': 0,
+    'Hex_Hover_2_c': 0,
+    'Hex_Hover_2_d': 0,
+    'Hex_Hover_2b_a': 0,
+    'Hex_Hover_2b_b': 0,
+    'Hex_Hover_2b_c': 0,
+    'Hex_Hover_2b_d': 0,
+    'Hex_6_Hover_a': 0
+}
+accuracy = test_model_accuracy(model, directory, truth)
 
 # Save Model if above 90%
 if accuracy > 90:
