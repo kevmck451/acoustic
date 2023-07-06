@@ -1,6 +1,8 @@
 
 
 from Acoustic.audio import Audio
+from Detection.test_model_accuracy import test_model_accuracy
+
 
 
 from sklearn.model_selection import train_test_split
@@ -26,11 +28,11 @@ def extract_features(path, duration):
         audio.data = audio.data[:num_samples]
 
     # Feature Extraction
-    mfccs = audio.mfcc()
-    # spectro = audio.spectrogram()
+    # mfccs = audio.mfcc()
+    spectro = audio.spectrogram()
 
-    return mfccs
-    # return spectro
+    # return mfccs
+    return spectro
 
 # Load Data from a Dataset with Labels and Extract Features
 def load_audio_data(path, duration=10):
@@ -61,89 +63,51 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 input_shape = (X_train.shape[1], X_train.shape[2], 1)
 model = Sequential()
 
-# model.add(Conv2D(32, (3, 3), activation='relu', input_shape=input_shape))
-# model.add(MaxPooling2D((2, 2)))
-# model.add(Dropout(0.25))
-# model.add(Conv2D(64, (3, 3), activation='relu'))
-# model.add(MaxPooling2D((2, 2)))
-# model.add(Dropout(0.25))
-# model.add(Flatten())
-# model.add(Dense(128, activation='relu'))
-# model.add(Dropout(0.5))
-# model.add(Dense(1, activation='sigmoid'))
-# model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-# model.fit(X_train, y_train, epochs=20, batch_size=12, validation_data=(X_test, y_test))
-
-
-model.add(Conv2D(32, (3, 3), activation='relu', input_shape=input_shape, kernel_regularizer=l2(0.01)))
+model.add(Conv2D(32, (3, 3), activation='relu', input_shape=input_shape))
 model.add(MaxPooling2D((2, 2)))
-model.add(Dropout(0.3))
+model.add(Dropout(0.25))
 
-model.add(Conv2D(64, (3, 3), activation='relu', kernel_regularizer=l2(0.01)))
+model.add(Conv2D(64, (3, 3), activation='relu'))
 model.add(MaxPooling2D((2, 2)))
-model.add(Dropout(0.3))
+model.add(Dropout(0.25))
 
 model.add(Flatten())
-model.add(Dense(64, activation='relu', kernel_regularizer=l2(0.01)))
+model.add(Dense(128, activation='relu'))
 model.add(Dropout(0.5))
 
 model.add(Dense(1, activation='sigmoid'))
 
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.fit(X_train, y_train, epochs=20, batch_size=12, validation_data=(X_test, y_test))
 
-early_stopping = EarlyStopping(monitor='val_loss', patience=5)
 
-model.fit(X_train, y_train, epochs=50, batch_size=12, validation_data=(X_test, y_test), callbacks=[early_stopping])
-
+# model.add(Conv2D(32, (3, 3), activation='relu', input_shape=input_shape, kernel_regularizer=l2(0.01)))
+# model.add(MaxPooling2D((2, 2)))
+# model.add(Dropout(0.3))
+#
+# model.add(Conv2D(64, (3, 3), activation='relu', kernel_regularizer=l2(0.01)))
+# model.add(MaxPooling2D((2, 2)))
+# model.add(Dropout(0.3))
+#
+# model.add(Flatten())
+# model.add(Dense(64, activation='relu', kernel_regularizer=l2(0.01)))
+# model.add(Dropout(0.5))
+#
+# model.add(Dense(1, activation='sigmoid'))
+#
+# model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+#
+# early_stopping = EarlyStopping(monitor='val_loss', patience=5)
+#
+# model.fit(X_train, y_train, epochs=50, batch_size=12, validation_data=(X_test, y_test), callbacks=[early_stopping])
 
 
 # Test accuracy of Model
-truth = {
-    '10m-D-DEIdle_b' : 1,
-    '10m-D-TIdle_1_c' : 1,
-    'Hex_8_Hover_4_a' : 0,
-    'Hex_8_Hover_1_a' : 0,
-    '10m-D-TIdle_2_c' : 1,
-    'Hex_1_Takeoff_a' : 0
-}
+# Test accuracy of Model
+accuracy = test_model_accuracy(model, display=True)
 
-y_true = []
-y_pred = []
-
-for file in Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/Test').iterdir():
-    # Load and preprocess the new audio sample
-    feature = extract_features(file, 10)
-    feature = np.array([feature])
-    feature = feature[..., np.newaxis]
-
-    # Predict class
-    y_new_pred = model.predict(feature)
-    y_pred_class = int(y_new_pred[0][0] > 0.5)  # Convert to binary class prediction
-
-    # Retrieve true label
-    y_true_class = truth.get(file.stem, None)
-
-    # Skip this file if it's not in our truth dictionary
-    if y_true_class is None:
-        continue
-
-    # Append to our lists
-    y_true.append(y_true_class)
-    y_pred.append(y_pred_class)
-
-    percent = y_new_pred[0][0]
-    print(f'File: {file.stem} / Percent: {np.round((percent * 100), 2)}%')
-
-# Compute accuracy
-accuracy = accuracy_score(y_true, y_pred)
-print(f'Accuracy: {np.round((accuracy * 100), 2)}%')
-
-
-
-# Save Model if Desired
-answer = input('Do you want to save this Model? y/n: ')
-# ------- Save Model
-if answer == 'y':
+# Save Model if above 90%
+if accuracy > 90:
     saveto = 'models/testing/detection_model_test_0.h5'
     num = 1
     while Path(saveto).exists():
@@ -152,11 +116,6 @@ if answer == 'y':
 
     # Save the model
     model.save(saveto)
-
-
-
-
-
 
 
 
