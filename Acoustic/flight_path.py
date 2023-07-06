@@ -251,6 +251,29 @@ class Flight_Path:
             plt.tight_layout(pad=1)
             plt.show()
 
+    # Function to plot the altitude of a flight path
+    def plot_altitude(self):
+
+        def find_takeoff_index(altitude_list, slope_threshold):
+            for i in range(1, len(altitude_list) - 1):
+                slope = (altitude_list[i + 1] - altitude_list[i - 1]) / 2.0
+                print(i, slope)
+                if slope > slope_threshold:
+                    return i
+                    break
+            return None  # No takeoff detected within the given threshold.
+
+        takeoff_index = find_takeoff_index(self.altitude, .1)
+
+        plt.figure(figsize=self.FIG_SIZE_LARGE)
+        plt.plot(self.time, self.altitude)
+        # plt.plot(self.time, self.speed)
+        plt.axvline(self.time[takeoff_index], c='black', linestyle='dotted', label=f'Takeoff: {self.time[takeoff_index]}s')
+        # plt.axhline(6, c='black', linestyle='dotted')
+        plt.legend()
+        plt.title('Altitude')
+        plt.show()
+
     # Function to get distance from Target if one
     def display_target_distance(self, display=False, save=False):
         if 'None' in self.target:

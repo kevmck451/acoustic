@@ -58,7 +58,69 @@ def spectral_detection_model():
     model.fit(X_train, y_train, epochs=20, batch_size=12, validation_data=(X_test, y_test))
 
     # Test accuracy of Model
-    accuracy = test_model_accuracy(model)
+    directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/Test'
+    truth = {
+        '10m-D-DEIdle_b': 1,
+        '10m-D-TIdle_1_c': 1,
+        'Hex_8_Hover_4_a': 0,
+        'Hex_8_Hover_1_a': 0,
+        '10m-D-TIdle_2_c': 1,
+        'Hex_1_Takeoff_a': 0,
+        '30m-D-DEIdle_a': 1,
+        '30m-D-DEIdle_b': 1,
+        '30m-D-DEIdle_c': 1,
+        '30m-D-DEIdle_d': 1,
+        '30m-D-TIdle_1_a': 1,
+        '30m-D-TIdle_1_b': 1,
+        '30m-D-TIdle_1_c': 1,
+        '30m-D-TIdle_1_d': 1,
+        '30m-D-TIdle_2_a': 1,
+        '30m-D-TIdle_2_b': 1,
+        '30m-D-TIdle_2_c': 1,
+        '30m-D-TIdle_2_d': 1,
+        '40m-D-DEIdle_a': 1,
+        '40m-D-DEIdle_b': 1,
+        '40m-D-DEIdle_c': 1,
+        '40m-D-DEIdle_d': 1,
+        '30m-D-Rev_a': 1,
+        '30m-D-Rev_b': 1,
+        '30m-D-Rev_c': 1,
+        '30m-D-Rev_d': 1,
+        '40m-D-Rev_a': 1,
+        '40m-D-Rev_b': 1,
+        '40m-D-Rev_c': 1,
+        '40m-D-Rev_d': 1,
+        '40m-D-TIdle_1_a': 1,
+        '40m-D-TIdle_1_b': 1,
+        '40m-D-TIdle_1_c': 1,
+        '40m-D-TIdle_1_d': 1,
+        '40m-D-TIdle_2_a': 1,
+        '40m-D-TIdle_2_b': 1,
+        '40m-D-TIdle_2_c': 1,
+        '40m-D-TIdle_2_d': 1,
+        'Hex_6_Flight1_a': 0,
+        'Hex_6_Flight2_a': 0,
+        'Hex_8_Hover_2_b': 0,
+        'Hex_8_Hover_3_c': 0,
+        'Hex_Hover_1_a': 0,
+        'Hex_Hover_1_b': 0,
+        'Hex_Hover_1_c': 0,
+        'Hex_Hover_1_d': 0,
+        'Hex_Hover_1b_a': 0,
+        'Hex_Hover_1b_b': 0,
+        'Hex_Hover_1b_c': 0,
+        'Hex_Hover_1b_d': 0,
+        'Hex_Hover_2_a': 0,
+        'Hex_Hover_2_b': 0,
+        'Hex_Hover_2_c': 0,
+        'Hex_Hover_2_d': 0,
+        'Hex_Hover_2b_a': 0,
+        'Hex_Hover_2b_b': 0,
+        'Hex_Hover_2b_c': 0,
+        'Hex_Hover_2b_d': 0,
+        'Hex_6_Hover_a': 0
+    }
+    accuracy = test_model_accuracy(model, directory, truth)
 
     # Save Model if above 90%
     if accuracy > 90:
@@ -74,7 +136,7 @@ def spectral_detection_model():
 
 if __name__ == '__main__':
 
-    while(True):
+    while True:
         spectral_detection_model()
 
 

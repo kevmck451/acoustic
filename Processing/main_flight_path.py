@@ -18,10 +18,11 @@ from target import Target
 def main():
 
 
-    flight = Flight_Path(FLIGHT_LOG[0])
+    flight = Flight_Path(FLIGHT_LOG[4])
     # flight.plot_flight_path()
     # flight.display_target_distance(display=True)
-    flight.label_flight_sections()
+    flight.plot_altitude()
+    # flight.label_flight_sections()
 
 
 
