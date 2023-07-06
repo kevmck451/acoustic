@@ -103,7 +103,6 @@ model.fit(X_train, y_train, epochs=20, batch_size=12, validation_data=(X_test, y
 
 
 # Test accuracy of Model
-# Test accuracy of Model
 accuracy = test_model_accuracy(model, display=True)
 
 # Save Model if above 90%
