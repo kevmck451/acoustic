@@ -66,7 +66,7 @@ def test_model_accuracy(model, directory, truth, display=False, stats=False):
 
     # Compute accuracy
     accuracy = accuracy_score(y_true, y_pred)
-    accuracy = np.round((accuracy * 100), 2)
+    accuracy = int(np.round((accuracy * 100)))
     print(f'Accuracy: {accuracy}%')
 
     if display:
@@ -87,8 +87,8 @@ def test_model_accuracy(model, directory, truth, display=False, stats=False):
         accuracy_positives = len(positives[positives['Predicted'] == 1]) / len(positives) * 100
 
         # Create subplots
-        fig, axes = plt.subplots(1, 2, figsize=(12, 4))
-        fig.suptitle(f'Spectral_Model Accuracy: {accuracy}%', size=14)
+        fig, axes = plt.subplots(2, 1, figsize=(12, 8))
+        fig.suptitle(f'Spectral_Model Accuracy-{Test_Directory.stem}: {accuracy}%', size=14)
 
         # Plot negatives
         axes[0].bar(negatives['FileName'], negatives['Score'], color=negatives['Predicted'].apply(lambda x: 'g' if x == 0 else 'r'))

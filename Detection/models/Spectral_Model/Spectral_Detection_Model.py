@@ -65,7 +65,7 @@ def spectral_detection_model(load_data=False):
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-    early_stopping = EarlyStopping(monitor='val_loss', patience=10)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=6)
     model.fit(X_train, y_train, epochs=50, batch_size=12, validation_data=(X_test, y_test), callbacks=[early_stopping])
 
     # Test accuracy of Model
@@ -73,11 +73,11 @@ def spectral_detection_model(load_data=False):
     accuracy = test_model_accuracy(model, directory_test_1, truth)
 
     # Save Model if above 90%
-    if accuracy > 85:
-        saveto = f'models/testing/detection_model_test_{accuracy}.h5'
+    if accuracy > 90:
+        saveto = f'testing/spec_detect_model_{accuracy}.h5'
         num = 1
         while Path(saveto).exists():
-            saveto = f'models/testing/detection_model_test_{accuracy}_{num}.h5'
+            saveto = f'testing/spec_detect_model_{accuracy}_{num}.h5'
             num += 1
 
         # Save the model
