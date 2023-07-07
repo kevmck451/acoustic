@@ -2,16 +2,22 @@
 
 from pathlib import Path
 
+def generate_truth(directory):
+    path = Path(directory)
+    path_pos = path / '1'
+    path_neg = path / '0'
 
-path_pos = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Orlando/dataset 5/1')
-path_neg = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Orlando/dataset 5/0')
-truth = {}
-for file in path_pos.iterdir():
-    truth[file.stem] = 1
+    truth = {}
+    for file in path_pos.iterdir():
+        truth[file.stem] = 1
 
+    for file in path_neg.iterdir():
+        truth[file.stem] = 0
 
-for file in path_neg.iterdir():
-    truth[file.stem] = 0
+    return truth
 
+if __name__ == '__main__':
+    base_path = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data')
+    directory = base_path / Path('ML Model Data/Static Detection/dataset')
 
-print(truth)
+    print(f'truth = {generate_truth(directory)}')
