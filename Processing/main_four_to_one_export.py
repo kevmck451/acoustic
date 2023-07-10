@@ -29,4 +29,5 @@ if __name__ == '__main__':
 
     input_path = base_path + '/Field Tests/Campus/Static Tests/Static Test 2/Samples/0'
     output_path = base_path + '/ML Model Data/Static Detection/Test 2/0'
-    process_directory(input_path, output_path)
+    process_directory('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/Free Flight',
+                      '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/Free Flight')

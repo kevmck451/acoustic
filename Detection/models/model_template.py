@@ -1,16 +1,16 @@
 
 
+from Detection.models.Spectral_Model_10s.accuracy.test_model_accuracy import test_model_accuracy
+from Detection.models.Spectral_Model_10s.accuracy.generate_truth import generate_truth
+from Detection.models.model_saving import save_model
+from Detection.models.dataset_info import *
 from Acoustic.audio import Audio
-from Detection.test_model_accuracy import test_model_accuracy
-
 
 
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Conv2D, Flatten, MaxPooling2D
 from sklearn.preprocessing import StandardScaler
-from keras.callbacks import EarlyStopping
-from keras.regularizers import l2
 from pathlib import Path
 import numpy as np
 import librosa
@@ -130,105 +130,25 @@ model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
 
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-model.fit(X_train, y_train, epochs=20, batch_size=12, validation_data=(X_test, y_test))
-
-
-# model.add(Conv2D(32, (3, 3), activation='relu', input_shape=input_shape, kernel_regularizer=l2(0.01)))
-# model.add(MaxPooling2D((2, 2)))
-# model.add(Dropout(0.3))
-#
-# model.add(Conv2D(64, (3, 3), activation='relu', kernel_regularizer=l2(0.01)))
-# model.add(MaxPooling2D((2, 2)))
-# model.add(Dropout(0.3))
-#
-# model.add(Flatten())
-# model.add(Dense(64, activation='relu', kernel_regularizer=l2(0.01)))
-# model.add(Dropout(0.5))
-#
-# model.add(Dense(1, activation='sigmoid'))
-#
-# model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-#
-# early_stopping = EarlyStopping(monitor='val_loss', patience=5)
-#
-# model.fit(X_train, y_train, epochs=50, batch_size=12, validation_data=(X_test, y_test), callbacks=[early_stopping])
+model.fit(X_train, y_train, epochs=1, batch_size=12, validation_data=(X_test, y_test))
 
 
 # Test accuracy of Model
-directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/Test'
-truth = {
-    '10m-D-DEIdle_b': 1,
-    '10m-D-TIdle_1_c': 1,
-    'Hex_8_Hover_4_a': 0,
-    'Hex_8_Hover_1_a': 0,
-    '10m-D-TIdle_2_c': 1,
-    'Hex_1_Takeoff_a': 0,
-    '30m-D-DEIdle_a': 1,
-    '30m-D-DEIdle_b': 1,
-    '30m-D-DEIdle_c': 1,
-    '30m-D-DEIdle_d': 1,
-    '30m-D-TIdle_1_a': 1,
-    '30m-D-TIdle_1_b': 1,
-    '30m-D-TIdle_1_c': 1,
-    '30m-D-TIdle_1_d': 1,
-    '30m-D-TIdle_2_a': 1,
-    '30m-D-TIdle_2_b': 1,
-    '30m-D-TIdle_2_c': 1,
-    '30m-D-TIdle_2_d': 1,
-    '40m-D-DEIdle_a': 1,
-    '40m-D-DEIdle_b': 1,
-    '40m-D-DEIdle_c': 1,
-    '40m-D-DEIdle_d': 1,
-    '30m-D-Rev_a': 1,
-    '30m-D-Rev_b': 1,
-    '30m-D-Rev_c': 1,
-    '30m-D-Rev_d': 1,
-    '40m-D-Rev_a': 1,
-    '40m-D-Rev_b': 1,
-    '40m-D-Rev_c': 1,
-    '40m-D-Rev_d': 1,
-    '40m-D-TIdle_1_a': 1,
-    '40m-D-TIdle_1_b': 1,
-    '40m-D-TIdle_1_c': 1,
-    '40m-D-TIdle_1_d': 1,
-    '40m-D-TIdle_2_a': 1,
-    '40m-D-TIdle_2_b': 1,
-    '40m-D-TIdle_2_c': 1,
-    '40m-D-TIdle_2_d': 1,
-    'Hex_6_Flight1_a': 0,
-    'Hex_6_Flight2_a': 0,
-    'Hex_8_Hover_2_b': 0,
-    'Hex_8_Hover_3_c': 0,
-    'Hex_Hover_1_a': 0,
-    'Hex_Hover_1_b': 0,
-    'Hex_Hover_1_c': 0,
-    'Hex_Hover_1_d': 0,
-    'Hex_Hover_1b_a': 0,
-    'Hex_Hover_1b_b': 0,
-    'Hex_Hover_1b_c': 0,
-    'Hex_Hover_1b_d': 0,
-    'Hex_Hover_2_a': 0,
-    'Hex_Hover_2_b': 0,
-    'Hex_Hover_2_c': 0,
-    'Hex_Hover_2_d': 0,
-    'Hex_Hover_2b_a': 0,
-    'Hex_Hover_2b_b': 0,
-    'Hex_Hover_2b_c': 0,
-    'Hex_Hover_2b_d': 0,
-    'Hex_6_Hover_a': 0
-}
-accuracy = test_model_accuracy(model, directory, truth)
+truth = generate_truth(directory_test_1)
+accuracy = test_model_accuracy(model, directory_test_1, truth)
 
 # Save Model if above 90%
-if accuracy > 90:
-    saveto = 'models/testing/detection_model_test_0.h5'
-    num = 1
-    while Path(saveto).exists():
-        saveto = f'models/testing/detection_model_test_{num}.h5'
-        num += 1
+if accuracy[0] > 10:
+    save_model(model, 'detect', 'spec', accuracy[0])
 
-    # Save the model
-    model.save(saveto)
+    # saveto = 'models/testing/detection_model_test_0.h5'
+    # num = 1
+    # while Path(saveto).exists():
+    #     saveto = f'models/testing/detection_model_test_{num}.h5'
+    #     num += 1
+    #
+    # # Save the model
+    # model.save(saveto)
 
 
 

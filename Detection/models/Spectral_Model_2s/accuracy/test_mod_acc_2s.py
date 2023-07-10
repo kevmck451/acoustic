@@ -1,9 +1,9 @@
 # File to test the accuracy of a model against some known samples that were excluded from test data
 
 
-from Detection.feature_extraction import extract_features
-from Detection.generate_truth import generate_truth
-from Detection.dataset_info import *
+from Detection.models.Spectral_Model_10s.accuracy.generate_truth import generate_truth
+from Detection.models.Spectral_Model_2s.Spec_Detect_FE_2s import load_audio_data
+from Detection.models.dataset_info import *
 
 from sklearn.metrics import accuracy_score
 from keras.models import load_model
@@ -16,7 +16,7 @@ import matplotlib.patches as mpatches
 
 
 # Function to test ML Model's Accuracy
-def test_model_accuracy(model, directory, truth, display=False, stats=False):
+def test_model_accuracy(model, directory, display=False, stats=False):
     if stats:
         # Get the model's architecture
         model.summary()
@@ -28,28 +28,22 @@ def test_model_accuracy(model, directory, truth, display=False, stats=False):
     Test_Directory = Path(directory)
 
     # Test accuracy of Model
-
-
     y_true = []
     y_pred = []
     y_pred_scores = []
     y_names = []
 
-    for file in Test_Directory.rglob('*.wav'):
-        y_names.append(file.stem)
+    features, labels = load_audio_data(Test_Directory)
 
-        # Load and preprocess the new audio sample
-        feature = extract_features(file, 10)
-        feature = np.array([feature])
-        feature = feature[..., np.newaxis]
-
-        # Predict class
+    for i, (feature, label) in enumerate(zip(features, labels)):
+        feature = np.expand_dims(feature, axis=0)
         y_new_pred = model.predict(feature)
         y_pred_class = int(y_new_pred[0][0] > 0.5)  # Convert to binary class prediction
-        # y_pred_score = y_new_pred[0][0]  # Store the prediction score
+        y_names.append(f'Sample {i}')
+
 
         # Retrieve true label
-        y_true_class = truth.get(file.stem, None)
+        y_true_class = label
 
         # Skip this file if it's not in our truth dictionary
         if y_true_class is None:
@@ -62,12 +56,12 @@ def test_model_accuracy(model, directory, truth, display=False, stats=False):
 
         percent = np.round((y_new_pred[0][0] * 100), 2)
         y_pred_scores.append(percent)
-        # print(f'File: {file.stem} / Percent: {percent}%')
 
     # Compute accuracy
     accuracy = accuracy_score(y_true, y_pred)
     accuracy = int(np.round((accuracy * 100)))
     print(f'Accuracy: {accuracy}%')
+    print(f'Scores: {y_pred_scores}')
 
     if display:
         # Create DataFrame
@@ -117,15 +111,13 @@ def test_model_accuracy(model, directory, truth, display=False, stats=False):
         plt.tight_layout(pad=1)  # Adjust subplot parameters to give specified padding
         plt.show()
 
-    return accuracy
+    return accuracy, y_pred_scores
 
 if __name__ == '__main__':
 
     # Model List
-    # model = load_model('models/Spectral_Detection_Model.h5')
-    model = load_model('models/Spectral_Model/Spectral_Detection_Model.h5')
+    model = load_model('../model_library/detect_spec_2_50_0.h5')
 
-    truth = generate_truth(directory_test_1)
-    test_model_accuracy(model, directory_test_1, truth)
+    test_model_accuracy(model, directory_test_1, display=True)
 
 

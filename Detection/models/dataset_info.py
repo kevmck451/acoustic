@@ -16,3 +16,9 @@ directory_orlando_4 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data
 
 # Orlando Flight 5
 directory_orlando_5 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Orlando/dataset 5'
+
+# Orlando Flight 5
+directory_mission_5 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Orlando/mission 5'
+
+# Free Flight Full File
+directory_free_flight = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/Free Flight'

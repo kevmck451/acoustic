@@ -1,9 +1,9 @@
 
 
-from Detection.test_model_accuracy import test_model_accuracy
-from Detection.models.Spectral_Model.Spectral_feature_extraction import extract_features
-from Detection.generate_truth import generate_truth
-from Detection.dataset_info import *
+from Detection.models.Spectral_Model_10s.accuracy.test_model_accuracy import test_model_accuracy
+from Detection.models.Spectral_Model_10s.Spectral_feature_extraction import extract_features
+from Detection.models.Spectral_Model_10s.accuracy.generate_truth import generate_truth
+from Detection.models.dataset_info import *
 
 from sklearn.model_selection import train_test_split
 from keras.callbacks import EarlyStopping
@@ -30,7 +30,7 @@ def load_audio_data(path, duration=10):
     X = X[..., np.newaxis]
     return X, np.array(y)
 
-# Train Spectral_Model
+# Train Spectral_Model_10s
 def spectral_detection_model(load_data=False):
     # Path to audio samples
     static_dataset = Path(
