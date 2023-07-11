@@ -57,7 +57,7 @@ def spectral_detection_model(load_data=False):
     accuracy = test_model_accuracy(model, directory_test_1)
 
     # Save Model if above 90%
-    if accuracy[0] > 890:
+    if accuracy[0] >= 96:
         save_model(model, 'detect', 'spec', 2, accuracy[0])
 
 

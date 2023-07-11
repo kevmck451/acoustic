@@ -56,7 +56,7 @@ class Flight_Path:
         self.speed = np.array(self.position_file.get_column('Speed'), dtype=float)
 
         self.flight_log_sample_rate = int(round(len(self.time) / self.time[-1], 0))
-        # print(f'Hex Sample Rate: {self.flight_log_sample_rate} Hz')
+        # print(f'Hex Sample Rate: {audio_object.flight_log_sample_rate} Hz')
 
         self.time -= self.time.min()
         self.altitude -= self.altitude.min()
@@ -138,7 +138,7 @@ class Flight_Path:
         self.target_threshold_times = self.time[self.times_below_threshold]
         # print(target_threshold_times)
         self.targeted_times = self.time[self.times_at_local_min]
-        # print(self.times_at_local_min)
+        # print(audio_object.times_at_local_min)
 
         if len(self.times_at_local_min) > 0:
             self.closest_times_index = []
@@ -166,7 +166,7 @@ class Flight_Path:
             edge_2 = self.times_at_local_min[-1]
             middle = int(round((edge_1 + edge_2) / 2))
             self.closest_times_index.append(middle)
-            # print(self.closest_times_index)
+            # print(audio_object.closest_times_index)
             self.times_closest_to_target = self.time[self.closest_times_index]
             print(f'Times Closest to Target: {self.times_closest_to_target}')
 
@@ -267,7 +267,7 @@ class Flight_Path:
 
         plt.figure(figsize=self.FIG_SIZE_LARGE)
         plt.plot(self.time, self.altitude)
-        # plt.plot(self.time, self.speed)
+        # plt.plot(audio_object.time, audio_object.speed)
         plt.axvline(self.time[takeoff_index], c='black', linestyle='dotted', label=f'Takeoff: {self.time[takeoff_index]}s')
         # plt.axhline(6, c='black', linestyle='dotted')
         plt.legend()
@@ -306,7 +306,7 @@ class Flight_Path:
                         for time in self.times_closest_to_target:
                             plt.axvline(x=time, color='red', linestyle='dotted')  # label=f'Target Times'
 
-                        # plt.xticks(self.times_closest_to_target)
+                        # plt.xticks(audio_object.times_closest_to_target)
                 plt.legend()
 
             plt.plot(self.time, self.distance_from_target)

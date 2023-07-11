@@ -24,17 +24,17 @@ class Compare:
             if os.path.isfile(self.filepath):
                 if filename.endswith('.wav'):
                     self.sample_list.append(Audio_MC(self.filepath))
-                    # print(self.filepath)
+                    # print(audio_object.filepath)
 
-        # print(self.files_list)
-        # self.sample_list.sort(key=lambda x: x.filename)
+        # print(audio_object.files_list)
+        # audio_object.sample_list.sort(key=lambda x: x.filename)
         self.sample_list.sort(key=lambda x: int(os.path.splitext(os.path.basename(x.filename))[0]))
 
     def RMS(self, title):
 
         # Prepare data for plotting
         # Sort the sample list by sample names
-        # self.sample_list.sort(key=lambda x: x.filename)
+        # audio_object.sample_list.sort(key=lambda x: x.filename)
 
         sample_names = [sample.filename for sample in self.sample_list]
         channel_labels = ['Channel 1', 'Channel 2', 'Channel 3', 'Channel 4', 'Average']
@@ -79,7 +79,7 @@ class Compare:
     def Peak(self, title):
         # Prepare data for plotting
         # Sort the sample list by sample names
-        # self.sample_list.sort(key=lambda x: x.filename)
+        # audio_object.sample_list.sort(key=lambda x: x.filename)
 
         sample_names = [sample.filename for sample in self.sample_list]
         channel_labels = ['Channel 1', 'Channel 2', 'Channel 3', 'Channel 4', 'Average']
@@ -123,7 +123,7 @@ class Compare:
     def Range(self, title):
         # Prepare data for plotting
         # Sort the sample list by sample names
-        # self.sample_list.sort(key=lambda x: x.filename)
+        # audio_object.sample_list.sort(key=lambda x: x.filename)
 
         sample_names = [sample.filename for sample in self.sample_list]
         channel_labels = ['Channel 1', 'Channel 2', 'Channel 3', 'Channel 4', 'Average']
@@ -166,7 +166,7 @@ class Compare:
 
     def Spectral(self, title):
         # Prepare data for plotting
-        # self.sample_list.sort(key=lambda x: x.filename)
+        # audio_object.sample_list.sort(key=lambda x: x.filename)
 
         sample_names = [sample.filename for sample in self.sample_list]
 
@@ -222,7 +222,7 @@ class Mount_Compare:
                 if os.path.isfile(self.filepath):
                     if filename.endswith('.wav'):
                         exp_list.append(Audio_MC(self.filepath))
-                        # print(self.filepath)
+                        # print(audio_object.filepath)
 
             try:
                 exp_list.sort(key=lambda x: int(os.path.splitext(os.path.basename(x.filename))[0]))
@@ -234,7 +234,7 @@ class Mount_Compare:
             self.sample_list.append(exp_list)
             exp_list = []
 
-        # for list in self.sample_list:
+        # for list in audio_object.sample_list:
         #     for samp in list:
         #         print(samp)
         #     print('---------------')
@@ -424,14 +424,14 @@ class SNR_Compare:
             if os.path.isfile(self.filepath):
                 if filename.endswith('.wav'):
                     self.sample_list.append(Audio_MC(self.filepath))
-                    # print(self.filepath)
+                    # print(audio_object.filepath)
 
         try:
             self.sample_list.sort(key=lambda x: int(os.path.splitext(os.path.basename(x.filename))[0]))
         except:
             self.sample_list.sort(key=lambda x: x.filename)
 
-        # for list in self.sample_list:
+        # for list in audio_object.sample_list:
         #     for samp in list:
         #         print(samp)
         #     print('---------------')

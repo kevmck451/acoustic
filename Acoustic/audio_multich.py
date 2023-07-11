@@ -54,9 +54,9 @@ class Audio_MC:
             print(f'Sample Rate: {self.sample_rate} Hz')
             print(f'Sample Length: {self.sample_length} s')
             print(f'Data Shape: {self.data.shape}')
-            # print(self.data)
+            # print(audio_object.data)
             # print()
-            # print(self.data[0])
+            # print(audio_object.data[0])
 
     def __str__(self):
         return f'Audio MultiCh: {self.filename}'
