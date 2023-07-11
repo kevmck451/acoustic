@@ -1,7 +1,7 @@
 # File to test the accuracy of a model against some known samples that were excluded from test data
 
 
-from Detection.models.feature_ex_template import extract_features
+from Detection.base_files.feature_ex_template import extract_features
 from Detection.models.Spectral_Model_10s.accuracy.generate_truth import generate_truth
 from Detection.models.dataset_info import *
 

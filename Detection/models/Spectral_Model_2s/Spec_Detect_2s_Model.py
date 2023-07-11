@@ -30,6 +30,9 @@ def spectral_detection_model(load_data=False):
         np.save('features.npy', X)
         np.save('labels.npy', y)
 
+    # print(X.shape)
+    # print(y.shape)
+
     # Create a Model for Training
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     input_shape = (X_train.shape[1], X_train.shape[2], 1)
@@ -65,6 +68,6 @@ def spectral_detection_model(load_data=False):
 if __name__ == '__main__':
 
     while True:
-        spectral_detection_model(load_data=True)
+        spectral_detection_model(load_data=False)
 
 

@@ -6,22 +6,25 @@ from scipy import signal
 import numpy as np
 import librosa
 import utils
-import copy
 
 
 # Function to convert audio sample to a specific length
-def generate_chunks(audio_object, length):
+def generate_chunks(audio_object, length, training=False):
     num_samples = audio_object.sample_rate * length
     start = 0
     end = num_samples
     total_samples = len(audio_object.data)
 
     audio_ob_list = []
+    labels = []
 
     # If the audio file is too short, pad it with zeroes
     if total_samples < num_samples:
         audio_object.data = np.pad(audio_object.data, (0, num_samples - len(audio_object.data)))
         audio_ob_list.append(audio_object)
+        if training:
+            label = int(audio_object.path.parent.stem)
+            labels.append(label)  # Add Label (folder name)
     # If the audio file is too long, shorten it
 
     elif total_samples > num_samples:
@@ -30,8 +33,15 @@ def generate_chunks(audio_object, length):
             audio_copy.data = audio_object.data[start:end]
             audio_ob_list.append(audio_copy)
             start, end = (start + num_samples), (end + num_samples)
+            if training:
+                label = int(audio_object.path.parent.stem)
+                labels.append(label)  # Add Label (folder name)
 
-    return audio_ob_list
+    if len(audio_ob_list) != len(labels):
+        print(f'Error: {audio_object.path.stem}')
+
+    if training: return audio_ob_list, labels
+    else: return audio_ob_list
 
 # Function to convert 4 channel wav to list of 4 objects
 def channel_to_objects(audio_object):
@@ -167,7 +177,7 @@ def root_mean_square(audio_object):
 
 # Function to Increase or Decrease Sample Gain
 def amplify(audio_object, gain_db):
-    Audio_Object_amp = copy.deepcopy(audio_object)
+    Audio_Object_amp = deepcopy(audio_object)
 
     # convert gain from decibels to linear scale
     gain_linear = 10 ** (gain_db / 20)
@@ -180,7 +190,7 @@ def amplify(audio_object, gain_db):
 # Function to Normalize Data
 def normalize(audio_object, percentage=95):
     # make a deep copy of the audio object to preserve the original
-    audio_normalized = copy.deepcopy(audio_object)
+    audio_normalized = deepcopy(audio_object)
     max_value = np.max(np.abs(audio_normalized.data))
     normalized_data = audio_normalized.data / max_value * (percentage / 100.0)
 

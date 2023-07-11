@@ -1,96 +1,38 @@
 
+from Acoustic.audio_abstract import Audio_Abstract
+from Acoustic import process
 
-from Acoustic.audio import Audio
-
-from copy import deepcopy
 from pathlib import Path
 import numpy as np
-import librosa
-import process
 
-
-class Audio_Spectral_Model(Audio):
-    def __init__(self, path):
-        super().__init__(path)
-
-    # Function to calculate spectrogram of audio
-    def spectrogram(self, range=(80, 2000), stats=False):
-        # Do not change settings - ML Model depends on it as currently set
-        window_size = 32768
-        hop_length = 512
-        frequency_range = range
-
-        Audio_Object = process.normalize(self)
-        data = Audio_Object.data
-
-        # Calculate the spectrogram using Short-Time Fourier Transform (STFT)
-        spectrogram = np.abs(librosa.stft(data, n_fft=window_size, hop_length=hop_length)) ** 2
-
-        # Convert to decibels (log scale) for better visualization
-        spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
-
-        # Calculate frequency range and resolution
-        nyquist_frequency = self.SAMPLE_RATE / 2
-        frequency_resolution = nyquist_frequency / (window_size / 2)
-        frequency_range = np.arange(0, window_size // 2 + 1) * frequency_resolution
-        self.freq_range_low = int(frequency_range[0])
-        self.freq_range_high = int(frequency_range[-1])
-        self.freq_resolution = round(frequency_resolution, 2)
-
-        bottom_index = int(np.round(range[0] / frequency_resolution))
-        top_index = int(np.round(range[1] / frequency_resolution))
-
-        if stats:
-            print(f'Spectro_dB: {spectrogram_db}')
-            print(f'Freq Range: ({range[0]},{range[1]}) Hz')
-            print(f'Freq Resolution: {self.freq_resolution} Hz')
-
-        return spectrogram_db[bottom_index:top_index]
 
 
 # Load Data from a Dataset with Labels and Extract Features
-def load_audio_data(path, duration=2):
+def load_audio_data(path, length=2):
     print('Loading Dataset')
-    X = []
-    y = []
+
     audio_ob_list = []
-
-    sample_rate = 48000
-    num_samples = sample_rate * duration
-
+    label_list = []
     for file in Path(path).rglob('*.wav'):
-        audio = Audio_Spectral_Model(file)
-        audio_copy = deepcopy(audio)
-        start = 0
-        end = num_samples
-        total_samples = len(audio.data)
+        audio = Audio_Abstract(filepath=file)
+        chunks_list, labels = process.generate_chunks(audio, length=length, training=True)
+        audio_ob_list.extend(chunks_list)  # Flattening the chunks_list
+        label_list.extend(labels)  # Flattening the labels
 
-        # If the audio file is too short, pad it with zeroes
-        if total_samples < num_samples:
-            audio.data = np.pad(audio.data, (0, num_samples - len(audio.data)))
-        # If the audio file is too long, shorten it
-        elif total_samples > num_samples:
-            while end <= total_samples:
-                audio_copy.data = audio.data[start:end]
-                audio_ob_list.append(audio_copy)
-                start, end = (start + num_samples), (end + num_samples)
-                try:
-                    label = int(file.parent.stem)
-                    y.append(label)  # Add Label (folder name)
-                except:
-                    continue
+    master_ob_list = list(audio_ob_list)  # Creating a new 1D list
+    master_label_list = list(label_list)  # Creating a new 1D list
 
     print('Extracting Features')
-    for audio in audio_ob_list:
-        # Feature Extraction
-        feature = audio.spectrogram()
-
+    features_list = []
+    for audio in master_ob_list:
+        feature = process.spectrogram(audio)
+        features_list.append(feature)  # Add Feature
         # print(feature.shape)
         # print(feature.dtype)
 
-        X.append(feature)  # Add Feature
+    # make into array and reshape to (6788, 1310, 188, 1) - (samples, freq, reduced time, batch)
+    features_list = np.array(features_list)
+    features_list = np.squeeze(features_list, axis=1)
+    features_list = features_list[..., np.newaxis]
 
-    X = np.array(X)
-    X = X[..., np.newaxis]
-
-    return X, np.array(y)
+    return features_list, np.array(master_label_list)
