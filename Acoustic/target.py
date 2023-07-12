@@ -1,25 +1,33 @@
 # File to characterize a sound source called "Target"
 
 from sample_library import *
+from utils import CSVFile
 import math
 import ast
 
 class Target:
 
-    def __init__(self, target_name):
-        """
-        Constructs all the necessary attributes for the Target object.
-        Parameters:
-            target_name (str): Type of the target. Expected values are 'tank' or 'generator'.
-        """
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name', 'Untitled')
+        self.flight = kwargs.get('flight', 'None')
+        self.type = kwargs.get('type', 'None')
 
-        type_dict = {'tank': 88, 'decoy': 78}
+        target_directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/_info/targets.csv'
+        if 'None' not in self.flight:
+            self.target_file = CSVFile(target_directory)
+            self.type = self.target_file.get_value(self.flight, 'Type')
+            self.location = ast.literal_eval(self.target_file.get_value(self.flight, 'Location'))
 
-        self.target_name = target_name
-        self.SPL_at_10m_dB = type_dict.get(target_name)
 
-        # convert decibels to intensity
-        self.intensity_at_10m_Wm2 = 10 ** (self.SPL_at_10m_dB / 10) * 1e-12
+        type_dict = {'tank': 88, 'decoy': 78, 'speaker': 88}
+        if 'Untitled' not in self.name and self.name in type_dict.keys():
+            self.SPL_at_10m_dB = type_dict.get(self.name)
+            # convert decibels to intensity
+            self.intensity_at_10m_Wm2 = 10 ** (self.SPL_at_10m_dB / 10) * 1e-12
+        elif self.type in type_dict.keys():
+            self.SPL_at_10m_dB = type_dict.get(self.type)
+            # convert decibels to intensity
+            self.intensity_at_10m_Wm2 = 10 ** (self.SPL_at_10m_dB / 10) * 1e-12
 
 
 
@@ -78,9 +86,9 @@ class Target:
 
         return projections
 
-    def calculate_distance(self, threshold_dB):
+    def calculate_distance_threshold(self, threshold_dB):
         """
-        Calculate the distance at which the sound level from the target would decrease below a given threshold.
+        Calculate the distance at which the sound level from the target would decrease below a given dB threshold.
 
         Parameters:
         threshold_dB (float): The sound level threshold in decibels.
@@ -104,3 +112,12 @@ class Target:
                 # print(f'{(i + 1) * 10} m')
                 break
 
+
+
+
+
+
+if __name__ == '__main__':
+
+    deocy = Target(name='decoy f', type='speaker', flight='Orlando_1')
+    # deocy.calculate_distance_threshold(55)

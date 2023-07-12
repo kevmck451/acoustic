@@ -13,41 +13,13 @@ class Flight_Path:
     def __init__(self, file_name, target_object=None):
         self.FIG_SIZE_LARGE = (14, 8)
         self.FIG_SIZE_SMALL = (14, 4)
+        self.path = Path(file_name)
+        self.file_name = self.path.stem
 
-        self.file_name = file_name
-
-        # For Flights with Targets
-        csv_file = TARGET_FLIGHT_DIRECTORY + '/' + file_name + '.csv'
-        target_directory = TARGET_FLIGHT_DIRECTORY + '/_flight targets.txt'
-        target_location_directory = TARGET_FLIGHT_DIRECTORY + '/_target locations.txt'
-        target_type_directory = TARGET_FLIGHT_DIRECTORY + '/_target types.txt'
-
-        self.target = 'None'
-        with open(target_directory, 'r') as f:
-            for line in f:
-                name, tgt = line.strip().split(' = ')
-                if name == file_name:
-                    self.target = tgt
-                    break
-
-        self.target_location = 'None'
-        with open(target_location_directory, 'r') as f:
-            for line in f:
-                name, location = line.strip().split(' = ')
-                if name == self.target:
-                    self.target_location = ast.literal_eval(location)
-                    break
-
-        self.target_type = 'None'
-        with open(target_type_directory, 'r') as f:
-            for line in f:
-                name, type = line.strip().split(' = ')
-                if name == self.target:
-                    self.target_type = type
-                    break
-
-
+        csv_file = f'/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/_info/{self.file_name}.csv'
         self.position_file = CSVFile(csv_file)
+        if self.position_file.header[0] != 'Time':
+            self.position_file.rename_headers(['Time', 'Lat', 'Long', 'Alt', 'Speed'])
 
         self.time = np.array(self.position_file.get_column('Time'), dtype=float)
         self.latitude = np.array(self.position_file.get_column('Lat'), dtype=int)
@@ -73,23 +45,19 @@ class Flight_Path:
             self.position_file.save_changes()
             print(f'Changes Made to {self.file_name} CSV')
 
-        if 'None' in self.target:
-            # print('No Target')
-            pass
 
-        else:
-            tar = target_object
-            if target_object is None:
-                tar = Target(self.target_type)
-                tar.calculate_distance(55)
-            self._calculate_distance(tar)
+        if target_object is not None:
+            self.target_object = target_object
+            target_object.calculate_distance_threshold(55)
+            self._calculate_distance()
+        else: self.target = 'None'
 
     # Function to get distance from Target if one
-    def _calculate_distance(self, target_object):
-        self.target_object = target_object
+    def _calculate_distance(self):
+
         latitude = self.latitude.astype(float) / 10000000
         longitude = self.longitude.astype(float) / 10000000
-        target_location = np.array(self.target_location, dtype=float) / 10000000
+        target_location = np.array(self.target_object.location, dtype=float) / 10000000
 
         coordinate_pairs = list(zip(latitude, longitude))
 
@@ -174,9 +142,9 @@ class Flight_Path:
     def plot_flight_path(self, offset=500, target_size=300, flight_path_size=40, save=False):
 
         # if target, adjust position based on offset
-        if 'None' not in self.target:
-            self.target_location = (self.target_location[0]-self.latitude.min(),
-                                    self.target_location[1]-(self.longitude.min() - offset))
+        if self.target_object is not None:
+            target_location = (self.target_object.location[0]-self.latitude.min(),
+                                    self.target_object.location[1]-(self.longitude.min() - offset))
 
         self.latitude -= (self.latitude.min() - offset)
         self.longitude -= (self.longitude.min() - offset)
@@ -189,12 +157,12 @@ class Flight_Path:
         space[:, :, 1] = 100
 
         # Only if Target
-        if 'None' not in self.target:
+        if self.target_object is not None:
             red = [255, 0, 0]
-            y1 = self.target_location[0] - target_size
-            y2 = self.target_location[0] + target_size
-            x1 = self.target_location[1] - target_size
-            x2 = self.target_location[1] + target_size
+            y1 = target_location[0] - target_size
+            y2 = target_location[0] + target_size
+            x1 = target_location[1] - target_size
+            x2 = target_location[1] + target_size
 
             if y1 < 0: y1 = 0
             if y2 < 0: y2 = 0
@@ -246,7 +214,7 @@ class Flight_Path:
         else:
             plt.figure(figsize=self.FIG_SIZE_LARGE)
             plt.imshow(space, origin='lower')
-            plt.title(self.file_name + f' Flight Path / Target: {self.target_type}')
+            plt.title(self.file_name + f' Flight Path / Target: {self.target_object.type}')
             plt.axis('off')
             plt.tight_layout(pad=1)
             plt.show()
@@ -281,13 +249,13 @@ class Flight_Path:
 
     # Function to get distance from Target if one
     def display_target_distance(self, display=False, save=False):
-        if 'None' in self.target:
+        if self.target_object is None:
             print('No Target')
             return None
 
         else:
             plt.figure(figsize=self.FIG_SIZE_SMALL)
-            plt.title(f'{self.file_name} - Distance from Target: {self.target_type}')
+            plt.title(f'{self.file_name} - Distance from Target: {self.target_object.type}')
             plt.xlabel('Time (s)')
             plt.ylabel('Distance (m)')
 
@@ -298,7 +266,7 @@ class Flight_Path:
 
             if self.target_object is not None:
                 plt.axhline(y=self.target_object.threshold_distance, color='blue',
-                            label=f'{self.target_object.target_name} threshold: {self.target_object.threshold_distance}m',
+                            label=f'{self.target_object.name} threshold: {self.target_object.threshold_distance}m',
                             linestyle='dotted')
 
                 if len(self.targeted_times) > 0:
@@ -355,7 +323,10 @@ class Flight_Path:
 
 
 if __name__ == '__main__':
-    flight = Flight_Path(FLIGHT_LOG[4])
+
+    target = Target(name='Semi', type='speaker', flight='Static_Test_2')
+    flight = Flight_Path('Static_Test_2', target_object=target) #
+
     # flight.plot_flight_path()
     # flight.display_target_distance(display=True)
     flight.get_takeoff_time(display=True)

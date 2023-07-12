@@ -17,7 +17,7 @@ if __name__ == '__main__':
     process_directory()
 
     # deocy = Target('decoy')
-    # deocy.calculate_distance(55)
+    # deocy.calculate_distance_threshold(55)
     #
     # flight = Flight_Path(file_names[6], target_object=deocy)
     # flight.display_target_distance(display=True)

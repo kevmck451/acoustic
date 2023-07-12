@@ -113,6 +113,17 @@ class CSVFile:
         for i in range(len(self.data)):
             self.data[i][column_index] = new_column_data[i] if i < len(new_column_data) else ""
 
+    def rename_headers(self, new_headers):
+        if len(new_headers) != len(self.header):
+            raise ValueError("The number of new headers must match the number of existing headers.")
+        self.header = new_headers
+
+        # Write the modified data back to the CSV file
+        with open(self.file_path, 'w', newline='', encoding='utf-8-sig') as csvfile:
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(self.header)
+            csvwriter.writerows(self.data)
+
     def save_changes(self):
         with open(self.file_path, 'w', newline='', encoding='utf-8-sig') as csvfile:
             csvwriter = csv.writer(csvfile)
