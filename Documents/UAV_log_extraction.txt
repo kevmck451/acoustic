@@ -1,0 +1,11 @@
+Extract Metadata from UAV Log File
+
+1. Aquire the log.bin file from UAV
+2. Go to https://plot.ardupilot.org/#/
+3. Insert file in dotted box
+4. Expand the Plot Individual Field Option
+5. Expand the GPS option
+6. Select Lat, Lng, Alt, and Speed
+7. Move mouse to plot area and click on "Download Data as CSV" in top right
+8. Rename CSV file and move to desired location
+9. Make sure there are no gaps in data or empty cells

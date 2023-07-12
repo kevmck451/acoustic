@@ -203,7 +203,7 @@ class Flight_Path:
                 # space = np.rot90(space, 1)
                 plt.figure(figsize=self.FIG_SIZE_LARGE)
                 plt.imshow(space, origin='lower')
-                plt.title(self.file_name + f' Flight Path / Target: {self.target_type}')
+                plt.title(self.file_name + f' Flight Path / Target: {self.target_object.type}')
                 plt.axis('off')
                 plt.tight_layout(pad=1)
                 plt.savefig(saveas, dpi=2000)
@@ -327,8 +327,8 @@ if __name__ == '__main__':
     target = Target(name='Semi', type='speaker', flight='Static_Test_2')
     flight = Flight_Path('Static_Test_2', target_object=target) #
 
-    # flight.plot_flight_path()
-    # flight.display_target_distance(display=True)
+    flight.plot_flight_path()
+    flight.display_target_distance(display=True)
     flight.get_takeoff_time(display=True)
     # flight.label_flight_sections()
 
