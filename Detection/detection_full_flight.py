@@ -16,12 +16,12 @@ def full_flight_detection(filepath, model_path):
 
     # LOAD DATA ------------------------------------------------------------------------
     print('Loading Mission Audio')
-    audio = Audio_Abstract(filepath=filepath)
+    audio = Audio_Abstract(filepath=filepath, num_channels=4)
     channel_list = process.channel_to_objects(audio)
 
     audio_ob_list = []
     for channel in channel_list:
-        chunks_list, labels = process.generate_chunks(channel, length=2)
+        chunks_list = process.generate_chunks(channel, length=2)
         audio_ob_list.append(chunks_list)
 
     # EXTRACT ------------------------------------------------------------------------

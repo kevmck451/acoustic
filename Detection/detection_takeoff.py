@@ -9,9 +9,9 @@ from pathlib import Path
 import numpy as np
 import statistics
 
-def takeoff_detection(filepath, length, display=False):
+def takeoff_detection(filepath, length=0.5, display=False):
     # LOAD DATA ------------------------------------------------------------------------
-    print('Loading Mission Audio')
+    # print('Loading Mission Audio')
     audio_object = Audio_Abstract(filepath=filepath)
 
     # Number of samples in each interval
@@ -48,7 +48,7 @@ def takeoff_detection(filepath, length, display=False):
 
     first_takeoff_time_index = takeoff_time_index[0]
     takeoff_time = time[first_takeoff_time_index]
-    print(takeoff_time)
+    # print(takeoff_time)
     # Display
     if display:
         row, col = 1, 1

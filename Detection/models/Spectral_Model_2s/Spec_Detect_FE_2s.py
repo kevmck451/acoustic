@@ -14,7 +14,7 @@ def load_audio_data(path, length=2):
     audio_ob_list = []
     label_list = []
     for file in Path(path).rglob('*.wav'):
-        audio = Audio_Abstract(filepath=file)
+        audio = Audio_Abstract(filepath=file, num_channels=4)
 
         if audio.num_channels == 1:
             chunks_list, labels = process.generate_chunks(audio, length=length, training=True)

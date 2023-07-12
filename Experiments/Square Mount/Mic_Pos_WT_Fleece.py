@@ -21,10 +21,10 @@ mic_position_exp4 = [[1, 2],
                      [3, 4]]
 
 
-mount_1 = Mount(4, 'square', mic_position_exp1, 'Exp1')
-mount_2 = Mount(4, 'square', mic_position_exp2, 'Exp2')
-mount_3 = Mount(4, 'square', mic_position_exp3, 'Exp3')
-mount_4 = Mount(4, 'square', mic_position_exp4, 'Exp4')
+mount_1 = Mount(number_of_mics=4, mount_geometry='square', channel_positions=mic_position_exp1, name='Exp1')
+mount_2 = Mount(number_of_mics=4, mount_geometry='square', channel_positions=mic_position_exp2, name='Exp2')
+mount_3 = Mount(number_of_mics=4, mount_geometry='square', channel_positions=mic_position_exp3, name='Exp3')
+mount_4 = Mount(number_of_mics=4, mount_geometry='square', channel_positions=mic_position_exp4, name='Exp4')
 
 mount_comparison = Mount_Compare(directories, [mount_1, mount_2, mount_3, mount_4])
 mount_comparison.position_comparison_individual()

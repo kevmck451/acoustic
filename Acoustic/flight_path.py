@@ -10,13 +10,15 @@ import math
 from target import Target
 
 class Flight_Path:
-    def __init__(self, file_name, target_object=None):
+    def __init__(self, name, **kwargs):
+        self.target_object = kwargs.get('target_object', None)
+        filepath = kwargs.get('directory', '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/_info')
+        if self.target_object is not None: self.contains_target=True
         self.FIG_SIZE_LARGE = (14, 8)
         self.FIG_SIZE_SMALL = (14, 4)
-        self.path = Path(file_name)
-        self.file_name = self.path.stem
+        self.file_name = name
 
-        csv_file = f'/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/_info/{self.file_name}.csv'
+        csv_file = f'{filepath}/{self.file_name}.csv'
         self.position_file = CSVFile(csv_file)
         if self.position_file.header[0] != 'Time':
             self.position_file.rename_headers(['Time', 'Lat', 'Long', 'Alt', 'Speed'])
@@ -46,11 +48,14 @@ class Flight_Path:
             print(f'Changes Made to {self.file_name} CSV')
 
 
-        if target_object is not None:
-            self.target_object = target_object
-            target_object.calculate_distance_threshold(55)
+        if self.target_object is not None:
+            self.target_object.calculate_distance_threshold(55)
             self._calculate_distance()
-        else: self.target = 'None'
+
+    def __str__(self):
+        return f'---------Flight Object---------\n' \
+               f'Name: {self.file_name}\n' \
+               f'Target: {self.contains_target}\n' \
 
     # Function to get distance from Target if one
     def _calculate_distance(self):
@@ -215,7 +220,7 @@ class Flight_Path:
             plt.figure(figsize=self.FIG_SIZE_LARGE)
             plt.imshow(space, origin='lower')
             plt.title(self.file_name + f' Flight Path / Target: {self.target_object.type}')
-            plt.axis('off')
+            #plt.axis('off')
             plt.tight_layout(pad=1)
             plt.show()
 
@@ -244,7 +249,7 @@ class Flight_Path:
             plt.title('Altitude')
             plt.show()
 
-        print(takeoff_time)
+        # print(takeoff_time)
         return takeoff_time
 
     # Function to get distance from Target if one
@@ -328,8 +333,8 @@ if __name__ == '__main__':
     flight = Flight_Path('Static_Test_2', target_object=target) #
 
     flight.plot_flight_path()
-    flight.display_target_distance(display=True)
-    flight.get_takeoff_time(display=True)
+    # flight.display_target_distance(display=True)
+    # flight.get_takeoff_time(display=True)
     # flight.label_flight_sections()
 
 

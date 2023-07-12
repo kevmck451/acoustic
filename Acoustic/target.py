@@ -11,15 +11,17 @@ class Target:
         self.name = kwargs.get('name', 'Untitled')
         self.flight = kwargs.get('flight', 'None')
         self.type = kwargs.get('type', 'None')
+        filepath = kwargs.get('directory', '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/_info/targets.csv')
 
-        target_directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/_info/targets.csv'
         if 'None' not in self.flight:
-            self.target_file = CSVFile(target_directory)
+            self.target_file = CSVFile(filepath)
             self.type = self.target_file.get_value(self.flight, 'Type')
             self.location = ast.literal_eval(self.target_file.get_value(self.flight, 'Location'))
 
 
         type_dict = {'tank': 88, 'decoy': 78, 'speaker': 88}
+        self.SPL_at_10m_dB = None
+        self.intensity_at_10m_Wm2 = None
         if 'Untitled' not in self.name and self.name in type_dict.keys():
             self.SPL_at_10m_dB = type_dict.get(self.name)
             # convert decibels to intensity
@@ -29,7 +31,13 @@ class Target:
             # convert decibels to intensity
             self.intensity_at_10m_Wm2 = 10 ** (self.SPL_at_10m_dB / 10) * 1e-12
 
-
+    def __str__(self):
+        return f'---------Target Object---------\n' \
+               f'Name: {self.name}\n' \
+               f'Flight: {self.flight}\n' \
+               f'Type: {self.type}\n' \
+               f'SPL at 10m: {self.SPL_at_10m_dB} dB\n' \
+               f'Intensity at 10m: {self.intensity_at_10m_Wm2} W/m^2'
 
     def propagation_projection_simple(self, distance_increments):
         """
@@ -111,7 +119,6 @@ class Target:
                 self.threshold_distance = (i + 1) * 10
                 # print(f'{(i + 1) * 10} m')
                 break
-
 
 
 

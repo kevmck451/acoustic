@@ -3,11 +3,11 @@ from pathlib import Path
 import soundfile as sf
 import numpy as np
 import wave
+import matplotlib.pyplot as plt
 
 
 class Audio_Abstract:
     def __init__(self, **kwargs):
-        stats = kwargs.get('stats', False)
         self.path = Path(kwargs.get('filepath', None))
         self.sample_rate = kwargs.get('sample_rate', 48000)
         self.num_channels = kwargs.get('num_channels', 1)
@@ -23,15 +23,16 @@ class Audio_Abstract:
 
             self.load_data(self.path)
 
-        if stats:
-            print(f'path: {self.path}')
-            print(f'sample_rate: {self.sample_rate}')
-            print(f'num_channels: {self.num_channels}')
-            print(f'sample_length: {self.sample_length}')
-            print(f'num_samples: {self.num_samples}')
-            print(f'data type: {self.data.dtype}')
-            print(f'data shape: {self.data.shape}')
-            print(f'data: {self.data}')
+
+    def __str__(self):
+        return f'---------Audio Object---------\n' \
+               f'sample_rate: {self.sample_rate} Hz\n' \
+               f'num_channels: {self.num_channels}\n' \
+               f'sample_length: {self.sample_length} s\n' \
+               f'num_samples: {self.num_samples}\n' \
+               f'data type: {self.data.dtype}\n' \
+               f'data shape: {self.data.shape}\n' \
+               f'data: {self.data}'
 
     # Function that loads data from filepath
     def load_data(self, filepath):
@@ -84,9 +85,30 @@ class Audio_Abstract:
             sf.write(f'{filepath}', self.data, self.sample_rate)
         else: sf.write(f'{self.name}_export.wav', self.data, self.sample_rate)
 
+    # Function to display the waveform of audio
+    def waveform(self):
+        # Calculate the time axis in seconds
+        time_axis = np.arange(len(self.data[0])) / self.sample_rate
 
+        # Create the figure and axis objects, with subplots equal to number of channels
+        fig, axs = plt.subplots(self.num_channels, figsize=(14, (4+self.num_channels)))
 
+        # If only one channel, make axs a list to handle indexing
+        if self.num_channels == 1:
+            axs = [axs]
 
+        # Plot the audio data for each channel
+        for i in range(self.num_channels):
+            axs[i].plot(time_axis, self.data[i], linewidth=0.5)
+            axs[i].set_ylabel('Amplitude')
+            axs[i].set_ylim([-1, 1])  # set the y-axis limits to -1 and 1
+            axs[i].axhline(y=0, color='black', linewidth=0.5, linestyle='--')  # add horizontal line at y=0
+            axs[i].set_xlabel('Time (s)')
+            axs[i].set_title(f'Waveform: {self.path.stem} - Channel {i + 1}')
+
+        # Make the layout tight to avoid overlap of subplots
+        fig.tight_layout(pad=1)
+        plt.show()
 
 
 if __name__ == '__main__':
