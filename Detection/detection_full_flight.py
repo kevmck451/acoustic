@@ -21,7 +21,8 @@ def full_flight_detection(filepath, model_path):
 
     audio_ob_list = []
     for channel in channel_list:
-        audio_ob_list.append(process.generate_chunks(channel, length=2)) # number of seconds model accepts
+        chunks_list, labels = process.generate_chunks(channel, length=2)
+        audio_ob_list.append(chunks_list)
 
     # EXTRACT ------------------------------------------------------------------------
     print('Extracting Features')

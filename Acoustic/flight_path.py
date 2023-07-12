@@ -168,7 +168,7 @@ class Flight_Path:
             self.closest_times_index.append(middle)
             # print(audio_object.closest_times_index)
             self.times_closest_to_target = self.time[self.closest_times_index]
-            print(f'Times Closest to Target: {self.times_closest_to_target}')
+            # print(f'Times Closest to Target: {self.times_closest_to_target}')
 
     # Function to Plot the FLight Path
     def plot_flight_path(self, offset=500, target_size=300, flight_path_size=40, save=False):
@@ -252,27 +252,32 @@ class Flight_Path:
             plt.show()
 
     # Function to plot the altitude of a flight path
-    def plot_altitude(self):
+    def get_takeoff_time(self, display=False):
 
         def find_takeoff_index(altitude_list, slope_threshold):
             for i in range(1, len(altitude_list) - 1):
                 slope = (altitude_list[i + 1] - altitude_list[i - 1]) / 2.0
-                print(i, slope)
+                # print(i, slope)
                 if slope > slope_threshold:
                     return i
-                    break
             return None  # No takeoff detected within the given threshold.
 
-        takeoff_index = find_takeoff_index(self.altitude, .1)
 
-        plt.figure(figsize=self.FIG_SIZE_LARGE)
-        plt.plot(self.time, self.altitude)
-        # plt.plot(audio_object.time, audio_object.speed)
-        plt.axvline(self.time[takeoff_index], c='black', linestyle='dotted', label=f'Takeoff: {self.time[takeoff_index]}s')
-        # plt.axhline(6, c='black', linestyle='dotted')
-        plt.legend()
-        plt.title('Altitude')
-        plt.show()
+        takeoff_index = find_takeoff_index(self.altitude, .1)
+        takeoff_time = self.time[takeoff_index]
+
+        if display:
+            plt.figure(figsize=self.FIG_SIZE_LARGE)
+            plt.plot(self.time, self.altitude)
+            # plt.plot(audio_object.time, audio_object.speed)
+            plt.axvline(self.time[takeoff_index], c='black', linestyle='dotted', label=f'Takeoff: {self.time[takeoff_index]}s')
+            # plt.axhline(6, c='black', linestyle='dotted')
+            plt.legend()
+            plt.title('Altitude')
+            plt.show()
+
+        print(takeoff_time)
+        return takeoff_time
 
     # Function to get distance from Target if one
     def display_target_distance(self, display=False, save=False):
@@ -349,7 +354,12 @@ class Flight_Path:
 
 
 
-
+if __name__ == '__main__':
+    flight = Flight_Path(FLIGHT_LOG[4])
+    # flight.plot_flight_path()
+    # flight.display_target_distance(display=True)
+    flight.get_takeoff_time(display=True)
+    # flight.label_flight_sections()
 
 
 

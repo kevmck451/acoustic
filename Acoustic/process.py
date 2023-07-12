@@ -37,10 +37,10 @@ def generate_chunks(audio_object, length, training=False):
                 label = int(audio_object.path.parent.stem)
                 labels.append(label)  # Add Label (folder name)
 
-    if len(audio_ob_list) != len(labels):
-        print(f'Error: {audio_object.path.stem}')
-
-    if training: return audio_ob_list, labels
+    if training:
+        if len(audio_ob_list) != len(labels):
+            print(f'Error: {audio_object.path.stem}')
+        return audio_ob_list, labels
     else: return audio_ob_list
 
 # Function to convert 4 channel wav to list of 4 objects

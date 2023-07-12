@@ -62,7 +62,7 @@ class Audio_Abstract:
         max_value = np.max(self.data).round(3)
         min_value = np.min(self.data).round(3)
         mean = np.mean(self.data).round(3)
-        rms = np.sqrt(np.mean(np.square(self.data))).round(3)
+        rms = np.sqrt(np.mean(np.square(self.data)))
         dynamic_range = (max_value - min_value).round(3)  # Calculate dynamic range
         channel_stats = {
             stat_names[0]: max_value,

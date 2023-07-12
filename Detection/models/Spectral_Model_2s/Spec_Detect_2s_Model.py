@@ -16,17 +16,14 @@ import numpy as np
 
 
 # Train Spectral_Model_10s
-def spectral_detection_model(load_data=False):
-    # Path to audio samples
-    # dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/dataset')
-    dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/dataset')
+def spectral_detection_model(dataset, sample_length, load_data=False):
 
     # -------- Load and preprocess data
     if load_data:
         X = np.load('features.npy')
         y = np.load('labels.npy')
     else:
-        X, y = load_audio_data(dataset)
+        X, y = load_audio_data(dataset, length=sample_length)
         np.save('features.npy', X)
         np.save('labels.npy', y)
 
@@ -54,20 +51,24 @@ def spectral_detection_model(load_data=False):
 
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
     early_stopping = EarlyStopping(monitor='val_loss', patience=6)
-    model.fit(X_train, y_train, epochs=50, batch_size=12, validation_data=(X_test, y_test), callbacks=[early_stopping])
+    model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test), callbacks=[early_stopping])
 
     # Test accuracy of Model
     accuracy = test_model_accuracy(model, directory_test_1)
 
     # Save Model if above 90%
-    if accuracy[0] >= 96:
+    if accuracy[0] >= 90:
         save_model(model, 'detect', 'spec', 2, accuracy[0])
 
 
 
 if __name__ == '__main__':
 
+    # dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/dataset')
+    dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/dataset')
+    sample_length = 2
+
     while True:
-        spectral_detection_model(load_data=False)
+        spectral_detection_model(dataset, sample_length, load_data=True)
 
 
