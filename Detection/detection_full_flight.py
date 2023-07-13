@@ -1,7 +1,6 @@
 # File for starting point to detect targets from dataset
 
 
-from Detection.models.dataset_info import *
 from Acoustic.audio_abstract import Audio_Abstract
 from Acoustic import process
 
@@ -12,7 +11,7 @@ import numpy as np
 import statistics
 
 
-def full_flight_detection(filepath, model_path):
+def full_flight_detection(filepath, model_path, display=False):
 
     # LOAD DATA ------------------------------------------------------------------------
     print('Loading Mission Audio')
@@ -57,36 +56,38 @@ def full_flight_detection(filepath, model_path):
     # print(time)
     # print(predictions_list)
 
-    averaged_predictions = [statistics.mean(values) for values in zip(*predictions_list)]
+    averaged_predictions = np.round([statistics.mean(values) for values in zip(*predictions_list)],2)
 
-    print(averaged_predictions)
+    # print(averaged_predictions)
 
-    fig, axs = plt.subplots(5, 1, figsize=(14, 8))
-    plt.suptitle(f'Sound Source Detection-Model: {Path(model_dir).stem}')
+    if display:
+        fig, axs = plt.subplots(5, 1, figsize=(14, 8))
+        plt.suptitle(f'Sound Source Detection-Model: {Path(model_dir).stem}')
 
-    # Loop over your 4 lists
-    for i in range(4):
-        bar_colors = ['g' if value >= 50 else 'r' for value in predictions_list[i]]
-        axs[i].bar(time, predictions_list[i], color=bar_colors)
-        axs[i].set_title(f"Channel {i + 1}")
-        axs[i].set_xlabel('Time')
-        axs[i].set_ylabel('Predictions')
-        axs[i].set_ylim((0,100))
-        axs[i].axhline(50, c='black', linestyle='dotted')
+        # Loop over your 4 lists
+        for i in range(4):
+            bar_colors = ['g' if value >= 50 else 'r' for value in predictions_list[i]]
+            axs[i].bar(time, predictions_list[i], color=bar_colors)
+            axs[i].set_title(f"Channel {i + 1}")
+            axs[i].set_xlabel('Time')
+            axs[i].set_ylabel('Predictions')
+            axs[i].set_ylim((0,100))
+            axs[i].axhline(50, c='black', linestyle='dotted')
 
-    # Plot averaged_predictions
-    bar_colors = ['g' if value >= 50 else 'r' for value in averaged_predictions]
-    axs[4].bar(time, averaged_predictions, color=bar_colors)
-    axs[4].set_title(f"Averaged Predictions")
-    axs[4].set_xlabel('Time')
-    axs[4].set_ylabel('Predictions')
-    axs[4].set_ylim((0, 100))
-    axs[4].axhline(50, c='black', linestyle='dotted')
+        # Plot averaged_predictions
+        bar_colors = ['g' if value >= 50 else 'r' for value in averaged_predictions]
+        axs[4].bar(time, averaged_predictions, color=bar_colors)
+        axs[4].set_title(f"Averaged Predictions")
+        axs[4].set_xlabel('Time')
+        axs[4].set_ylabel('Predictions')
+        axs[4].set_ylim((0, 100))
+        axs[4].axhline(50, c='black', linestyle='dotted')
 
-    # Ensure the subplots do not overlap
-    plt.tight_layout(pad=1)
-    plt.show()
+        # Ensure the subplots do not overlap
+        plt.tight_layout(pad=1)
+        plt.show()
 
+    return averaged_predictions, time
 
 if __name__ == '__main__':
     mission_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Agricenter/Hex Flight 7/Hex 7.wav'

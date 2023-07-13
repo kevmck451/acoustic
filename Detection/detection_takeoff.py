@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 import statistics
 
-def takeoff_detection(filepath, length=0.5, display=False):
+def takeoff_detection_audio(filepath, length=0.5, display=False):
     # LOAD DATA ------------------------------------------------------------------------
     # print('Loading Mission Audio')
     audio_object = Audio_Abstract(filepath=filepath)
@@ -95,4 +95,4 @@ def takeoff_detection(filepath, length=0.5, display=False):
 if __name__ == '__main__':
     mission_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/Orlando_1.wav'
     sample_length = 0.5
-    takeoff_detection(mission_path, sample_length, display=True)
+    takeoff_detection_audio(mission_path, sample_length, display=True)

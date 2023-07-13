@@ -2,8 +2,11 @@
 
 from sample_library import *
 from utils import CSVFile
+
+import numpy as np
 import math
 import ast
+
 
 class Target:
 
@@ -37,7 +40,7 @@ class Target:
                f'Flight: {self.flight}\n' \
                f'Type: {self.type}\n' \
                f'SPL at 10m: {self.SPL_at_10m_dB} dB\n' \
-               f'Intensity at 10m: {self.intensity_at_10m_Wm2} W/m^2'
+               f'Intensity at 10m: {np.round(self.intensity_at_10m_Wm2, 5)} W/m^2'
 
     def propagation_projection_simple(self, distance_increments):
         """

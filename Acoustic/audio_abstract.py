@@ -23,7 +23,6 @@ class Audio_Abstract:
 
             self.load_data(self.path)
 
-
     def __str__(self):
         return f'---------Audio Object---------\n' \
                f'sample_rate: {self.sample_rate} Hz\n' \
