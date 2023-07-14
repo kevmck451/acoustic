@@ -13,14 +13,20 @@ import statistics
 
 def full_flight_detection(filepath, model_path, display=False):
 
+
     # LOAD DATA ------------------------------------------------------------------------
     print('Loading Mission Audio')
     audio = Audio_Abstract(filepath=filepath, num_channels=4)
     channel_list = process.channel_to_objects(audio)
 
+    # Determine sample length
+    path = Path(model_path)
+    name = path.stem
+    sample_length = int(name.split('_')[2])
+
     audio_ob_list = []
     for channel in channel_list:
-        chunks_list = process.generate_chunks(channel, length=2)
+        chunks_list = process.generate_chunks(channel, length=sample_length)
         audio_ob_list.append(chunks_list)
 
     # EXTRACT ------------------------------------------------------------------------
@@ -50,7 +56,7 @@ def full_flight_detection(filepath, model_path, display=False):
 
         predictions_list.append(predictions)
 
-    time = list(range(0, (len(predictions_list[0]) * 2), 2))
+    time = list(range(0, (len(predictions_list[0]) * sample_length), sample_length))
 
     # AVERAGE CHANNEL PREDICTIONS ------------------------------------------------------------------------
     # print(time)
@@ -90,8 +96,8 @@ def full_flight_detection(filepath, model_path, display=False):
     return averaged_predictions, time
 
 if __name__ == '__main__':
-    mission_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Agricenter/Hex Flight 7/Hex 7.wav'
-    # mission_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Campus/Static Tests/Static Test 2/RAW/4.wav'
-    model_path = 'models/Spectral_Model_2s/model_library/detect_spec_2_96_0.h5'
+
+    mission_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/Dynamic_1b.wav'
+    model_path = 'models/model_library/detect_spec_2_96_0.h5'
     full_flight_detection(mission_path, model_path)
 

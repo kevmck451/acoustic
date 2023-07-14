@@ -12,8 +12,10 @@ from Acoustic.mic_mount import Mount
 from Acoustic.target import Target
 
 
-mission = 'Orlando_5'
-model_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Detection/models/Spectral_Model_2s/model_library/detect_spec_2_96_0.h5'
+# mission = 'Dynamic_1a'
+# mission = 'Dynamic_1b'
+mission = 'Dynamic_1c'
+model_path = '/Detection/models/Spectral_Model_2s/model_library/detect_spec_2_96_0.h5'
 
 base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/'
 filepath = base_dir + mission + '.wav'
@@ -30,8 +32,8 @@ target = Target(name='Semi-Truck', type='speaker', flight=mission, filepath=targ
 # print(target)
 flight = Flight_Path(name=mission, target_object=target, filepath=flight_path_dir)
 # print(flight)
-# flight.plot_flight_path()
-# flight.display_target_distance(display=True)
+# flight.plot_flight_path(offset=1000, target_size=150, flight_path_size=15, save=False)
+flight.display_target_distance(display=True)
 
 
 
@@ -43,18 +45,18 @@ audio = Audio_Abstract(filepath=filepath, num_channels=4)
 
 
 predictions, predict_time = full_flight_detection(filepath, model_path, display=False)
-# print(predictions)
-# print(predict_time)
+print(predictions)
+print(predict_time)
 import matplotlib.pyplot as plt
 plt.plot(predict_time, predictions)
 plt.show()
 
 
 # Sync Takeoff time with logs and audio
-log_takeoff = flight.get_takeoff_time()
-audio_takeoff = takeoff_detection_audio(filepath=filepath)
-# print(f'Log Takeoff: {log_takeoff}')
-# print(f'Audio Takeoff: {audio_takeoff}')
+log_takeoff = flight.get_takeoff_time(display=True)
+audio_takeoff = takeoff_detection_audio(filepath=filepath, display=True)
+print(f'Log Takeoff: {log_takeoff}')
+print(f'Audio Takeoff: {audio_takeoff}')
 
 # adjust prediction's times for logs
 sync_offset = audio_takeoff - log_takeoff

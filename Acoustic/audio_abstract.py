@@ -3,6 +3,7 @@ from pathlib import Path
 import soundfile as sf
 import numpy as np
 import wave
+import librosa
 import matplotlib.pyplot as plt
 
 
@@ -18,9 +19,10 @@ class Audio_Abstract:
 
         # If given a filepath
         if self.path is not None:
-            with wave.open(str(self.path), 'rb') as wav_file:
-                self.num_channels = wav_file.getnchannels()
-
+            # with wave.open(str(self.path), 'rb') as wav_file:
+            #     self.num_channels = wav_file.getnchannels()
+            info = sf.info(self.path)
+            self.num_channels = info.channels
             self.load_data(self.path)
 
     def __str__(self):
@@ -36,7 +38,9 @@ class Audio_Abstract:
     # Function that loads data from filepath
     def load_data(self, filepath):
         if self.num_channels > 1:
-            self.data, _ = sf.read(str(filepath), dtype='float32')
+            self.data, samplerate = sf.read(str(filepath), dtype='float32')
+            if samplerate != self.sample_rate:
+                self.data = librosa.resample(y=self.data, orig_sr=samplerate, target_sr=self.sample_rate)
 
             try:
                 self.data = self.data.reshape(-1, self.num_channels)  # Reshape to match the number of channels
@@ -50,7 +54,10 @@ class Audio_Abstract:
             self.num_samples = len(self.data[1])
 
         else:
-            self.data, _ = sf.read(str(filepath), dtype='float32')
+            self.data, samplerate = sf.read(str(filepath), dtype='float32')
+            if samplerate != self.sample_rate:
+                for i, channel in enumerate(self.data):
+                    self.data[i] = librosa.resample(channel, samplerate, self.sample_rate)
             self.sample_length = round((len(self.data) / self.sample_rate), 2)
             self.num_samples = len(self.data)
 

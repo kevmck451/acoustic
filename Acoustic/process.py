@@ -83,11 +83,62 @@ def mfcc(audio_object, n_mfcc=50):
     return np.array(mfccs_all_channels)
 
 # Function to calculate spectrogram of audio
+def custom_filter_1(audio_object, **kwargs):
+    stats = kwargs.get('stats', False)
+    window_size = 32768
+    hop_length = 512
+    # freq_range_low = (100, 170) #if hovering only
+    freq_range_mid = (800, 2100)
+    freq_range_high = (2600, 5000)
+
+    Audio_Object = normalize(audio_object)
+    data = Audio_Object.data
+
+    # Initialize an empty list to store the spectrograms for each channel
+    spectrograms = []
+
+    # Check if audio_object is multi-channel
+    if len(data.shape) == 1:
+        # Mono audio data, convert to a list with a single item for consistency
+        data = [data]
+
+    for channel_data in data:
+        # Calculate the spectrogram using Short-Time Fourier Transform (STFT)
+        spectrogram = np.abs(librosa.stft(channel_data, n_fft=window_size, hop_length=hop_length)) ** 2
+
+        # Convert to decibels (log scale) for better visualization
+        spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
+
+        # Calculate frequency range and resolution
+        nyquist_frequency = audio_object.sample_rate / 2
+        frequency_resolution = nyquist_frequency / (window_size / 2)
+        frequency_range = np.arange(0, window_size // 2 + 1) * frequency_resolution
+
+        bottom_index_mid = int(np.round(freq_range_mid[0] / frequency_resolution))
+        top_index_mid = int(np.round(freq_range_mid[1] / frequency_resolution))
+        bottom_index_high = int(np.round(freq_range_high[0] / frequency_resolution))
+        top_index_high = int(np.round(freq_range_high[1] / frequency_resolution))
+
+        spectrogram_mid = spectrogram_db[bottom_index_mid:top_index_mid]
+        spectrogram_high = spectrogram_db[bottom_index_high:top_index_high]
+
+        # Combine the 'mid' and 'high' spectrograms and append to the list
+        spectrograms.append(np.concatenate((spectrogram_mid, spectrogram_high)))
+
+        if stats:
+            print(f'Spectro_dB: {spectrogram_db}')
+            print(f'Freq Range Mid: ({freq_range_mid[0]},{freq_range_mid[1]}) Hz')
+            print(f'Freq Range High: ({freq_range_high[0]},{freq_range_high[1]}) Hz')
+            print(f'Freq Resolution: {frequency_resolution} Hz')
+
+    # Convert the list of spectrograms to a numpy array and return
+    return np.array(spectrograms)
+
+# Function to calculate spectrogram of audio
 def spectrogram(audio_object, range=(80, 2000), **kwargs):
     stats = kwargs.get('stats', False)
     window_size = 32768
     hop_length = 512
-    frequency_range = range
 
     Audio_Object = normalize(audio_object)
     data = Audio_Object.data

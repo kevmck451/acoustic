@@ -12,13 +12,15 @@ from target import Target
 class Flight_Path:
     def __init__(self, name, **kwargs):
         self.target_object = kwargs.get('target_object', None)
-        filepath = kwargs.get('directory', '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/_info')
+        self.filepath = kwargs.get('directory', '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/_info')
+        target_threshold = kwargs.get('target_threshold', 58)
         if self.target_object is not None: self.contains_target=True
         self.FIG_SIZE_LARGE = (14, 8)
         self.FIG_SIZE_SMALL = (14, 4)
         self.file_name = name
 
-        csv_file = f'{filepath}/{self.file_name}.csv'
+
+        csv_file = f'{self.filepath}/{self.file_name}.csv'
         self.position_file = CSVFile(csv_file)
         if self.position_file.header[0] != 'Time':
             self.position_file.rename_headers(['Time', 'Lat', 'Long', 'Alt', 'Speed'])
@@ -49,7 +51,7 @@ class Flight_Path:
 
 
         if self.target_object is not None:
-            self.target_object.calculate_distance_threshold(55)
+            self.target_object.calculate_distance_threshold(target_threshold)
             self._calculate_distance()
 
     def __str__(self):
@@ -144,11 +146,11 @@ class Flight_Path:
             # print(f'Times Closest to Target: {self.times_closest_to_target}')
 
     # Function to Plot the FLight Path
-    def plot_flight_path(self, offset=500, target_size=300, flight_path_size=40, save=False):
+    def plot_flight_path(self, offset=500, target_size=300, flight_path_size=40, display=True, save=False):
 
         # if target, adjust position based on offset
         if self.target_object is not None:
-            target_location = (self.target_object.location[0]-self.latitude.min(),
+            target_location = (self.target_object.location[0]-(self.latitude.min() - offset),
                                     self.target_object.location[1]-(self.longitude.min() - offset))
 
         self.latitude -= (self.latitude.min() - offset)
@@ -202,7 +204,7 @@ class Flight_Path:
             space[y1:y2, x1:x2, i] = c
 
         if save:
-            saveas = FLIGHT_PATH_SAVE_DIRECTORY + '/' + self.file_name + ' Flight.pdf'
+            saveas = f'{self.filepath}/{self.file_name}_Flight.pdf'
             if not utils.check_file_exists(saveas):
                 utils.create_directory_if_not_exists(FLIGHT_PATH_SAVE_DIRECTORY)
                 # space = np.rot90(space, 1)
@@ -213,15 +215,16 @@ class Flight_Path:
                 plt.tight_layout(pad=1)
                 plt.savefig(saveas, dpi=2000)
                 plt.close()
-                print(f'{self.file_name} Saved')
+                print(f'{saveas} Saved')
             else:
                 pass
-        else:
+        if display:
             plt.figure(figsize=self.FIG_SIZE_LARGE)
             plt.imshow(space, origin='lower')
             plt.title(self.file_name + f' Flight Path / Target: {self.target_object.type}')
-            #plt.axis('off')
+            plt.axis('off')
             plt.tight_layout(pad=1)
+            # plt.grid(True)
             plt.show()
 
     # Function to plot the altitude of a flight path
@@ -263,6 +266,7 @@ class Flight_Path:
             plt.title(f'{self.file_name} - Distance from Target: {self.target_object.type}')
             plt.xlabel('Time (s)')
             plt.ylabel('Distance (m)')
+            plt.ylim((0,120))
 
             # y_coordinates = [50, 52, 54, 56, 60, 88]
             # colors = ['black', 'purple', 'blue', 'green', 'orange', 'yellow']
@@ -285,7 +289,7 @@ class Flight_Path:
                             plt.axvline(x=time, color='red', linestyle='dotted')  # label=f'Target Times'
 
                         # plt.xticks(audio_object.times_closest_to_target)
-                plt.legend()
+                plt.legend(loc='upper left')
 
             plt.plot(self.time, self.distance_from_target)
             plt.tight_layout(pad=1)

@@ -1,0 +1,35 @@
+Spectral Model:
+Input: Spectrogram dB values from ~80 - 2kHz / 5 second sample
+
+Model: "sequential"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ conv2d (Conv2D)             (None, 1308, 936, 32)     320       
+                                                                 
+ max_pooling2d (MaxPooling2  (None, 654, 468, 32)      0         
+ D)                                                              
+                                                                 
+ dropout (Dropout)           (None, 654, 468, 32)      0         
+                                                                 
+ conv2d_1 (Conv2D)           (None, 652, 466, 64)      18496     
+                                                                 
+ max_pooling2d_1 (MaxPoolin  (None, 326, 233, 64)      0         
+ g2D)                                                            
+                                                                 
+ dropout_1 (Dropout)         (None, 326, 233, 64)      0         
+                                                                 
+ flatten (Flatten)           (None, 4861312)           0         
+                                                                 
+ dense (Dense)               (None, 128)               622248064 
+                                                                 
+ dropout_2 (Dropout)         (None, 128)               0         
+                                                                 
+ dense_1 (Dense)             (None, 1)                 129       
+                                                                 
+=================================================================
+Total params: 622267009 (2.32 GB)
+Trainable params: 622267009 (2.32 GB)
+Non-trainable params: 0 (0.00 Byte)
+_________________________________________________________________
+Optimizer Configuration: {'name': 'Adam', 'learning_rate': 0.001, 'decay': 0.0, 'beta_1': 0.9, 'beta_2': 0.999, 'epsilon': 1e-07, 'amsgrad': False}

@@ -1,7 +1,7 @@
 
 
-from Detection.models.Spectral_Model_2s.accuracy.test_mod_acc_2s import test_model_accuracy
-from Detection.models.Spectral_Model_2s.Spec_Detect_FE_2s import load_audio_data
+from Detection.models.Spectral_Model_5s.accuracy.test_mod_acc_5s import test_model_accuracy
+from Detection.models.template_load_data import load_audio_data
 from Detection.models.template_save_model import save_model
 from Detection.models.dataset_info import *
 
@@ -12,7 +12,6 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Conv2D, Flatten, MaxPooling2D
 from pathlib import Path
 import numpy as np
-
 
 
 # Train Spectral_Model_10s
@@ -54,20 +53,20 @@ def spectral_detection_model(dataset, sample_length, load_data=False):
     model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test), callbacks=[early_stopping])
 
     # Test accuracy of Model
-    accuracy = test_model_accuracy(model, directory_test_1)
+    accuracy = test_model_accuracy(model, directory_test_1, sample_length)
 
     # Save Model if above 90%
-    if accuracy[0] >= 90:
-        save_model(model, 'detect', 'spec', 2, accuracy[0])
+    # if accuracy[0] >= 90:
+    #     save_model(model, 'detect', 'spec', sample_length, accuracy[0])
 
-
+    save_model(model, 'detect', 'spec', sample_length, accuracy[0])
 
 if __name__ == '__main__':
 
     # dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/dataset')
     dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/dataset')
-    sample_length = 2
-
+    sample_length = 5
+    spectral_detection_model(dataset, sample_length, load_data=False)
     while True:
         spectral_detection_model(dataset, sample_length, load_data=True)
 
