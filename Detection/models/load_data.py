@@ -8,7 +8,7 @@ import numpy as np
 
 
 # Load Data from a Dataset with Labels and Extract Features
-def load_audio_data(path, length):
+def load_audio_data(path, length, feature_type):
     print('Loading Dataset')
 
     audio_ob_list = []
@@ -33,8 +33,13 @@ def load_audio_data(path, length):
     print('Extracting Features')
     features_list = []
     for audio in master_ob_list:
-        feature = process.custom_filter_1(audio)
-        print(feature)
+        if feature_type == 'spectral':
+            feature = process.spectrogram(audio)
+        elif feature_type == 'filter1':
+            feature = process.custom_filter_1(audio)
+        else:
+            feature = process.spectrogram(audio)
+
         features_list.append(feature)  # Add Feature
         # print(feature.shape)
         # print(feature.dtype)
@@ -45,20 +50,3 @@ def load_audio_data(path, length):
     features_list = features_list[..., np.newaxis]
 
     return features_list, np.array(master_label_list)
-
-
-def custom_filter_1(features_list):
-    filtered_feature_list = []
-    for feature in features_list:
-        print(feature)
-
-
-    return filtered_feature_list
-
-if __name__ =='__main__':
-
-    dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/dataset')
-    length = 5
-    features_list, labels = load_audio_data(dataset, length)
-
-    features_list = custom_filter_1(features_list)

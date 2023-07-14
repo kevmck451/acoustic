@@ -1,7 +1,7 @@
 # File to test the accuracy of a model against some known samples that were excluded from test data
 
 
-from Detection.models.template_load_data import load_audio_data
+from Detection.models.load_data import load_audio_data
 from Detection.models.dataset_info import *
 
 from sklearn.metrics import accuracy_score
