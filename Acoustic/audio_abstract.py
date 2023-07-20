@@ -64,7 +64,6 @@ class Audio_Abstract:
     # Function that returns stats from the audio file
     def stats(self):
         stat_names = ['Max', 'Min', 'Mean', 'RMS', 'Range']
-        channel_stats = {}
 
         max_value = np.max(self.data).round(3)
         min_value = np.min(self.data).round(3)

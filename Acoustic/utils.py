@@ -3,7 +3,8 @@
 from pathlib import Path
 import csv
 import os
-import shutil
+import time
+import pandas as pd
 
 
 
@@ -129,3 +130,85 @@ class CSVFile:
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(self.header)
             csvwriter.writerows(self.data)
+
+
+
+
+# DATA LOGGING CLASS
+class record_class:
+    def __init__(self):
+
+        self.record_location_base = 'Records/'
+        self.record_location_ad = self.record_location_base + 'Anomaly Detectors/'
+
+        # File Name, Detector, AD Score, AD Eff, Time, AD Parameters, Preprocesses, Image Stats
+        self.fields = ['File Name', 'Detector', 'Score', 'Efficiency', 'Run Time', 'Parameters', 'Image Stats']
+
+        if not os.path.isdir(self.record_location_ad):
+            os.makedirs(self.record_location_ad)
+
+    def record(self, filename, detector, score, eff, runtime, params, imgstats):
+        import csv
+        self.filename = self.record_location_ad + detector + '.csv'
+        if not os.path.exists(self.filename):
+            with open(self.filename, 'w', newline='') as file:
+                writer = csv.DictWriter(file, fieldnames=self.fields)
+                writer.writeheader()
+
+        with open(self.filename, 'a', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=self.fields)
+            writer.writerow({self.fields[0] : filename,
+                             self.fields[1] : detector,
+                             self.fields[2] : score,
+                             self.fields[3] : eff,
+                             self.fields[4] : runtime,
+                             self.fields[5] : params,
+                             self.fields[6] : imgstats})
+
+    def compile_detectors(self):
+
+        try:
+
+            if os.path.exists(f'{self.record_location_ad}Detector Data Main.csv'):
+                os.remove(f'{self.record_location_ad}Detector Data Main.csv')
+
+            # Get the list of all csv files in the folder
+            csv_files = [f'{self.record_location_ad}{f}' for f in os.listdir(self.record_location_ad) if f.endswith('.csv')]
+
+            # Create an empty DataFrame to store the data from all csv files
+            df = pd.DataFrame(
+                columns=['File Name', 'Detector', 'Score', 'Efficiency', 'Run Time', 'Parameters', 'Image Stats'])
+
+            # Loop through all csv files in the folder
+            for file in csv_files:
+                # Read the csv file into a DataFrame
+                file_df = pd.read_csv(file)
+
+                # Extract the specified columns from the csv file
+                data = file_df[['File Name', 'Detector', 'Score', 'Efficiency', 'Run Time', 'Parameters', 'Image Stats']]
+
+                # Append the data from the csv file to the DataFrame
+                df = df.append(data)
+
+            # Write the DataFrame to a new csv file
+            df.to_csv(f'{self.record_location_ad}Detector Data Main.csv', index=False)
+        except:
+            print('DETECTOR DATA MAIN COULD NOT BE COMPILED. CHECK FILES.')
+
+
+# TIME CLASS TO GIVE STATS ABOUT HOW LONG FUNCTION TAKES
+class time_class:
+    def __init__(self, name):
+        self.start_time = time.time()
+        self.name = name
+
+    def stats(self):
+        total_time = round((time.time() - self.start_time), 1)
+
+        if total_time < 60:
+            print(f'{self.name} Time: {total_time} secs')
+        else:
+            total_time_min = round((total_time / 60), 1)
+            print(f'{self.name} Time: {total_time_min} mins')
+
+        return total_time

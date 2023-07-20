@@ -21,15 +21,16 @@ class Mount:
 
             if self.channel_position is None:
                 self.channel_position = ast.literal_eval(info_file.get_value(self.name, 'Position'))
-                self.mic_driver = self.channel_position[0][0]
-                self.mic_passenger = self.channel_position[0][1]
-                self.mic_bs_driver = self.channel_position[1][0]
-                self.mic_bs_passenger = self.channel_position[1][1]
+                if self.number_of_mics == 4:
+                    self.mic_driver = self.channel_position[0][0]
+                    self.mic_passenger = self.channel_position[0][1]
+                    self.mic_bs_driver = self.channel_position[1][0]
+                    self.mic_bs_passenger = self.channel_position[1][1]
 
             if self.cover is None:
                 self.cover = info_file.get_value(self.name, 'Cover')
 
-        if self.channel_position is not None:
+        if self.channel_position is not None and self.number_of_mics == 4:
             self.mic_driver = self.channel_position[0][0]
             self.mic_passenger = self.channel_position[0][1]
             self.mic_bs_driver = self.channel_position[1][0]

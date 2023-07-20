@@ -112,15 +112,15 @@ class Flight_Path:
         # Get the corresponding time value at the found index
         self.target_threshold_times = self.time[self.times_below_threshold]
         # print(target_threshold_times)
-        self.targeted_times = self.time[self.times_at_local_min]
+        self.targeted_times = self.time[self.times_below_threshold]
         # print(audio_object.times_at_local_min)
 
-        if len(self.times_at_local_min) > 0:
+        if len(self.times_below_threshold) > 0:
             self.closest_times_index = []
             new_edge = True
             edge_1, edge_2 = 0, 0
             previous_index = 0
-            for index in self.times_at_local_min:
+            for index in self.times_below_threshold:
                 if new_edge:
                     edge_1 = index
                     new_edge = False
@@ -138,7 +138,7 @@ class Flight_Path:
 
                 previous_index = index
 
-            edge_2 = self.times_at_local_min[-1]
+            edge_2 = self.times_below_threshold[-1]
             middle = int(round((edge_1 + edge_2) / 2))
             self.closest_times_index.append(middle)
             # print(audio_object.closest_times_index)
@@ -266,7 +266,7 @@ class Flight_Path:
             plt.title(f'{self.file_name} - Distance from Target: {self.target_object.type}')
             plt.xlabel('Time (s)')
             plt.ylabel('Distance (m)')
-            plt.ylim((0,120))
+            # plt.ylim((0,120))
 
             # y_coordinates = [50, 52, 54, 56, 60, 88]
             # colors = ['black', 'purple', 'blue', 'green', 'orange', 'yellow']
@@ -274,13 +274,9 @@ class Flight_Path:
             #     plt.axhline(y=cord, color=c, linestyle='dotted') #'-', '--', '-.', ':', 'None', ' ', '', 'solid', 'dashed', 'dashdot', 'dotted'
 
             if self.target_object is not None:
-                plt.axhline(y=self.target_object.threshold_distance, color='blue',
-                            label=f'{self.target_object.name} threshold: {self.target_object.threshold_distance}m',
-                            linestyle='dotted')
-
-                if len(self.targeted_times) > 0:
-                    plt.axvline(x=self.targeted_times[0], color='yellow', label=f'Target Times', linestyle='dotted')  # label=f'Target Times'
-                    for time in self.targeted_times:
+                if len(self.target_threshold_times) > 0:
+                    plt.axvline(x=self.target_threshold_times[0], color='yellow', label=f'Target Times', linestyle='dotted')  # label=f'Target Times'
+                    for time in self.target_threshold_times:
                         plt.axvline(x=time, color='yellow', linestyle='dotted') #label=f'Target Times'
 
                     if len(self.times_closest_to_target) > 0:
@@ -289,8 +285,11 @@ class Flight_Path:
                             plt.axvline(x=time, color='red', linestyle='dotted')  # label=f'Target Times'
 
                         # plt.xticks(audio_object.times_closest_to_target)
+                plt.axhline(y=self.target_object.threshold_distance, color='blue',
+                            label=f'{self.target_object.name} threshold: {self.target_object.threshold_distance}m',
+                            linestyle='dotted')
                 plt.legend(loc='upper left')
-
+            plt.ylim((0, (np.max(self.distance_from_target)+40)))
             plt.plot(self.time, self.distance_from_target)
             plt.tight_layout(pad=1)
 
@@ -336,8 +335,8 @@ if __name__ == '__main__':
     target = Target(name='Semi', type='speaker', flight='Static_Test_2')
     flight = Flight_Path('Static_Test_2', target_object=target) #
 
-    flight.plot_flight_path()
-    # flight.display_target_distance(display=True)
+    # flight.plot_flight_path()
+    flight.display_target_distance(display=True)
     # flight.get_takeoff_time(display=True)
     # flight.label_flight_sections()
 

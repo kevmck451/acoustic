@@ -15,7 +15,7 @@ import matplotlib.patches as mpatches
 
 
 # Function to test ML Model's Accuracy
-def test_model_accuracy(model, directory, sample_length, display=False, stats=False):
+def test_model_accuracy(model, directory, sample_length, feature_type, display=False, stats=False):
     if stats:
         # Get the model's architecture
         model.summary()
@@ -32,7 +32,7 @@ def test_model_accuracy(model, directory, sample_length, display=False, stats=Fa
     y_pred_scores = []
     y_names = []
 
-    features, labels = load_audio_data(Test_Directory, length=sample_length)
+    features, labels = load_audio_data(Test_Directory, sample_length, feature_type)
 
     for i, (feature, label) in enumerate(zip(features, labels)):
         feature = np.expand_dims(feature, axis=0)

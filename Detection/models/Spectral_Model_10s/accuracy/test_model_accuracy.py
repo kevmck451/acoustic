@@ -124,7 +124,7 @@ if __name__ == '__main__':
 
     # Model List
     # model = load_model('models/Spectral_Detection_Model.h5')
-    model = load_model('../model_library/detect_spec_10_100_0.h5')
+    model = load_model('../../model_library/detect_spec_10_100_0.h5')
 
     truth = generate_truth(directory_test_1)
     test_model_accuracy(model, directory_test_1, truth)
