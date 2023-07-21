@@ -18,12 +18,14 @@ def load_audio_data(path, length, feature_type):
 
         if audio.num_channels == 1:
             chunks_list, labels = process.generate_chunks(audio, length=length, training=True)
+            # chunks_list, labels = process.generate_windowed_chunks(audio, window_size=length, training=True)
             audio_ob_list.extend(chunks_list)  # Flattening the chunks_list
             label_list.extend(labels)  # Flattening the labels
         else: # it's 4 channel
             channel_list = process.channel_to_objects(audio)
             for channel in channel_list:
                 chunks_list, labels = process.generate_chunks(channel, length=length, training=True)
+                # chunks_list, labels = process.generate_windowed_chunks(audio, window_size=length, training=True)
                 audio_ob_list.extend(chunks_list)
                 label_list.extend(labels)  # Flattening the labels
 
@@ -37,8 +39,8 @@ def load_audio_data(path, length, feature_type):
             feature = process.spectrogram(audio)
         elif feature_type == 'filter1':
             feature = process.custom_filter_1(audio)
-        else:
-            feature = process.spectrogram(audio)
+        elif feature_type == 'mfcc':
+            feature = process.mfcc(audio)
 
         features_list.append(feature)  # Add Feature
         # print(feature.shape)

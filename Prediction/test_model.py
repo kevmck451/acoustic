@@ -1,9 +1,8 @@
 # File to test the accuracy of a model against some known samples that were excluded from test data
 
 
-from Detection.models.Spectral_Model_10s.accuracy.generate_truth import generate_truth
-from Detection.models.Spectral_Model_2s.Spec_Detect_FE_2s import load_audio_data
-from Detection.models.dataset_info import *
+from Prediction.load_data import load_audio_data
+from Prediction.dataset_info import *
 
 from sklearn.metrics import accuracy_score
 from keras.models import load_model
@@ -16,7 +15,7 @@ import matplotlib.patches as mpatches
 
 
 # Function to test ML Model's Accuracy
-def test_model_accuracy(model, directory, display=False, stats=False):
+def test_model_accuracy(model, directory, sample_length, feature_type, display=False, stats=False):
     if stats:
         # Get the model's architecture
         model.summary()
@@ -33,7 +32,7 @@ def test_model_accuracy(model, directory, display=False, stats=False):
     y_pred_scores = []
     y_names = []
 
-    features, labels = load_audio_data(Test_Directory)
+    features, labels = load_audio_data(Test_Directory, sample_length, feature_type)
 
     for i, (feature, label) in enumerate(zip(features, labels)):
         feature = np.expand_dims(feature, axis=0)

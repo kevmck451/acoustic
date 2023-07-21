@@ -1,11 +1,11 @@
 
 
-from Detection.models.test_model import test_model_accuracy
-from Detection.models.create_model import basic_model_1
-from Detection.models.create_model import deep_model_1
-from Detection.models.load_data import load_audio_data
-from Detection.models.save_model import save_model
-from Detection.models.dataset_info import *
+from Prediction.test_model import test_model_accuracy
+from Prediction.create_model import basic_model_1
+from Prediction.create_model import deep_model_1
+from Prediction.load_data import load_audio_data
+from Prediction.save_model import save_model
+from Prediction.dataset_info import *
 from Acoustic.utils import time_class
 
 from pathlib import Path
@@ -43,8 +43,8 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, load_da
     loss = 'binary_crossentropy'
     metric = 'accuracy'
     patience = 4
-    epochs = 50
-    batch_size = 32
+    epochs = 20
+    batch_size = 12
 
     if model_type == 'basic':
         model = basic_model_1(features, labels, test_size=test_size,
@@ -80,9 +80,19 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, load_da
 if __name__ == '__main__':
 
     dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/dataset')
-    sample_length = 5
-    feature_type = 'filter1' #'spectral'
+
+    sample_length = 10
+    # sample_length = 5
+    # sample_length = 2
+
+    # feature_type = 'spectral'
+    feature_type = 'filter1'
+    # feature_type = 'mfcc'
+
     model_type = 'deep'
+    # model_type = 'basic'
+
+    Train_Detect_Model(dataset, sample_length, feature_type, model_type, load_data=False)
 
     while True:
         Train_Detect_Model(dataset, sample_length, feature_type, model_type, load_data=True)

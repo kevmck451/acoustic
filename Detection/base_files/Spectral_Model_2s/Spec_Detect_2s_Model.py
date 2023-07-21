@@ -1,9 +1,9 @@
 
 
-from Detection.models.Spectral_Model_2s.accuracy.test_mod_acc_2s import test_model_accuracy
-from Detection.models.Spectral_Model_2s.Spec_Detect_FE_2s import load_audio_data
-from Detection.models.save_model import save_model
-from Detection.models.dataset_info import *
+from Detection.base_files.Spectral_Model_2s.accuracy.test_mod_acc_2s import test_model_accuracy
+from Detection.base_files.Spectral_Model_2s.Spec_Detect_FE_2s import load_audio_data
+from Prediction.save_model import save_model
+from Prediction.dataset_info import *
 
 from sklearn.model_selection import train_test_split
 from keras.callbacks import EarlyStopping

@@ -2,8 +2,8 @@
 
 
 from Detection.base_files.feature_ex_template import extract_features
-from Detection.models.Spectral_Model_10s.accuracy.generate_truth import generate_truth
-from Detection.models.dataset_info import *
+from Detection.base_files.Spectral_Model_10s.accuracy.generate_truth import generate_truth
+from Prediction.dataset_info import *
 
 from sklearn.metrics import accuracy_score
 from keras.models import load_model
@@ -124,7 +124,7 @@ if __name__ == '__main__':
 
     # Model List
     # model = load_model('models/Spectral_Detection_Model.h5')
-    model = load_model('../../model_library/detect_spec_10_100_0.h5')
+    model = load_model('../../../../Prediction/model_library/detect_spec_10_100_0.h5')
 
     truth = generate_truth(directory_test_1)
     test_model_accuracy(model, directory_test_1, truth)

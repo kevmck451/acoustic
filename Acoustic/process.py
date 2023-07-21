@@ -8,6 +8,52 @@ import librosa
 import utils
 
 
+# Function to Normalize Data
+def takeoff_trim(audio_object, takeoff_time):
+    audio_copy = deepcopy(audio_object)
+    samples_to_remove = int(np.round((takeoff_time * audio_object.sample_rate) + 1))
+    audio_copy.data = audio_object.data[:, samples_to_remove:]
+
+    return audio_copy
+
+# Function to window over a sample of a specific length
+def generate_windowed_chunks(audio_object, window_size, training=False):
+    window_samples = audio_object.sample_rate * window_size
+    half_window_samples = window_samples // 2
+    total_samples = len(audio_object.data)
+
+    audio_ob_list = []
+    labels = []
+
+    for window_start in range(0, total_samples, audio_object.sample_rate):
+        audio_copy = deepcopy(audio_object)
+        if window_start < half_window_samples:
+            start = 0
+            end = window_samples
+            if training:
+                label = int(audio_object.path.parent.stem)
+                labels.append(label)  # Add Label (folder name)
+        elif window_start >= total_samples - half_window_samples:
+            start = total_samples - window_samples
+            end = total_samples
+            if training:
+                label = int(audio_object.path.parent.stem)
+                labels.append(label)  # Add Label (folder name)
+        else:
+            start = window_start - half_window_samples
+            end = start + window_samples
+            if training:
+                label = int(audio_object.path.parent.stem)
+                labels.append(label)  # Add Label (folder name)
+        audio_copy.data = audio_object.data[start:end]
+        audio_ob_list.append(audio_copy)
+
+    if training:
+        if len(audio_ob_list) != len(labels):
+            print(f'Error: {audio_object.path.stem}')
+        return audio_ob_list, labels
+    else: return audio_ob_list
+
 # Function to convert audio sample to a specific length
 def generate_chunks(audio_object, length, training=False):
     num_samples = audio_object.sample_rate * length
@@ -57,9 +103,12 @@ def channel_to_objects(audio_object):
     return [audio_a, audio_b, audio_c, audio_d]
 
 # Function to calculate MFCC of audio
-def mfcc(audio_object, n_mfcc=50):
-    # Extract the data from the audio object
-    data = audio_object.data
+def mfcc(audio_object, n_mfcc=50, **kwargs):
+    stats = kwargs.get('stats', False)
+
+    # Normalize audio data
+    Audio_Object = normalize(audio_object)
+    data = Audio_Object.data
 
     # Initialize an empty list to store the MFCCs for each channel
     mfccs_all_channels = []
@@ -75,6 +124,9 @@ def mfcc(audio_object, n_mfcc=50):
 
         # Normalize the MFCCs
         mfccs = StandardScaler().fit_transform(mfccs)
+
+        if stats:
+            print(f'MFCC: {mfccs}')
 
         # Append to the list
         mfccs_all_channels.append(mfccs)
@@ -158,6 +210,9 @@ def spectrogram(audio_object, range=(80, 2000), **kwargs):
         # Convert to decibels (log scale) for better visualization
         spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
 
+        # Normalize the spectrogram_db for ReLU
+        spectrogram_db_normalized = spectrogram_db + np.abs(np.min(spectrogram_db))
+
         # Calculate frequency range and resolution
         nyquist_frequency = audio_object.sample_rate / 2
         frequency_resolution = nyquist_frequency / (window_size / 2)
@@ -167,12 +222,12 @@ def spectrogram(audio_object, range=(80, 2000), **kwargs):
         top_index = int(np.round(range[1] / frequency_resolution))
 
         if stats:
-            print(f'Spectro_dB: {spectrogram_db}')
+            print(f'Spectro_dB: {spectrogram_db_normalized}')
             print(f'Freq Range: ({range[0]},{range[1]}) Hz')
             print(f'Freq Resolution: {frequency_resolution} Hz')
 
         # Cut the spectrogram to the desired frequency range and append to the list
-        spectrograms.append(spectrogram_db[bottom_index:top_index])
+        spectrograms.append(spectrogram_db_normalized[bottom_index:top_index])
 
     # Convert the list of spectrograms to a numpy array and return
     return np.array(spectrograms)

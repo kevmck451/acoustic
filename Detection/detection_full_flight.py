@@ -11,12 +11,11 @@ import numpy as np
 import statistics
 
 
-def full_flight_detection(filepath, model_path, display=False):
-
+def full_flight_detection(audio_object, model_path, display=False):
 
     # LOAD DATA ------------------------------------------------------------------------
     print('Loading Mission Audio')
-    audio = Audio_Abstract(filepath=filepath, num_channels=4)
+    audio = audio_object
     channel_list = process.channel_to_objects(audio)
 
     # Determine sample length
@@ -26,7 +25,8 @@ def full_flight_detection(filepath, model_path, display=False):
 
     audio_ob_list = []
     for channel in channel_list:
-        chunks_list = process.generate_chunks(channel, length=sample_length)
+        # chunks_list = process.generate_chunks(channel, length=sample_length)
+        chunks_list = process.generate_windowed_chunks(channel, window_size=sample_length)
         audio_ob_list.append(chunks_list)
 
     # EXTRACT ------------------------------------------------------------------------
@@ -56,7 +56,8 @@ def full_flight_detection(filepath, model_path, display=False):
 
         predictions_list.append(predictions)
 
-    time = list(range(0, (len(predictions_list[0]) * sample_length), sample_length))
+    # time = list(range(0, (len(predictions_list[0]) * sample_length), sample_length))
+    time = list(range(0, len(predictions_list[0]), 1))
 
     # AVERAGE CHANNEL PREDICTIONS ------------------------------------------------------------------------
     # print(time)
@@ -98,7 +99,7 @@ def full_flight_detection(filepath, model_path, display=False):
         plt.suptitle(f'Sound Source Detection-Model: {Path(model_dir).stem}')
         bar_colors = ['g' if value >= 50 else 'r' for value in averaged_predictions]
         axs.bar(time, averaged_predictions, width=sample_length, color=bar_colors)
-        axs.set_title(f'Averaged Predictions: {Path(filepath).stem}')
+        axs.set_title(f'Averaged Predictions: {audio.path.stem}')
         axs.set_xlabel('Time')
         axs.set_ylabel('Predictions')
         axs.set_ylim((0, 100))
@@ -110,8 +111,8 @@ def full_flight_detection(filepath, model_path, display=False):
 
 if __name__ == '__main__':
 
-    mission_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/Dynamic_1c.wav'
+    mission_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/Dynamic_1a.wav'
     # model_path = 'models/model_library/detect_spec_2_96_0.h5'
-    model_path = 'models/model_library/detect_spec_10_100_0.h5'
+    model_path = '../Prediction/model_library/detect_spec_10_100_0.h5'
     full_flight_detection(mission_path, model_path, display=True)
 

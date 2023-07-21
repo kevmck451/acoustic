@@ -246,14 +246,14 @@ class Flight_Path:
             plt.figure(figsize=self.FIG_SIZE_LARGE)
             plt.plot(self.time, self.altitude)
             # plt.plot(audio_object.time, audio_object.speed)
-            plt.axvline(self.time[takeoff_index], c='black', linestyle='dotted', label=f'Takeoff: {self.time[takeoff_index]}s')
+            plt.axvline(takeoff_time, c='black', linestyle='dotted', label=f'Takeoff: {takeoff_time}s')
             # plt.axhline(6, c='black', linestyle='dotted')
             plt.legend()
             plt.title('Altitude')
             plt.show()
 
         # print(takeoff_time)
-        return takeoff_time
+        return takeoff_time, takeoff_index
 
     # Function to get distance from Target if one
     def display_target_distance(self, display=False, save=False):
@@ -262,10 +262,12 @@ class Flight_Path:
             return None
 
         else:
+            takeoff_time, _ = self.get_takeoff_time()
             plt.figure(figsize=self.FIG_SIZE_SMALL)
             plt.title(f'{self.file_name} - Distance from Target: {self.target_object.type}')
             plt.xlabel('Time (s)')
             plt.ylabel('Distance (m)')
+            plt.axvline(takeoff_time, c='black', linestyle='solid', label=f'Takeoff: {takeoff_time}')
             # plt.ylim((0,120))
 
             # y_coordinates = [50, 52, 54, 56, 60, 88]
@@ -289,10 +291,9 @@ class Flight_Path:
                             label=f'{self.target_object.name} threshold: {self.target_object.threshold_distance}m',
                             linestyle='dotted')
                 plt.legend(loc='upper left')
-            plt.ylim((0, (np.max(self.distance_from_target)+40)))
+            plt.ylim((0, (np.max(self.distance_from_target)+50)))
             plt.plot(self.time, self.distance_from_target)
             plt.tight_layout(pad=1)
-
 
             if save:
                 saveas = TARGET_DISTANCE_DIRECTORY + '/' + self.file_name + ' TarDis.pdf'
@@ -304,6 +305,49 @@ class Flight_Path:
 
             if display:
                 plt.show()
+
+    # Function to get distance from Target if one
+    def target_distance(self):
+        if self.target_object is None:
+            print('No Target')
+            return None
+
+        else:
+            takeoff_time = self.get_takeoff_time()
+            plt.figure(figsize=self.FIG_SIZE_SMALL)
+            plt.title(f'{self.file_name} - Distance from Target: {self.target_object.type}')
+            plt.xlabel('Time (s)')
+            plt.ylabel('Distance (m)')
+            plt.axvline(takeoff_time, c='black', linestyle='solid', label=f'Takeoff: {takeoff_time}')
+            # plt.ylim((0,120))
+
+            # y_coordinates = [50, 52, 54, 56, 60, 88]
+            # colors = ['black', 'purple', 'blue', 'green', 'orange', 'yellow']
+            # for cord, c in zip(y_coordinates, colors):
+            #     plt.axhline(y=cord, color=c, linestyle='dotted') #'-', '--', '-.', ':', 'None', ' ', '', 'solid', 'dashed', 'dashdot', 'dotted'
+
+            if self.target_object is not None:
+                if len(self.target_threshold_times) > 0:
+                    plt.axvline(x=self.target_threshold_times[0], color='yellow', label=f'Target Times',
+                                linestyle='dotted')  # label=f'Target Times'
+                    for time in self.target_threshold_times:
+                        plt.axvline(x=time, color='yellow', linestyle='dotted')  # label=f'Target Times'
+
+                    if len(self.times_closest_to_target) > 0:
+                        plt.axvline(x=self.times_closest_to_target[0], color='red',
+                                    label=f'Closest Times: {self.times_closest_to_target}',
+                                    linestyle='dotted')  # label=f'Target Times'
+                        for time in self.times_closest_to_target:
+                            plt.axvline(x=time, color='red', linestyle='dotted')  # label=f'Target Times'
+
+                        # plt.xticks(audio_object.times_closest_to_target)
+                plt.axhline(y=self.target_object.threshold_distance, color='blue',
+                            label=f'{self.target_object.name} threshold: {self.target_object.threshold_distance}m',
+                            linestyle='dotted')
+                plt.legend(loc='upper left')
+            plt.ylim((0, (np.max(self.distance_from_target) + 50)))
+            plt.plot(self.time, self.distance_from_target)
+            plt.tight_layout(pad=1)
 
     # Function to label sections of mission based on position
     def label_flight_sections(self):
@@ -326,6 +370,12 @@ class Flight_Path:
         plt.axhline(1, c='black', linestyle='dotted')
         plt.axhline(6, c='black', linestyle='dotted')
         plt.show()
+
+
+
+
+
+
 
 
 

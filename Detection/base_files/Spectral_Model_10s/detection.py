@@ -1,8 +1,8 @@
 # File for starting point to detect targets from dataset
 
-from Detection.models.Spectral_Model_10s.accuracy.test_model_accuracy import test_model_accuracy
-from Detection.models.Spectral_Model_10s.accuracy.generate_truth import generate_truth
-from Detection.models.dataset_info import *
+from Detection.base_files.Spectral_Model_10s.accuracy.test_model_accuracy import test_model_accuracy
+from Detection.base_files.Spectral_Model_10s.accuracy.generate_truth import generate_truth
+from Prediction.dataset_info import *
 
 from keras.models import load_model
 

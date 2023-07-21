@@ -1,5 +1,5 @@
 
-from Detection.models.template_train_model import Train_Detect_Model
+from Prediction.template_train_model import Train_Detect_Model
 
 from pathlib import Path
 

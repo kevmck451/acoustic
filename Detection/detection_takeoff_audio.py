@@ -1,11 +1,9 @@
 # File for starting point to detect time in sample where UAV takes off
 
 
-from Detection.models.dataset_info import *
 from Acoustic.audio_abstract import Audio_Abstract
 
 import matplotlib.pyplot as plt
-from pathlib import Path
 import numpy as np
 import statistics
 

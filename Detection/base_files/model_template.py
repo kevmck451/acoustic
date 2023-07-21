@@ -1,9 +1,9 @@
 
 
-from Detection.models.Spectral_Model_10s.accuracy.test_model_accuracy import test_model_accuracy
-from Detection.models.Spectral_Model_10s.accuracy.generate_truth import generate_truth
-from Detection.models.save_model import save_model
-from Detection.models.dataset_info import *
+from Detection.base_files.Spectral_Model_10s.accuracy.test_model_accuracy import test_model_accuracy
+from Detection.base_files.Spectral_Model_10s.accuracy.generate_truth import generate_truth
+from Prediction.save_model import save_model
+from Prediction.dataset_info import *
 from Acoustic.audio import Audio
 
 
