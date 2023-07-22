@@ -52,3 +52,23 @@ def load_audio_data(path, length, feature_type):
     features_list = features_list[..., np.newaxis]
 
     return features_list, np.array(master_label_list)
+
+
+
+
+if __name__ == '__main__':
+    dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/dataset')
+
+    sample_length = 10
+    # sample_length = 5
+    # sample_length = 2
+
+    feature_type = 'spectral'
+    # feature_type = 'filter1'
+    # feature_type = 'mfcc'
+
+
+    features, labels = load_audio_data(dataset, sample_length, feature_type)
+
+
+

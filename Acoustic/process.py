@@ -141,7 +141,8 @@ def custom_filter_1(audio_object, **kwargs):
     hop_length = 512
     # freq_range_low = (100, 170) #if hovering only
     freq_range_mid = (800, 2100)
-    freq_range_high = (2600, 5000)
+    # freq_range_high = (2600, 5000)
+    freq_range_high = (2600, 3200)
 
     Audio_Object = normalize(audio_object)
     data = Audio_Object.data
@@ -160,6 +161,9 @@ def custom_filter_1(audio_object, **kwargs):
 
         # Convert to decibels (log scale) for better visualization
         spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
+
+        # Normalize the spectrogram_db for ReLU
+        # spectrogram_db = spectrogram_db + np.abs(np.min(spectrogram_db))
 
         # Calculate frequency range and resolution
         nyquist_frequency = audio_object.sample_rate / 2
@@ -187,13 +191,14 @@ def custom_filter_1(audio_object, **kwargs):
     return np.array(spectrograms)
 
 # Function to calculate spectrogram of audio
-def spectrogram(audio_object, range=(80, 2000), **kwargs):
+def spectrogram(audio_object, range=(200, 2100), **kwargs): #80-2000
     stats = kwargs.get('stats', False)
     window_size = 32768
     hop_length = 512
 
-    Audio_Object = normalize(audio_object)
-    data = Audio_Object.data
+    data = audio_object.data
+    # Audio_Object = normalize(audio_object)
+    # data = Audio_Object.data
 
     # Initialize an empty list to store the spectrograms for each channel
     spectrograms = []
@@ -210,8 +215,13 @@ def spectrogram(audio_object, range=(80, 2000), **kwargs):
         # Convert to decibels (log scale) for better visualization
         spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
 
-        # Normalize the spectrogram_db for ReLU
-        spectrogram_db_normalized = spectrogram_db + np.abs(np.min(spectrogram_db))
+        # Apply Min-Max normalization to the spectrogram_db
+        spectrogram_db_min, spectrogram_db_max = spectrogram_db.min(), spectrogram_db.max()
+        spectrogram_db = (spectrogram_db - spectrogram_db_min) / (spectrogram_db_max - spectrogram_db_min)
+
+        # print(spectrogram_db_min)
+        # print(spectrogram_db_max)
+        # print(spectrogram_db)
 
         # Calculate frequency range and resolution
         nyquist_frequency = audio_object.sample_rate / 2
@@ -222,12 +232,12 @@ def spectrogram(audio_object, range=(80, 2000), **kwargs):
         top_index = int(np.round(range[1] / frequency_resolution))
 
         if stats:
-            print(f'Spectro_dB: {spectrogram_db_normalized}')
+            print(f'Spectro_dB: {spectrogram_db}')
             print(f'Freq Range: ({range[0]},{range[1]}) Hz')
             print(f'Freq Resolution: {frequency_resolution} Hz')
 
         # Cut the spectrogram to the desired frequency range and append to the list
-        spectrograms.append(spectrogram_db_normalized[bottom_index:top_index])
+        spectrograms.append(spectrogram_db[bottom_index:top_index])
 
     # Convert the list of spectrograms to a numpy array and return
     return np.array(spectrograms)

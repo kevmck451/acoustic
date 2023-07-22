@@ -1,8 +1,8 @@
 
 
-from Detection.base_files.Spectral_Model_10s.accuracy.test_model_accuracy import test_model_accuracy
-from Detection.base_files.Spectral_Model_10s.Spectral_feature_extraction import extract_features
-from Detection.base_files.Spectral_Model_10s.accuracy.generate_truth import generate_truth
+from Prediction.base_files.Spectral_Model_10s.accuracy.test_model_accuracy import test_model_accuracy
+from Prediction.base_files.Spectral_Model_10s.Spectral_feature_extraction import extract_features
+from Prediction.base_files.Spectral_Model_10s.accuracy.generate_truth import generate_truth
 from Prediction.dataset_info import *
 
 from sklearn.model_selection import train_test_split
