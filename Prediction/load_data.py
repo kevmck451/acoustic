@@ -2,6 +2,7 @@
 from Acoustic.audio_abstract import Audio_Abstract
 from Acoustic import process
 
+from tqdm import tqdm as progress_bar
 from pathlib import Path
 import numpy as np
 
@@ -13,7 +14,7 @@ def load_audio_data(path, length, feature_type):
 
     audio_ob_list = []
     label_list = []
-    for file in Path(path).rglob('*.wav'):
+    for file in progress_bar(Path(path).rglob('*.wav')):
         audio = Audio_Abstract(filepath=file)
 
         if audio.num_channels == 1:
@@ -34,7 +35,7 @@ def load_audio_data(path, length, feature_type):
 
     print('Extracting Features')
     features_list = []
-    for audio in master_ob_list:
+    for audio in progress_bar(master_ob_list):
         if feature_type == 'spectral':
             feature = process.spectrogram(audio)
         elif feature_type == 'filter1':

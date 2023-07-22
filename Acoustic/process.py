@@ -89,6 +89,41 @@ def generate_chunks(audio_object, length, training=False):
         return audio_ob_list, labels
     else: return audio_ob_list
 
+# Function to convert audio sample to a specific length
+def generate_chunks_4ch(audio_object, length, training=False):
+    num_samples = audio_object.sample_rate * length
+    start = 0
+    end = num_samples
+    total_samples = audio_object.data.shape[1]
+
+    audio_ob_list = []
+    labels = []
+
+    # If the audio file is too short, pad it with zeroes
+    if total_samples < num_samples:
+        audio_object.data = np.pad(audio_object.data, (0, num_samples - len(audio_object.data)))
+        audio_ob_list.append(audio_object)
+        if training:
+            label = int(audio_object.path.parent.stem)
+            labels.append(label)  # Add Label (folder name)
+    # If the audio file is too long, shorten it
+
+    elif total_samples > num_samples:
+        while end <= total_samples:
+            audio_copy = deepcopy(audio_object)
+            audio_copy.data = audio_object.data[:, start:end]
+            audio_ob_list.append(audio_copy)
+            start, end = (start + num_samples), (end + num_samples)
+            if training:
+                label = int(audio_object.path.parent.stem)
+                labels.append(label)  # Add Label (folder name)
+
+    if training:
+        if len(audio_ob_list) != len(labels):
+            print(f'Error: {audio_object.path.stem}')
+        return audio_ob_list, labels
+    else: return audio_ob_list
+
 # Function to convert 4 channel wav to list of 4 objects
 def channel_to_objects(audio_object):
     audio_a = deepcopy(audio_object)
