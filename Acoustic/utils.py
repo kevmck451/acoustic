@@ -44,7 +44,7 @@ def copy_directory_structure(src_dir, dest_dir):
 
 class CSVFile:
     def __init__(self, file_path):
-        self.file_path = file_path
+        self.file_path = str(file_path)
         self.header, self.data = self._read_csv_file()
 
     def _read_csv_file(self):

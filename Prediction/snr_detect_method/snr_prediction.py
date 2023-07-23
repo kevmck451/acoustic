@@ -2,34 +2,28 @@
 
 from Acoustic.audio_abstract import Audio_Abstract
 
-from scipy import signal, fft
 from matplotlib import pyplot as plt
-from probability_constants import *
-import numpy as np
+from snr_constants import *
+from scipy import signal, fft
+import librosa, copy
 import pandas as pd
-import librosa, copy, os
+import numpy as np
 
-def generate_predicitions(df, i, std_mult, err='RMSE', audio_object=None):
-    # time_data_s, sr_s = librosa.load(file_names[audio_object[0]], sr=big_sr, mono=False)
-    # time_data_n, sr_n = librosa.load(file_names[audio_object[1]], sr=big_sr, mono=False)
-    # time_data_ns, sr_ns = librosa.load(file_names[audio_object[2]], sr=big_sr, mono=False)
-    # time_data_ns_n, sr_ns_n = librosa.load(file_names[audio_object[3]], sr=big_sr, mono=False)
 
-    # time_data_ns_temp, sr_ns = librosa.load(audio_object, sr=big_sr, mono=False)
-    # time_data_s_temp, sr_s = librosa.load(file_names[17], sr=big_sr, mono=False)
-    # time_data_n_temp, sr_n = librosa.load(file_names[22], sr=big_sr, mono=False)
+
+def generate_snr_predictions(df, i, std_mult, err='RMSE', audio_object=None):
 
     # Audio Object to Predict
     time_data_ns_temp, sr_ns = audio_object.data, audio_object.sample_rate
     # Reference Signal File
-    audio_signal_reference = Audio_Abstract(filepath='D_4_Track_10.wav')
+    audio_signal_reference = Audio_Abstract(filepath='reference_audios/D_4_Track_10.wav')
     time_data_s_temp, sr_s = audio_signal_reference.data, audio_signal_reference.sample_rate
     # Reference Noise File
     # audio_noise_reference = Audio_Abstract(filepath='Noise_2_3.wav')
-    audio_noise_reference = Audio_Abstract(filepath='Noise_Angel_2.wav')
+    audio_noise_reference = Audio_Abstract(filepath='reference_audios/Noise_Angel_2.wav')
     time_data_n_temp, sr_n = audio_noise_reference.data, audio_noise_reference.sample_rate
 
-
+    # Check for audio data shape and make adjustments
     if time_data_ns_temp.shape[1] == time_data_s_temp.shape[1] and time_data_ns_temp.shape[1] == \
             time_data_n_temp.shape[1] and time_data_ns_temp.shape[1] % 2 == 1:
         time_data_ns = np.empty(shape=(time_data_ns_temp.shape[0], time_data_ns_temp.shape[1] - 1))
@@ -88,20 +82,20 @@ def generate_predicitions(df, i, std_mult, err='RMSE', audio_object=None):
 
     time_data_s = np.empty(shape=time_data_ns.shape)
     time_data_n = np.empty(shape=time_data_ns.shape)
+
     for j in range(4):
         time_data_s[j] = time_data_s_temp[j][0:time_data_ns.shape[1]]
         time_data_n[j] = time_data_n_temp[j][0:time_data_ns.shape[1]]
-
     time_data_s_norm = np.empty(shape=time_data_s.shape)
     time_data_n_norm = np.empty(shape=time_data_n.shape)
     time_data_ns_norm = np.empty(shape=time_data_ns.shape)
     # time_data_ns_n_norm = np.empty(shape=time_data_ns_n.shape)
+
     for j in range(4):
         time_data_s_norm[j] = (time_data_s[j] - np.mean(time_data_s[j])) / np.std(time_data_s[j])
         time_data_n_norm[j] = (time_data_n[j] - np.mean(time_data_n[j])) / np.std(time_data_n[j])
         time_data_ns_norm[j] = (time_data_ns[j] - np.mean(time_data_ns[j])) / np.std(time_data_ns[j])
         # time_data_ns_n_norm[j] = (time_data_ns_n[j] - np.mean(time_data_ns_n[j]))/np.std(time_data_ns_n[j])
-
     time_data_s_mono = librosa.to_mono(time_data_s)
     time_data_n_mono = librosa.to_mono(time_data_n)
     time_data_ns_mono = librosa.to_mono(time_data_ns)
@@ -187,7 +181,7 @@ def generate_predicitions(df, i, std_mult, err='RMSE', audio_object=None):
     # plt.legend()
     # plt.show()
 
-    fd_freqs, fd_hst = apply_hst(filtered_data_2, sr_ns)
+    fd_freqs, fd_hst = apply_hst(filtered_data_mono, sr_ns)
     n_freqs, n_hst = apply_hst(filtered_noise_mono, sr_n)
     s_freqs, s_hst = apply_hst(filtered_sig_mono, sr_s)
 
