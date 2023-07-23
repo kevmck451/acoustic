@@ -1,0 +1,29 @@
+
+
+Data Loading
+	The run_me method is invoked with various arguments including file name, file list index, error analysis type, standard deviation multiplier and a dataframe for storing the results.
+	The method begins by loading three different types of signals from files: the noisy signal (passed as a parameter to the method), a pure diesel engine sound (the signal), and a noise file.
+
+Data Pre-processing
+	The method continues by allocating variable data and ensuring each file's data has the proper shape (lines 40-99).
+	The signals (noisy, pure, and noise) are normalized (lines 101-108).
+	These signals are then converted to mono, i.e., from 4-channel audio to 1-channel audio (lines 111-118).
+
+Filter Application
+	A Wiener Filter is applied to the normalized signals (lines 122-147). The filter is applied after averaging the measured signal and measured noise into one mono signal. It's applied to each of the four noisy signal channels.
+	A Matched Filter is applied (lines 149-155). It's applied to the noise (which should return a PSD that detects no signal), the signal (which should return a perfect signal detected PSD), and the 4 noisy signal channels (which would fall somewhere in between).
+
+Harmonic Spectral Transform
+	The signals are converted to mono (if not already) for the Harmonic Spectral Transform (lines 157-159).
+	The Harmonic Spectra of the signals are taken (lines 196-198).
+	If normalization was chosen after the filters or both before and after, it's performed (lines 200-203).
+	Each signal is then interpolated with fewer points (lines 205-210). This is done to fix any change in array sizes due to filter application or the Harmonic Spectral Transform.
+
+Harmonic Data Analysis
+	Details of the harmonic data are recorded including the mean, the standard deviation, the max peak, and the frequency at which the max is present (lines 222-235).
+
+Data Thresholding
+	A standard deviation multiplier algorithm is applied to drop data below a certain threshold (lines 241 and 242).
+	Error Analysis and Hypothesis Formation
+	Errors are recorded and a hypothesis is formed (lines 243-254).
+	The dataframe for the processed data file is then returned.

@@ -1,0 +1,54 @@
+Brad
+
+Well to break it down in a matter of minutes, the run_me method operates on whatever file name it is fed
+along with the file’s corresponding file list index, the desired error analysis, the desired standard deviation multiplier,
+and the dataframe where the results will be stored.
+
+So for the run_me method, starting on lines 36-38, that’s loading the noisy signal, signal, and noise.
+The noisy signal is the name passed into the run_me method (ex. P3_10_0.wav), the signal is the pure diesel engine sound,
+and the noise is one of the noise files where the UAV should’ve been furthest from the source.
+You will see that those two files are referenced using the file_names array in the constants.py file.
+
+Then lines 40-99 are simply just variable data allocation and making sure each file’s data has the proper shape.
+It’s really a lot of copy and pasted code that I tried to do really fast honestly.
+
+Lines 101-108 are normalizing all three (signal, noise, and noisy signal).
+Lines 111-118 are converting those 4 track files to mono.
+
+Then line 122 through roughly 147, it’s applying first the Wiener Filter, and the if statements are just making sure in each case
+if it is being applied to the correct variables (based on whether I tried to normalize the data before or after the filter or both).
+One thing worthy of noticing though, the way I went about applying the filter is averaging the measured signal and
+measured noise into one mono signal, and then the filter is applied on each of the four noisy signal channels.
+
+Then 149-155 applies the matched filter. This one is applied differently than the wiener filter because it drastically affects
+the PSD because it is merely trying to see if the signal is present within the noisy signal. That means that if we applied
+the filter to only the noisy signal (and not the signal and noise), their PSDs are rendered incomparable.
+So the filter is first applied to the noise, and in theory that should return a PSD that detects no signal at all,
+and then it is applied to the signal, which should return a perfect signal detected PSD,
+and then it is applied to the 4 noisy signal channels, which would fall somewhere in between.
+If you want more details on how each of those filters work, the method definitions and
+their details described in my thesis together should make that fairly straightforward.
+
+Then in lines 157-159, those three are all then converted to mono (if not already) for the harmonic spectral transform.
+The commented out portion following it was just experimenting I did with plots.
+
+Then in 196-198, the harmonic spectra are finally taken.
+Lines 200-203 are for if we chose to normalize after the filters or both before and after.
+Then lines 205-210 are interpolating each with much fewer points,
+and the reason for doing such are to fix if array sizes are altered when previous filters are applied
+(and for if they are altered even more when HST is applied since it reduces the spectrum size). And again,
+the following commented portion was experimental plotting.
+
+Side note: if you ever see any variables like num_harmonics in the apply_hst method where you have no idea what they are,
+check in constants.py because chances are it will be defined there. Had to do that when the project got so big and I was playing with different values.
+
+Then lines 222-235 are just recording details of the harmonic data, such as the mean, the standard deviation, the max peak,
+and the frequency at which the max is present.
+
+Then 241 and 242 are applying my standard deviation multiplier algorithm where it drops data below a certain threshold.
+
+Then in lines 243-254 it records all the errors and makes the hypothesis. Then it returns the completed dataframe for the one processed data file.
+
+Then it will go back to the main method and go through every noisy signal file (fl_files in constants.py)
+and it will save the csv file of every processed noisy signal file for that particular chosen error type and standard deviation multiplier.
+Then the two outer loops iterate through the error types (MAE, MSE, and RMSE) and the standard deviation multipliers, and it will make as many csv files as necessary.
