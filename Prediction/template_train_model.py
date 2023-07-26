@@ -25,7 +25,6 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, 
             np.save(f'{save_path}/features_{feature_type}_{sample_length}s.npy', features)
             np.save(f'{save_path}/labels_{feature_type}_{sample_length}s.npy', labels)
     else:
-
         features, labels = load_audio_data(dataset, sample_length, feature_type)
         np.save(f'{save_path}/features_{feature_type}_{sample_length}s.npy', features)
         np.save(f'{save_path}/labels_{feature_type}_{sample_length}s.npy', labels)
