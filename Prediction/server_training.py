@@ -6,16 +6,12 @@ from pathlib import Path
 if __name__ == '__main__':
 
     dataset = Path('../../ML Model Data/dataset')
+    testing_path = Path('../../ML Model Data/accuracy/dataset')
 
-    if dataset.exists():
-        print('Dataset Exists')
-
-    testing_path = '../../ML Model Data/accuracy/dataset'
+    print(Path.cwd())
 
     sample_lengths = [10, 8, 6, 4, 2]
-
     feature_types = ['spectral', 'filter1', 'mfcc']
-
     model_types = ['basic_1', 'basic_2', 'deep_1', 'deep_2']
 
     specs = {
@@ -29,7 +25,7 @@ if __name__ == '__main__':
         'epochs': 50,
         'batch_size': 24}
 
-
+    # Train Model using all parameters
     for length in sample_lengths:
         for feature in feature_types:
             for model in model_types:
