@@ -1,14 +1,18 @@
 # Audio Class for Analyzing WAV Files
 # Kevin McKenzie 2023
 
+from . import sample_library
+from .utils import CSVFile
+from . import process
+
+
+from sklearn.preprocessing import StandardScaler
 from pathlib import Path
+import soundfile as sf
 import numpy as np
 import librosa
-import sample_library
-from utils import CSVFile
-import process
-import soundfile as sf
-from sklearn.preprocessing import StandardScaler
+
+
 
 class Audio:
     def __init__(self, filepath, channel_num = 1, stats=False):
@@ -20,21 +24,21 @@ class Audio:
         self.sample_length = round((self.data.shape[0] / self.SAMPLE_RATE), 2)
 
         # Initial Conditions of Audio File
-        CSV = CSVFile(sample_library.SAMPLE_LIBRARY_LIST)
-        self.location = CSV.get_value(self.filepath.stem, 'Location')
-        self.date = CSV.get_value(self.filepath.stem, 'Date')
-        self.time = CSV.get_value(self.filepath.stem, 'Time')
-        self.vehicle = CSV.get_value(self.filepath.stem, 'Vehicle')
-        self.recorder = CSV.get_value(self.filepath.stem, 'Recorder')
-        self.mount = CSV.get_value(self.filepath.stem, 'Mount')
-        self.cover = CSV.get_value(self.filepath.stem, 'Cover')
-        self.position = CSV.get_value(self.filepath.stem, 'Position')
-        self.raw = CSV.get_value(self.filepath.stem, 'RAW')
-        self.category = CSV.get_value(self.filepath.stem, 'Category')
-        self.temp = CSV.get_value(self.filepath.stem, 'Temp')
-        self.humidity = CSV.get_value(self.filepath.stem, 'Humidity')
-        self.pressure = CSV.get_value(self.filepath.stem, 'Pressure')
-        self.wind = CSV.get_value(self.filepath.stem, 'Wind')
+        # CSV = CSVFile(sample_library.SAMPLE_LIBRARY_LIST)
+        # self.location = CSV.get_value(self.filepath.stem, 'Location')
+        # self.date = CSV.get_value(self.filepath.stem, 'Date')
+        # self.time = CSV.get_value(self.filepath.stem, 'Time')
+        # self.vehicle = CSV.get_value(self.filepath.stem, 'Vehicle')
+        # self.recorder = CSV.get_value(self.filepath.stem, 'Recorder')
+        # self.mount = CSV.get_value(self.filepath.stem, 'Mount')
+        # self.cover = CSV.get_value(self.filepath.stem, 'Cover')
+        # self.position = CSV.get_value(self.filepath.stem, 'Position')
+        # self.raw = CSV.get_value(self.filepath.stem, 'RAW')
+        # self.category = CSV.get_value(self.filepath.stem, 'Category')
+        # self.temp = CSV.get_value(self.filepath.stem, 'Temp')
+        # self.humidity = CSV.get_value(self.filepath.stem, 'Humidity')
+        # self.pressure = CSV.get_value(self.filepath.stem, 'Pressure')
+        # self.wind = CSV.get_value(self.filepath.stem, 'Wind')
 
         if stats:
             print(f'File Name: {self.filepath.name}')

@@ -7,26 +7,35 @@ if __name__ == '__main__':
 
     dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/dataset')
 
-    # create a thread for function with arguments
-    Train_Detect_Model(dataset, 10, 'spectral', 'basic', False)
-    Train_Detect_Model(dataset, 5, 'spectral', 'basic', False)
-    Train_Detect_Model(dataset, 2, 'spectral', 'basic', False)
-    Train_Detect_Model(dataset, 10, 'filter1', 'basic', False)
-    Train_Detect_Model(dataset, 5, 'filter1', 'basic', False)
-    Train_Detect_Model(dataset, 2, 'filter1', 'basic', False)
+    sample_length = [10, 8, 6, 4, 2]
 
-    while True:
-        Train_Detect_Model(dataset, 10, 'spectral', 'basic', True)
-        Train_Detect_Model(dataset, 5, 'spectral', 'basic', True)
-        Train_Detect_Model(dataset, 2, 'spectral', 'basic', True)
-        Train_Detect_Model(dataset, 10, 'filter1', 'basic', True)
-        Train_Detect_Model(dataset, 5, 'filter1', 'basic', True)
-        Train_Detect_Model(dataset, 2, 'filter1', 'basic', True)
-        Train_Detect_Model(dataset, 10, 'spectral', 'deep', True)
-        Train_Detect_Model(dataset, 5, 'spectral', 'deep', True)
-        Train_Detect_Model(dataset, 2, 'spectral', 'deep', True)
-        Train_Detect_Model(dataset, 10, 'filter1', 'deep', True)
-        Train_Detect_Model(dataset, 5, 'filter1', 'deep', True)
-        Train_Detect_Model(dataset, 2, 'filter1', 'deep', True)
+    feature_type = ['spectral', 'filter1', 'mfcc']
+
+    model_type = ['basic_1', 'basic_2', 'deep_1', 'deep_2']
+
+    # Create a Model for Training
+    specs = {
+        'test_size': 0.2,
+        'random_state': 42,
+        'l2_value': 0.01,
+        'optimizer': 'adam',
+        'loss': 'binary_crossentropy',
+        'metric': 'accuracy',
+        'patience': 4,
+        'epochs': 50,
+        'batch_size': 24}
+
+
+    # create a thread for function with arguments
+
+    for length in sample_length:
+        for feature in feature_type:
+            for model in model_type:
+                Train_Detect_Model(dataset, length, feature, model, specs, load_data=False)
+
+
+
+
+
 
 

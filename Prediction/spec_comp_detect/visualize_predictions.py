@@ -8,7 +8,7 @@ from Acoustic.utils import CSVFile
 
 
 
-def get_predictions(csv_filepath):
+def get_predictions_csv(csv_filepath):
 
     prediction_csv = CSVFile(csv_filepath)
 
@@ -26,19 +26,13 @@ def get_predictions(csv_filepath):
 
     return predictions, accuracy
 
-
-if __name__ == '__main__':
-
-    flight_name = 'Angel_2'
-    length = 10
-    directory_csv = Path('/Prediction/snr_detect_method/Round 3')
-
+def visualize_csv_predictions(directory_csv):
     info_list = []
     for file in directory_csv.iterdir():
         # print(Path(file).stem)
         err_type = Path(file).stem.split('_')[2]
         std_num = Path(file).stem.split('_')[3]
-        predictions, accuracy = get_predictions(file)
+        predictions, accuracy = get_predictions_csv(file)
         info_list.append({'predictions': predictions, 'accuracy': accuracy,
                           'err_type': err_type, 'std_num': int(std_num)})
 
@@ -69,5 +63,30 @@ if __name__ == '__main__':
 
     plt.tight_layout(pad=1)
     plt.show()
+
+def visualize_predictions(predictions, **kwargs):
+    all_neg = kwargs.get('all_neg')
+    all_pos = kwargs.get('all_pos')
+    truth = kwargs.get('truth', None)
+
+    if truth is not None:
+        if all_neg:
+            truth = [0] * len(predictions)
+        elif all_pos:
+            truth = [1] * len(predictions)
+
+
+
+
+
+if __name__ == '__main__':
+
+    flight_name = 'Angel_2'
+    length = 10
+    directory_csv = Path('/Prediction/spec_comp_detect/Round 3')
+
+    # visualize_csv_predictions(directory_csv)
+
+
 
 

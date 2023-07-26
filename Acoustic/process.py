@@ -1,11 +1,13 @@
 # Functions to Process Audio
 
+from . import utils
+
 from sklearn.preprocessing import StandardScaler
 from copy import deepcopy
 from scipy import signal
 import numpy as np
 import librosa
-import utils
+
 
 
 # Function to Normalize Data
@@ -175,7 +177,7 @@ def custom_filter_1(audio_object, **kwargs):
     window_size = 32768
     hop_length = 512
     # freq_range_low = (100, 170) #if hovering only
-    freq_range_mid = (800, 2100)
+    freq_range_mid = (200, 2100)
     # freq_range_high = (2600, 5000)
     freq_range_high = (2600, 3200)
 
@@ -197,8 +199,9 @@ def custom_filter_1(audio_object, **kwargs):
         # Convert to decibels (log scale) for better visualization
         spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
 
-        # Normalize the spectrogram_db for ReLU
-        # spectrogram_db = spectrogram_db + np.abs(np.min(spectrogram_db))
+        # Apply Min-Max normalization to the spectrogram_db
+        spectrogram_db_min, spectrogram_db_max = spectrogram_db.min(), spectrogram_db.max()
+        spectrogram_db = (spectrogram_db - spectrogram_db_min) / (spectrogram_db_max - spectrogram_db_min)
 
         # Calculate frequency range and resolution
         nyquist_frequency = audio_object.sample_rate / 2

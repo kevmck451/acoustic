@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 
 
-# Basic CNN: 3 layers
+# Basic CNN: 3 layers-Relu
 def basic_model_1(features, labels, **kwargs):
     test_size = kwargs.get('test_size', 0.2)
     random_state = kwargs.get('random_state', 42)
@@ -47,7 +47,7 @@ def basic_model_1(features, labels, **kwargs):
 
     return model
 
-# Basic CNN: 3 layers
+# Basic CNN: 3 layers-Sigmoid
 def basic_model_2(features, labels, **kwargs):
     test_size = kwargs.get('test_size', 0.2)
     random_state = kwargs.get('random_state', 42)
@@ -56,7 +56,7 @@ def basic_model_2(features, labels, **kwargs):
     loss = kwargs.get('loss', 'binary_crossentropy')
     metric = kwargs.get('metric', 'accuracy')
     patience = kwargs.get('patience', 3)
-    epochs = kwargs.get('epochs', 20)
+    epochs = kwargs.get('epochs', 50)
     batch_size = kwargs.get('batch_size', 12)
 
     # Create a Model for Training
@@ -85,7 +85,7 @@ def basic_model_2(features, labels, **kwargs):
 
     return model
 
-# Deep CNN: 4 layers
+# Deep CNN: 4 layers-Relu
 def deep_model_1(features, labels, **kwargs):
 
     test_size = kwargs.get('test_size', 0.2)
@@ -95,7 +95,7 @@ def deep_model_1(features, labels, **kwargs):
     loss = kwargs.get('loss', 'binary_crossentropy')
     metric = kwargs.get('metric', 'accuracy')
     patience = kwargs.get('patience', 3)
-    epochs = kwargs.get('epochs', 20)
+    epochs = kwargs.get('epochs', 50)
     batch_size = kwargs.get('batch_size', 12)
 
     # Create a Model for Training
@@ -131,7 +131,7 @@ def deep_model_1(features, labels, **kwargs):
 
     return model
 
-# Deep CNN: 4 layers
+# Deep CNN: 4 layers-Sigmoid
 def deep_model_2(features, labels, **kwargs):
 
     test_size = kwargs.get('test_size', 0.2)
@@ -141,7 +141,7 @@ def deep_model_2(features, labels, **kwargs):
     loss = kwargs.get('loss', 'binary_crossentropy')
     metric = kwargs.get('metric', 'accuracy')
     patience = kwargs.get('patience', 3)
-    epochs = kwargs.get('epochs', 20)
+    epochs = kwargs.get('epochs', 50)
     batch_size = kwargs.get('batch_size', 12)
 
     # Create a Model for Training
@@ -149,23 +149,23 @@ def deep_model_2(features, labels, **kwargs):
     input_shape = (X_train.shape[1], X_train.shape[2], 1)
     model = Sequential()
 
-    model.add(Conv2D(32, (3, 3), activation='relu', input_shape=input_shape, kernel_regularizer=l2(l2_value)))
+    model.add(Conv2D(32, (3, 3), activation='sigmoid', input_shape=input_shape, kernel_regularizer=l2(l2_value)))
     model.add(BatchNormalization())
     model.add(MaxPooling2D((2, 2)))
     model.add(Dropout(0.3))
 
-    model.add(Conv2D(64, (3, 3), activation='relu', kernel_regularizer=l2(l2_value)))
+    model.add(Conv2D(64, (3, 3), activation='sigmoid', kernel_regularizer=l2(l2_value)))
     model.add(BatchNormalization())
     model.add(MaxPooling2D((2, 2)))
     model.add(Dropout(0.4))
 
-    model.add(Conv2D(128, (3, 3), activation='relu', kernel_regularizer=l2(l2_value)))
+    model.add(Conv2D(128, (3, 3), activation='sigmoid', kernel_regularizer=l2(l2_value)))
     model.add(BatchNormalization())
     model.add(MaxPooling2D((2, 2)))
     model.add(Dropout(0.5))
 
     model.add(Flatten())
-    model.add(Dense(256, activation='relu', kernel_regularizer=l2(l2_value)))
+    model.add(Dense(256, activation='sigmoid', kernel_regularizer=l2(l2_value)))
     model.add(Dropout(0.5))
 
     model.add(Dense(1, activation='sigmoid'))

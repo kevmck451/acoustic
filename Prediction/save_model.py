@@ -1,21 +1,38 @@
 # File for model naming
 
+import json
 from pathlib import Path
 
-
-def save_model(model, model_type, feature, input_time, accuracy):
+def save_model(model, model_type, feature, input_time, accuracy, specs, runtime):
     index = 0
-    extension = '.h5'
-    lib_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Prediction/model_library'
+    model_extension = '.h5'
+    text_extension = '.txt'
+    lib_dir = '/model_library'
 
-    saveto = f'{lib_dir}/{model_type}_{feature}_{str(input_time)}_{accuracy}_{str(index)}{extension}'
+    model_saveto = f'{lib_dir}/{model_type}_{feature}_{str(input_time)}_{accuracy}_{str(index)}{model_extension}'
 
-    while Path(saveto).exists():
-        saveto = f'{lib_dir}/{model_type}_{feature}_{str(input_time)}_{accuracy}_{str(index)}{extension}'
+    while Path(model_saveto).exists():
         index += 1
+        model_saveto = f'{lib_dir}/{model_type}_{feature}_{str(input_time)}_{accuracy}_{str(index)}{model_extension}'
 
-    model.save(saveto)
+    model.save(model_saveto)
 
-    if Path(saveto).exists(): print('Save Successful')
-    else: print('Save Not Successful')
+    # Save text file with all info about model
+    text_saveto = f'{lib_dir}/{model_type}_{feature}_{str(input_time)}_{accuracy}_{str(index)}{text_extension}'
+
+    with open(text_saveto, 'w') as f:
+        f.write('Model Type: ' + model_type + '\n')
+        f.write('Feature: ' + feature + '\n')
+        f.write('Input Time: ' + str(input_time) + '\n')
+        f.write('Accuracy: ' + str(accuracy) + '\n')
+        f.write('Total Runtime: ' + str(runtime) + '\n')
+        f.write('Specs: ' + json.dumps(specs, indent=4) + '\n')
+
+    if Path(model_saveto).exists(): print('Model Save Successful')
+    else: print('Model Save Not Successful')
+
+    if Path(text_saveto).exists(): print('Text Save Successful')
+    else: print('Text Save Not Successful')
+
+
 

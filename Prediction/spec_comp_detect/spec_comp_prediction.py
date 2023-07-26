@@ -3,7 +3,7 @@
 from Acoustic.audio_abstract import Audio_Abstract
 
 from matplotlib import pyplot as plt
-from snr_constants import *
+from spec_comp_constants import *
 from scipy import signal, fft
 import librosa, copy
 import pandas as pd
@@ -11,7 +11,7 @@ import numpy as np
 
 
 
-def generate_snr_predictions(df, i, std_mult, err='RMSE', audio_object=None):
+def generate_spec_comp_predictions(df, i, std_mult, err='RMSE', audio_object=None):
 
     # Audio Object to Predict
     time_data_ns_temp, sr_ns = audio_object.data, audio_object.sample_rate
