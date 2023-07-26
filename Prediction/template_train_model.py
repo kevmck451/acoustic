@@ -15,7 +15,7 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, 
     timing_stats = time_class(name='Model Training')
 
     # -------- Load and preprocess data
-    save_path = 'features_labels'
+    save_path = f'{Path.cwd()}/Prediction/features_labels'
     if load_data:
         try:
             features = np.load(f'{save_path}/features_{feature_type}_{sample_length}s.npy')
@@ -25,6 +25,7 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, 
             np.save(f'{save_path}/features_{feature_type}_{sample_length}s.npy', features)
             np.save(f'{save_path}/labels_{feature_type}_{sample_length}s.npy', labels)
     else:
+
         features, labels = load_audio_data(dataset, sample_length, feature_type)
         np.save(f'{save_path}/features_{feature_type}_{sample_length}s.npy', features)
         np.save(f'{save_path}/labels_{feature_type}_{sample_length}s.npy', labels)
