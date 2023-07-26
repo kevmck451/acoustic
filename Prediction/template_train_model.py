@@ -15,7 +15,7 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, 
     timing_stats = time_class(name='Model Training')
 
     # -------- Load and preprocess data
-    save_path = '/features_labels'
+    save_path = 'features_labels'
     if load_data:
         try:
             features = np.load(f'{save_path}/features_{feature_type}_{sample_length}s.npy')

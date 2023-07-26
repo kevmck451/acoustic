@@ -35,4 +35,18 @@ if __name__ == '__main__':
 
 
 
+'''
+ssh kmcknze1@c2-kevin.uom.memphis.edu
 
+password: m2d2jkl9123
+
+tmux
+
+conda activate acoustic1
+
+cd acoustic
+
+git pull
+
+python3 -m Prediction.server_training
+'''
