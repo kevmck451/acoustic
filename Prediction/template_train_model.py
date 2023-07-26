@@ -79,18 +79,12 @@ if __name__ == '__main__':
     dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/dataset')
     testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/dataset'
 
-    sample_length = 10
-    # sample_length = 5
-    # sample_length = 2
+    sample_lengths = [10, 8, 6, 4, 2]
 
-    feature_type = 'spectral'
-    # feature_type = 'filter1'
-    # feature_type = 'mfcc'
+    feature_types = ['spectral', 'filter1', 'mfcc']
 
-    # model_type = 'deep'
-    model_type = 'basic'
+    model_types = ['basic_1', 'basic_2', 'deep_1', 'deep_2']
 
-    # Create a Model for Training
     specs = {
         'test_size': 0.2,
         'random_state': 42,
@@ -98,12 +92,13 @@ if __name__ == '__main__':
         'optimizer': 'adam',
         'loss': 'binary_crossentropy',
         'metric': 'accuracy',
-        'patience': 4,
+        'patience': 5,
         'epochs': 50,
-        'batch_size': 12}
+        'batch_size': 24}
 
-    Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, testing_path, load_data=False)
 
-    while True:
-        Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, testing_path, load_data=True)
+    for length in sample_lengths:
+        for feature in feature_types:
+            for model in model_types:
+                Train_Detect_Model(dataset, length, feature, model, specs, testing_path, load_data=False)
 

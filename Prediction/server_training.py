@@ -7,6 +7,9 @@ if __name__ == '__main__':
 
     dataset = Path('../../ML Model Data/dataset')
 
+    if dataset.exists():
+        print('Dataset Exists')
+
     testing_path = '../../ML Model Data/accuracy/dataset'
 
     sample_lengths = [10, 8, 6, 4, 2]

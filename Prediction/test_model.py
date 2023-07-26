@@ -24,7 +24,7 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
         optimizer_config = model.optimizer.get_config()
         print("Optimizer Configuration:", optimizer_config)
 
-    Test_Directory = Path(directory)
+    Test_Directory = Path(str(directory))
 
     # Test accuracy of Model
     y_true = []
