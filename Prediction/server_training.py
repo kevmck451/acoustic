@@ -5,7 +5,7 @@ from pathlib import Path
 
 if __name__ == '__main__':
 
-    base_dir = '/home/kmcknze1/acoustic'
+    base_dir = '/home/kmcknze1'
     dataset = Path(f'{base_dir}/ML Model Data/dataset')
     testing_path = Path(f'{base_dir}/ML Model Data/accuracy/dataset')
 
