@@ -5,15 +5,16 @@ from pathlib import Path
 
 if __name__ == '__main__':
 
-    dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/dataset')
+    dataset = Path('../../ML Model Data/dataset')
 
-    sample_length = [10, 8, 6, 4, 2]
+    testing_path = '../../ML Model Data/accuracy/dataset'
 
-    feature_type = ['spectral', 'filter1', 'mfcc']
+    sample_lengths = [10, 8, 6, 4, 2]
 
-    model_type = ['basic_1', 'basic_2', 'deep_1', 'deep_2']
+    feature_types = ['spectral', 'filter1', 'mfcc']
 
-    # Create a Model for Training
+    model_types = ['basic_1', 'basic_2', 'deep_1', 'deep_2']
+
     specs = {
         'test_size': 0.2,
         'random_state': 42,
@@ -21,17 +22,15 @@ if __name__ == '__main__':
         'optimizer': 'adam',
         'loss': 'binary_crossentropy',
         'metric': 'accuracy',
-        'patience': 4,
+        'patience': 5,
         'epochs': 50,
         'batch_size': 24}
 
 
-    # create a thread for function with arguments
-
-    for length in sample_length:
-        for feature in feature_type:
-            for model in model_type:
-                Train_Detect_Model(dataset, length, feature, model, specs, load_data=False)
+    for length in sample_lengths:
+        for feature in feature_types:
+            for model in model_types:
+                Train_Detect_Model(dataset, length, feature, model, specs, testing_path, load_data=False)
 
 
 

@@ -4,17 +4,13 @@ from Prediction.test_model import test_model_accuracy
 import Prediction.create_model as create_model
 from Prediction.load_data import load_audio_data
 from Prediction.save_model import save_model
-import Prediction.dataset_info as dataset_info
 from Acoustic.utils import time_class
 
 from pathlib import Path
-
 import numpy as np
 
-
-
 # Train Spectral_Model
-def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, load_data=False):
+def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, test_path, load_data=False):
 
     timing_stats = time_class(name='Model Training')
 
@@ -68,7 +64,7 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, 
                                            epochs=specs['epochs'], batch_size=specs['batch_size'])
 
     # Test accuracy of Model
-    accuracy = test_model_accuracy(model, dataset_info.directory_test_1, sample_length, feature_type)
+    accuracy = test_model_accuracy(model, test_path, sample_length, feature_type)
 
     total_runtime = timing_stats.stats()
 
@@ -78,10 +74,10 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, 
     #     save_model(model, 'detect', 'spec', sample_length, accuracy[0])
 
 
-
 if __name__ == '__main__':
 
     dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/dataset')
+    testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/dataset'
 
     sample_length = 10
     # sample_length = 5
@@ -106,8 +102,8 @@ if __name__ == '__main__':
         'epochs': 50,
         'batch_size': 12}
 
-    Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, load_data=False)
+    Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, testing_path, load_data=False)
 
     while True:
-        Train_Detect_Model(dataset, sample_length, feature_type, model_type, load_data=True)
+        Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, testing_path, load_data=True)
 
