@@ -5,10 +5,9 @@ from pathlib import Path
 
 if __name__ == '__main__':
 
-    dataset = Path('../../ML Model Data/dataset')
-    testing_path = Path('../../ML Model Data/accuracy/dataset')
-
-    print(Path.cwd())
+    base_dir = '/home/kmcknze1/acoustic'
+    dataset = Path(f'{base_dir}/ML Model Data/dataset')
+    testing_path = Path(f'{base_dir}/ML Model Data/accuracy/dataset')
 
     sample_lengths = [10, 8, 6, 4, 2]
     feature_types = ['spectral', 'filter1', 'mfcc']
