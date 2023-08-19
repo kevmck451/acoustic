@@ -114,9 +114,21 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
 
 if __name__ == '__main__':
 
-    # Model List
-    model = load_model('../model_library/detect_spec_2_50_0.h5')
+    # testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/Test 1'
+    testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/dataset'
+    sample_lengths = [10, 8, 6, 4, 2]
 
-    test_model_accuracy(model, directory_test_1, display=True)
+    feature_types = ['spectral', 'filter1', 'mfcc']
+
+    # model = load_model('Prediction/model_library/basic_1_mfcc_10_79_0.h5')
+    # test_model_accuracy(model, testing_path, sample_lengths[0], feature_types[2], display=True)
+
+    # model = load_model('Prediction/model_library/deep_1_mfcc_6_73_0.h5')
+    # test_model_accuracy(model, testing_path, sample_lengths[2], feature_types[2], display=True)
+
+    model = load_model('../Feature_Testing/Prediction/model_library/deep_1_mfcc_2_46_0.h5')
+    test_model_accuracy(model, testing_path, sample_lengths[4], feature_types[2], display=True)
+
+
 
 

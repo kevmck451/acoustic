@@ -16,7 +16,6 @@ def load_audio_data(path, length, feature_type):
     label_list = []
     for file in progress_bar(Path(path).rglob('*.wav')):
         audio = Audio_Abstract(filepath=file)
-
         if audio.num_channels == 1:
             chunks_list, labels = process.generate_chunks(audio, length=length, training=True)
             # chunks_list, labels = process.generate_windowed_chunks(audio, window_size=length, training=True)
@@ -28,6 +27,7 @@ def load_audio_data(path, length, feature_type):
                 chunks_list, labels = process.generate_chunks(channel, length=length, training=True)
                 # chunks_list, labels = process.generate_windowed_chunks(audio, window_size=length, training=True)
                 audio_ob_list.extend(chunks_list)
+
                 label_list.extend(labels)  # Flattening the labels
 
     master_ob_list = list(audio_ob_list)  # Creating a new 1D list
@@ -42,6 +42,9 @@ def load_audio_data(path, length, feature_type):
             feature = process.custom_filter_1(audio)
         elif feature_type == 'mfcc':
             feature = process.mfcc(audio)
+        elif feature_type == 'zcr':
+            feature = process.zcr(audio)
+
 
         features_list.append(feature)  # Add Feature
         # print(feature.shape)

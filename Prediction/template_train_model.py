@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 
 # Train Spectral_Model
-def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, test_path, load_data=False):
+def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, test_path, load_data=False, display=False):
 
     timing_stats = time_class(name='Model Training')
 
@@ -64,7 +64,10 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, 
                                            epochs=specs['epochs'], batch_size=specs['batch_size'])
 
     # Test accuracy of Model
-    accuracy = test_model_accuracy(model, test_path, sample_length, feature_type)
+    if display:
+        accuracy = test_model_accuracy(model, test_path, sample_length, feature_type, display=True)
+    else:
+        accuracy = test_model_accuracy(model, test_path, sample_length, feature_type)
 
     total_runtime = timing_stats.stats()
 
@@ -75,14 +78,11 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, 
 
 
 if __name__ == '__main__':
-
     dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/dataset')
     testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/dataset'
 
     sample_lengths = [10, 8, 6, 4, 2]
-
     feature_types = ['spectral', 'filter1', 'mfcc']
-
     model_types = ['basic_1', 'basic_2', 'deep_1', 'deep_2']
 
     specs = {
@@ -96,9 +96,11 @@ if __name__ == '__main__':
         'epochs': 50,
         'batch_size': 24}
 
-
-    for length in sample_lengths:
-        for feature in feature_types:
-            for model in model_types:
-                Train_Detect_Model(dataset, length, feature, model, specs, testing_path, load_data=False)
+    Train_Detect_Model(dataset,
+                       sample_lengths[4],
+                       feature_types[2],
+                       model_types[2],
+                       specs,
+                       testing_path,
+                       load_data=True)
 

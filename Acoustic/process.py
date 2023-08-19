@@ -1,6 +1,7 @@
 # Functions to Process Audio
 
-from . import utils
+from Acoustic.audio_abstract import Audio_Abstract
+from Acoustic import utils
 
 from sklearn.preprocessing import StandardScaler
 from copy import deepcopy
@@ -9,7 +10,206 @@ import numpy as np
 import librosa
 
 
+#-----------------------------------
+# FEATURES -------------------------
+#-----------------------------------
+# Function to calculate spectrogram of audio (Features are 2D)
+def spectrogram(audio_object, range=(200, 2100), **kwargs): #80-2000
+    stats = kwargs.get('stats', False)
+    window_size = 32768
+    hop_length = 512
 
+    data = audio_object.data
+    # Audio_Object = normalize(audio_object)
+    # data = Audio_Object.data
+
+    # Initialize an empty list to store the spectrograms for each channel
+    spectrograms = []
+
+    # Check if audio_object is multi-channel
+    if len(data.shape) == 1:
+        # Mono audio data, convert to a list with a single item for consistency
+        data = [data]
+
+    for channel_data in data:
+        # Calculate the spectrogram using Short-Time Fourier Transform (STFT)
+        spectrogram = np.abs(librosa.stft(channel_data, n_fft=window_size, hop_length=hop_length)) ** 2
+
+        # Convert to decibels (log scale) for better visualization
+        spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
+
+        # Apply Min-Max normalization to the spectrogram_db
+        spectrogram_db_min, spectrogram_db_max = spectrogram_db.min(), spectrogram_db.max()
+        spectrogram_db = (spectrogram_db - spectrogram_db_min) / (spectrogram_db_max - spectrogram_db_min)
+
+        # print(spectrogram_db_min)
+        # print(spectrogram_db_max)
+        # print(spectrogram_db)
+
+        # Calculate frequency range and resolution
+        nyquist_frequency = audio_object.sample_rate / 2
+        frequency_resolution = nyquist_frequency / (window_size / 2)
+        frequency_range = np.arange(0, window_size // 2 + 1) * frequency_resolution
+
+        bottom_index = int(np.round(range[0] / frequency_resolution))
+        top_index = int(np.round(range[1] / frequency_resolution))
+
+        if stats:
+            print(f'Spectro_dB: {spectrogram_db}')
+            print(f'Freq Range: ({range[0]},{range[1]}) Hz')
+            print(f'Freq Resolution: {frequency_resolution} Hz')
+
+        # Cut the spectrogram to the desired frequency range and append to the list
+        spectrograms.append(spectrogram_db[bottom_index:top_index])
+
+    # Convert the list of spectrograms to a numpy array and return
+    return np.array(spectrograms)
+
+# Function to calculate MFCC of audio (Features are 2D)
+def mfcc(audio_object, n_mfcc=50, **kwargs):
+    stats = kwargs.get('stats', False)
+
+    # Normalize audio data
+    Audio_Object = normalize(audio_object)
+    data = Audio_Object.data
+
+    # Initialize an empty list to store the MFCCs for each channel
+    mfccs_all_channels = []
+
+    # Check if audio_object is multi-channel
+    if len(data.shape) == 1:
+        # Mono audio data, convert to a list with a single item for consistency
+        data = [data]
+
+    for channel_data in data:
+        # Calculate MFCCs for this channel
+        mfccs = librosa.feature.mfcc(y=channel_data, sr=audio_object.sample_rate, n_mfcc=n_mfcc)
+
+        # Normalize the MFCCs
+        mfccs = StandardScaler().fit_transform(mfccs)
+
+        if stats:
+            print(f'MFCC: {mfccs}')
+
+        # Append to the list
+        mfccs_all_channels.append(mfccs)
+
+    # Convert the list of MFCCs to a numpy array and return
+    return np.array(mfccs_all_channels)
+
+# Function to calculate spectrogram of audio (Features are 2D)
+def custom_filter_1(audio_object, **kwargs):
+    stats = kwargs.get('stats', False)
+    window_size = 32768
+    hop_length = 512
+    # freq_range_low = (100, 170) #if hovering only
+    freq_range_mid = (200, 2100)
+    # freq_range_high = (2600, 5000)
+    freq_range_high = (2600, 3200)
+
+    Audio_Object = normalize(audio_object)
+    data = Audio_Object.data
+
+    # Initialize an empty list to store the spectrograms for each channel
+    spectrograms = []
+
+    # Check if audio_object is multi-channel
+    if len(data.shape) == 1:
+        # Mono audio data, convert to a list with a single item for consistency
+        data = [data]
+
+    for channel_data in data:
+        # Calculate the spectrogram using Short-Time Fourier Transform (STFT)
+        spectrogram = np.abs(librosa.stft(channel_data, n_fft=window_size, hop_length=hop_length)) ** 2
+
+        # Convert to decibels (log scale) for better visualization
+        spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
+
+        # Apply Min-Max normalization to the spectrogram_db
+        spectrogram_db_min, spectrogram_db_max = spectrogram_db.min(), spectrogram_db.max()
+        spectrogram_db = (spectrogram_db - spectrogram_db_min) / (spectrogram_db_max - spectrogram_db_min)
+
+        # Calculate frequency range and resolution
+        nyquist_frequency = audio_object.sample_rate / 2
+        frequency_resolution = nyquist_frequency / (window_size / 2)
+        frequency_range = np.arange(0, window_size // 2 + 1) * frequency_resolution
+
+        bottom_index_mid = int(np.round(freq_range_mid[0] / frequency_resolution))
+        top_index_mid = int(np.round(freq_range_mid[1] / frequency_resolution))
+        bottom_index_high = int(np.round(freq_range_high[0] / frequency_resolution))
+        top_index_high = int(np.round(freq_range_high[1] / frequency_resolution))
+
+        spectrogram_mid = spectrogram_db[bottom_index_mid:top_index_mid]
+        spectrogram_high = spectrogram_db[bottom_index_high:top_index_high]
+
+        # Combine the 'mid' and 'high' spectrograms and append to the list
+        spectrograms.append(np.concatenate((spectrogram_mid, spectrogram_high)))
+
+        if stats:
+            print(f'Spectro_dB: {spectrogram_db}')
+            print(f'Freq Range Mid: ({freq_range_mid[0]},{freq_range_mid[1]}) Hz')
+            print(f'Freq Range High: ({freq_range_high[0]},{freq_range_high[1]}) Hz')
+            print(f'Freq Resolution: {frequency_resolution} Hz')
+
+    # Convert the list of spectrograms to a numpy array and return
+    return np.array(spectrograms)
+
+# Function to calculate Zero Crossing Rate of audio (Features are 1D)
+def zcr(audio_object, **kwargs):
+    def sliding_window_reshape(data, window_size, step_size=1):
+        """Reshape data using a sliding window."""
+        num_windows = (len(data) - window_size) // step_size + 1
+        output = np.zeros((num_windows, window_size))
+
+        for i in range(num_windows):
+            start = i * step_size
+            end = start + window_size
+            output[i] = data[start:end]
+
+        return output
+
+    stats = kwargs.get('stats', False)
+
+    # Normalize audio data
+    Audio_Object = normalize(audio_object)
+    data = Audio_Object.data
+
+    # Initialize an empty list to store the ZCRs for each channel
+    zcr_all_channels = []
+
+    # Check if audio_object is multi-channel
+    if len(data.shape) == 1:
+        # Mono audio data, convert to a list with a single item for consistency
+        data = [data]
+
+    for channel_data in data:
+        # Calculate ZCR for this channel
+        window_size = 4096 # 8192
+        hop_length = 1024 # 2048
+        zcr_values = librosa.feature.zero_crossing_rate(y=channel_data,
+                                                        frame_length=window_size,
+                                                        hop_length=hop_length)
+
+        # Normalize the ZCR values
+        zcr_values = StandardScaler().fit_transform(zcr_values.reshape(-1, 1)).flatten()
+
+        if stats:
+            print(f'ZCR: {zcr_values}')
+
+        # Reshape the ZCR using sliding window
+        window_size = 3
+        step_size = 1
+        zcr_2d = sliding_window_reshape(zcr_values, window_size, step_size)
+
+        # Now the shape of zcr_2d is [number_of_windows, window_size], add the channel dimension
+        zcr_all_channels.append(zcr_2d[:, :, np.newaxis])
+
+    # Convert the list of ZCRs to a numpy array and return
+    return np.array(zcr_all_channels)
+
+#-----------------------------------
+# OTHER ----------------------------
+#-----------------------------------
 # Function to Normalize Data
 def takeoff_trim(audio_object, takeoff_time):
     audio_copy = deepcopy(audio_object)
@@ -75,7 +275,7 @@ def generate_chunks(audio_object, length, training=False):
             labels.append(label)  # Add Label (folder name)
     # If the audio file is too long, shorten it
 
-    elif total_samples > num_samples:
+    else:
         while end <= total_samples:
             audio_copy = deepcopy(audio_object)
             audio_copy.data = audio_object.data[start:end]
@@ -128,157 +328,36 @@ def generate_chunks_4ch(audio_object, length, training=False):
 
 # Function to convert 4 channel wav to list of 4 objects
 def channel_to_objects(audio_object):
-    audio_a = deepcopy(audio_object)
-    audio_a.data = audio_object.data[0]
-    audio_b = deepcopy(audio_object)
-    audio_b.data = audio_object.data[1]
-    audio_c = deepcopy(audio_object)
-    audio_c.data = audio_object.data[2]
-    audio_d = deepcopy(audio_object)
-    audio_d.data = audio_object.data[3]
 
-    return [audio_a, audio_b, audio_c, audio_d]
+    if audio_object.num_channels == 4:
+        audio_a = deepcopy(audio_object)
+        audio_a.data = audio_object.data[0]
+        audio_b = deepcopy(audio_object)
+        audio_b.data = audio_object.data[1]
+        audio_c = deepcopy(audio_object)
+        audio_c.data = audio_object.data[2]
+        audio_d = deepcopy(audio_object)
+        audio_d.data = audio_object.data[3]
 
-# Function to calculate MFCC of audio
-def mfcc(audio_object, n_mfcc=50, **kwargs):
-    stats = kwargs.get('stats', False)
+        return [audio_a, audio_b, audio_c, audio_d]
 
-    # Normalize audio data
-    Audio_Object = normalize(audio_object)
-    data = Audio_Object.data
+    elif audio_object.num_channels == 3:
+        audio_a = deepcopy(audio_object)
+        audio_a.data = audio_object.data[0]
+        audio_b = deepcopy(audio_object)
+        audio_b.data = audio_object.data[1]
+        audio_c = deepcopy(audio_object)
+        audio_c.data = audio_object.data[2]
 
-    # Initialize an empty list to store the MFCCs for each channel
-    mfccs_all_channels = []
+        return [audio_a, audio_b, audio_c]
 
-    # Check if audio_object is multi-channel
-    if len(data.shape) == 1:
-        # Mono audio data, convert to a list with a single item for consistency
-        data = [data]
+    else:
+        audio_a = deepcopy(audio_object)
+        audio_a.data = audio_object.data[0]
+        audio_b = deepcopy(audio_object)
+        audio_b.data = audio_object.data[1]
 
-    for channel_data in data:
-        # Calculate MFCCs for this channel
-        mfccs = librosa.feature.mfcc(y=channel_data, sr=audio_object.sample_rate, n_mfcc=n_mfcc)
-
-        # Normalize the MFCCs
-        mfccs = StandardScaler().fit_transform(mfccs)
-
-        if stats:
-            print(f'MFCC: {mfccs}')
-
-        # Append to the list
-        mfccs_all_channels.append(mfccs)
-
-    # Convert the list of MFCCs to a numpy array and return
-    return np.array(mfccs_all_channels)
-
-# Function to calculate spectrogram of audio
-def custom_filter_1(audio_object, **kwargs):
-    stats = kwargs.get('stats', False)
-    window_size = 32768
-    hop_length = 512
-    # freq_range_low = (100, 170) #if hovering only
-    freq_range_mid = (200, 2100)
-    # freq_range_high = (2600, 5000)
-    freq_range_high = (2600, 3200)
-
-    Audio_Object = normalize(audio_object)
-    data = Audio_Object.data
-
-    # Initialize an empty list to store the spectrograms for each channel
-    spectrograms = []
-
-    # Check if audio_object is multi-channel
-    if len(data.shape) == 1:
-        # Mono audio data, convert to a list with a single item for consistency
-        data = [data]
-
-    for channel_data in data:
-        # Calculate the spectrogram using Short-Time Fourier Transform (STFT)
-        spectrogram = np.abs(librosa.stft(channel_data, n_fft=window_size, hop_length=hop_length)) ** 2
-
-        # Convert to decibels (log scale) for better visualization
-        spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
-
-        # Apply Min-Max normalization to the spectrogram_db
-        spectrogram_db_min, spectrogram_db_max = spectrogram_db.min(), spectrogram_db.max()
-        spectrogram_db = (spectrogram_db - spectrogram_db_min) / (spectrogram_db_max - spectrogram_db_min)
-
-        # Calculate frequency range and resolution
-        nyquist_frequency = audio_object.sample_rate / 2
-        frequency_resolution = nyquist_frequency / (window_size / 2)
-        frequency_range = np.arange(0, window_size // 2 + 1) * frequency_resolution
-
-        bottom_index_mid = int(np.round(freq_range_mid[0] / frequency_resolution))
-        top_index_mid = int(np.round(freq_range_mid[1] / frequency_resolution))
-        bottom_index_high = int(np.round(freq_range_high[0] / frequency_resolution))
-        top_index_high = int(np.round(freq_range_high[1] / frequency_resolution))
-
-        spectrogram_mid = spectrogram_db[bottom_index_mid:top_index_mid]
-        spectrogram_high = spectrogram_db[bottom_index_high:top_index_high]
-
-        # Combine the 'mid' and 'high' spectrograms and append to the list
-        spectrograms.append(np.concatenate((spectrogram_mid, spectrogram_high)))
-
-        if stats:
-            print(f'Spectro_dB: {spectrogram_db}')
-            print(f'Freq Range Mid: ({freq_range_mid[0]},{freq_range_mid[1]}) Hz')
-            print(f'Freq Range High: ({freq_range_high[0]},{freq_range_high[1]}) Hz')
-            print(f'Freq Resolution: {frequency_resolution} Hz')
-
-    # Convert the list of spectrograms to a numpy array and return
-    return np.array(spectrograms)
-
-# Function to calculate spectrogram of audio
-def spectrogram(audio_object, range=(200, 2100), **kwargs): #80-2000
-    stats = kwargs.get('stats', False)
-    window_size = 32768
-    hop_length = 512
-
-    data = audio_object.data
-    # Audio_Object = normalize(audio_object)
-    # data = Audio_Object.data
-
-    # Initialize an empty list to store the spectrograms for each channel
-    spectrograms = []
-
-    # Check if audio_object is multi-channel
-    if len(data.shape) == 1:
-        # Mono audio data, convert to a list with a single item for consistency
-        data = [data]
-
-    for channel_data in data:
-        # Calculate the spectrogram using Short-Time Fourier Transform (STFT)
-        spectrogram = np.abs(librosa.stft(channel_data, n_fft=window_size, hop_length=hop_length)) ** 2
-
-        # Convert to decibels (log scale) for better visualization
-        spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
-
-        # Apply Min-Max normalization to the spectrogram_db
-        spectrogram_db_min, spectrogram_db_max = spectrogram_db.min(), spectrogram_db.max()
-        spectrogram_db = (spectrogram_db - spectrogram_db_min) / (spectrogram_db_max - spectrogram_db_min)
-
-        # print(spectrogram_db_min)
-        # print(spectrogram_db_max)
-        # print(spectrogram_db)
-
-        # Calculate frequency range and resolution
-        nyquist_frequency = audio_object.sample_rate / 2
-        frequency_resolution = nyquist_frequency / (window_size / 2)
-        frequency_range = np.arange(0, window_size // 2 + 1) * frequency_resolution
-
-        bottom_index = int(np.round(range[0] / frequency_resolution))
-        top_index = int(np.round(range[1] / frequency_resolution))
-
-        if stats:
-            print(f'Spectro_dB: {spectrogram_db}')
-            print(f'Freq Range: ({range[0]},{range[1]}) Hz')
-            print(f'Freq Resolution: {frequency_resolution} Hz')
-
-        # Cut the spectrogram to the desired frequency range and append to the list
-        spectrograms.append(spectrogram_db[bottom_index:top_index])
-
-    # Convert the list of spectrograms to a numpy array and return
-    return np.array(spectrograms)
+        return [audio_a, audio_b]
 
 # Function to calculate the Signal to Noise Ratio with PSD
 def signal_noise_ratio_psd(signal, noise, ):
@@ -358,3 +437,22 @@ class Process:
     def __init__(self, source_directory, dest_directory):
 
         utils.copy_directory_structure(source_directory, dest_directory)
+
+
+
+
+if __name__ == '__main__':
+
+    filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Orlando/dataset 5/1/5_target_1_a.wav'
+    audio = Audio_Abstract(filepath=filepath)
+    print(audio)
+
+    feature = zcr(audio, stats=False)
+    print(feature.shape)
+
+    feature = spectrogram(audio)
+    print(feature.shape)
+
+    feature = mfcc(audio)
+    print(feature.shape)
+
