@@ -104,7 +104,7 @@ def custom_filter_1(audio_object, **kwargs):
     window_size = 32768
     hop_length = 512
     # freq_range_low = (100, 170) #if hovering only
-    freq_range_mid = (200, 2100)
+    freq_range_mid = (900, 2100)
     # freq_range_high = (2600, 5000)
     freq_range_high = (2600, 3200)
 
