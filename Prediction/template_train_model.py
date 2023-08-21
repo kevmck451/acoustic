@@ -51,7 +51,13 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, 
                                           metric=specs['metric'], patience=specs['patience'],
                                           epochs=specs['epochs'], batch_size=specs['batch_size'])
     elif model_type == 'deep_2':
-        model = create_model.deep_model_1(features, labels, test_size=specs['test_size'],
+        model = create_model.deep_model_2(features, labels, test_size=specs['test_size'],
+                                          random_state=specs['random_state'], l2_value=specs['l2_value'],
+                                          optimizer=specs['optimizer'], loss=specs['loss'],
+                                          metric=specs['metric'], patience=specs['patience'],
+                                          epochs=specs['epochs'], batch_size=specs['batch_size'])
+    elif model_type == 'deep_3':
+        model = create_model.deep_model_3(features, labels, test_size=specs['test_size'],
                                           random_state=specs['random_state'], l2_value=specs['l2_value'],
                                           optimizer=specs['optimizer'], loss=specs['loss'],
                                           metric=specs['metric'], patience=specs['patience'],

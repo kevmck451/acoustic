@@ -11,7 +11,6 @@ import numpy as np
 # Load Data from a Dataset with Labels and Extract Features
 def load_audio_data(path, length, feature_type):
     print('Loading Dataset')
-
     audio_ob_list = []
     label_list = []
     for file in progress_bar(Path(path).rglob('*.wav')):
@@ -32,6 +31,13 @@ def load_audio_data(path, length, feature_type):
 
     master_ob_list = list(audio_ob_list)  # Creating a new 1D list
     master_label_list = list(label_list)  # Creating a new 1D list
+
+    print('Preprocessing Data')
+    prepro_ob_list = []
+    # for audio in progress_bar(master_ob_list):
+    #     # Spectral Subtraction
+    #     process.spectra_subtraction_hex(audio)
+
 
     print('Extracting Features')
     features_list = []
