@@ -101,7 +101,7 @@ def mfcc(audio_object, n_mfcc=50, **kwargs):
 # Function to calculate spectrogram of audio (Features are 2D)
 def custom_filter_1(audio_object, **kwargs):
     stats = kwargs.get('stats', False)
-    window_size = 32768
+    window_size = 16384
     hop_length = 512
     # freq_range_low = (100, 170) #if hovering only
     freq_range_mid = (900, 2100)
