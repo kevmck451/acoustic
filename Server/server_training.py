@@ -20,7 +20,7 @@ if __name__ == '__main__':
         'optimizer': 'adam',
         'loss': 'binary_crossentropy',
         'metric': 'accuracy',
-        'patience': 8,
+        'patience': 10,
         'epochs': 50,
         'batch_size': 12}
 
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     Train_Detect_Model(dataset,
                        sample_lengths[0],
                        feature_types[2],
-                       model_types[1],
+                       model_types[2],
                        specs,
                        testing_path,
                        load_data=True)
