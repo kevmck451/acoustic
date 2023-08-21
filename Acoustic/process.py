@@ -15,7 +15,7 @@ import librosa
 # FEATURES -------------------------
 #-----------------------------------
 # Function to calculate spectrogram of audio (Features are 2D)
-def spectrogram(audio_object, range=(200, 2100), **kwargs): #80-2000
+def spectrogram(audio_object, range=(130, 1300), **kwargs): #80-2000
     stats = kwargs.get('stats', False)
     window_size = 32768
     hop_length = 512
