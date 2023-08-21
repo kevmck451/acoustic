@@ -22,13 +22,13 @@ if __name__ == '__main__':
         'metric': 'accuracy',
         'patience': 10,
         'epochs': 50,
-        'batch_size': 12}
+        'batch_size': 24}
 
     for model in model_types:
         # Train Model using all parameters
         Train_Detect_Model(dataset,
                            sample_lengths[0],
-                           feature_types[1],
+                           feature_types[0],
                            model,
                            specs,
                            testing_path,
