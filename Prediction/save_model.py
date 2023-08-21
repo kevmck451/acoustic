@@ -9,11 +9,11 @@ def save_model(model, model_type, feature, input_time, accuracy, specs, runtime)
     text_extension = '.txt'
     lib_dir = f'{Path.cwd()}/Prediction/model_library'
 
-    model_saveto = f'{lib_dir}/{model_type}_{feature}_{str(input_time)}_{accuracy}_{str(index)}{model_extension}'
+    model_saveto = f'{lib_dir}/{feature}_{str(input_time)}_{model_type}_{accuracy}_{str(index)}{model_extension}'
 
     while Path(model_saveto).exists():
         index += 1
-        model_saveto = f'{lib_dir}/{model_type}_{feature}_{str(input_time)}_{accuracy}_{str(index)}{model_extension}'
+        model_saveto = f'{lib_dir}/{feature}_{str(input_time)}_{model_type}_{accuracy}_{str(index)}{model_extension}'
 
     model.save(model_saveto)
 
