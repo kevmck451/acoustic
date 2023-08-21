@@ -22,7 +22,7 @@ if __name__ == '__main__':
         'metric': 'accuracy',
         'patience': 10,
         'epochs': 50,
-        'batch_size': 24}
+        'batch_size': 12}
 
     while True:
         # Train Model using all parameters
