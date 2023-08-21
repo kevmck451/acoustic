@@ -24,19 +24,24 @@ if __name__ == '__main__':
         'epochs': 50,
         'batch_size': 12}
 
-    while True:
+    for model in model_types:
         # Train Model using all parameters
         Train_Detect_Model(dataset,
                            sample_lengths[0],
                            feature_types[1],
-                           model_types[0],
+                           model,
                            specs,
                            testing_path,
                            load_data=True)
 
-
-
-
+    # # Train Model using all parameters
+    # Train_Detect_Model(dataset,
+    #                    sample_lengths[0],
+    #                    feature_types[1],
+    #                    model_types[0],
+    #                    specs,
+    #                    testing_path,
+    #                    load_data=True)
 
 
 '''
