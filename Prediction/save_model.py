@@ -18,7 +18,7 @@ def save_model(model, model_type, feature, input_time, accuracy, specs, runtime)
     model.save(model_saveto)
 
     # Save text file with all info about model
-    text_saveto = f'{lib_dir}/{model_type}_{feature}_{str(input_time)}_{accuracy}_{str(index)}{text_extension}'
+    text_saveto = f'{lib_dir}/{feature}_{str(input_time)}_{model_type}_{accuracy}_{str(index)}{text_extension}'
 
     with open(text_saveto, 'w') as f:
         f.write('Model Type: ' + model_type + '\n')
