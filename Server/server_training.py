@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
     sample_lengths = [10, 8, 6, 4, 2]
     feature_types = ['spectral', 'filter1', 'mfcc']
-    model_types = ['deep_1', 'deep_3'] #'basic_1', 'basic_2',  'deep_2',
+    model_types = ['deep_3'] #'basic_1', 'basic_2', 'deep_1', 'deep_2',
 
     specs = {
         'test_size': 0.2,
