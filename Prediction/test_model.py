@@ -67,8 +67,8 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
     # Compute accuracy
     accuracy = accuracy_score(y_true, y_pred)
     accuracy = int(np.round((accuracy * 100)))
-    print(f'Accuracy: {accuracy}%')
-    print(f'Scores: {y_pred_scores}')
+    # print(f'Accuracy: {accuracy}%')
+    # print(f'Scores: {y_pred_scores}')
 
     if display:
         # Create DataFrame
