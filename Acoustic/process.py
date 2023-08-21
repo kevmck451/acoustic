@@ -4,6 +4,7 @@ from Acoustic.audio_abstract import Audio_Abstract
 from Acoustic import utils
 
 from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
 from copy import deepcopy
 from scipy import signal
 import numpy as np
@@ -431,6 +432,46 @@ def normalize(audio_object, percentage=95):
 
     return audio_normalized
 
+# Function to get average spectral values
+def average_spectrum(audio_object, **kwargs):
+    frequency_range = kwargs.get('frequency_range', (0, 20000))
+    data = audio_object.data
+    spectrum = np.fft.fft(data)  # Apply FFT to the audio data
+    magnitude = np.abs(spectrum)
+    frequency_bins = np.fft.fftfreq(len(data), d=1 / audio_object.sample_rate)
+    positive_freq_mask = (frequency_bins >= frequency_range[0]) & (frequency_bins <= frequency_range[1])
+    channel_spectrums = [magnitude[positive_freq_mask][:len(frequency_bins)]]
+    average_spectrum = np.mean(channel_spectrums, axis=0)
+
+    return average_spectrum, frequency_bins
+
+
+#-----------------------------------
+# PREPROCESSING --------------------
+#-----------------------------------
+# Function to subtract Hex from sample
+def spectra_subtraction_hex(audio_object, **kwargs):
+    pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class Process:
@@ -443,16 +484,19 @@ class Process:
 
 if __name__ == '__main__':
 
-    filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Orlando/dataset 5/1/5_target_1_a.wav'
+    filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Experiments/Static Tests/Static Test 1/Samples/Engine_1/3_10m-D-DEIdle.wav'
     audio = Audio_Abstract(filepath=filepath)
-    print(audio)
+    audio.data = audio.data[2]
+    audio = normalize(audio)
+    # print(audio)
 
-    feature = zcr(audio, stats=False)
-    print(feature.shape)
+    # feature = zcr(audio, stats=False)
+    # print(feature.shape)
+    #
+    # feature = spectrogram(audio)
+    # print(feature.shape)
+    #
+    # feature = mfcc(audio)
+    # print(feature.shape)
 
-    feature = spectrogram(audio)
-    print(feature.shape)
-
-    feature = mfcc(audio)
-    print(feature.shape)
-
+    spectra_subtraction_hex(audio)
