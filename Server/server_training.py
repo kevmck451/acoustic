@@ -31,7 +31,7 @@ if __name__ == '__main__':
                        model_types[0],
                        specs,
                        testing_path,
-                       load_data=False)
+                       load_data=True)
 
 
 
