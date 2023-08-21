@@ -134,8 +134,12 @@ if __name__ == '__main__':
     # model = load_model('Prediction/model_library/deep_1_mfcc_6_73_0.h5')
     # test_model_accuracy(model, testing_path, sample_lengths[2], feature_types[2], display=True)
 
-    model = load_model('../Feature_Testing/Prediction/model_library/deep_1_mfcc_2_46_0.h5')
-    test_model_accuracy(model, testing_path, sample_lengths[4], feature_types[2], display=True)
+    model = 'spectral_10_basic_1_100_1'
+    sample_length = int(model.split('_')[1])
+    feature_type = model.split('_')[0]
+
+    model = load_model(f'Prediction/model_library/{model}.h5')
+    test_model_accuracy(model, testing_path, sample_length, feature_type, display=True)
 
 
 

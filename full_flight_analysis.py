@@ -23,7 +23,7 @@ time_stats = time_class('Detection')
 mission = 'Dynamic_1a'
 # mission = 'Dynamic_1b'
 # mission = 'Dynamic_1c'
-model_path = 'Prediction/model_library/detect_spec_10_100_0.h5'
+model_path = 'Prediction/Prediction/model_library/detect_spec_10_100_0.h5'
 sample_length = int(Path(model_path).stem.split('_')[2])
 
 base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/'

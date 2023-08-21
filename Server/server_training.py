@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
     sample_lengths = [10, 8, 6, 4, 2]
     feature_types = ['spectral', 'filter1', 'mfcc']
-    model_types = ['basic_1', 'basic_2', 'deep_1', 'deep_2', 'deep_3']
+    model_types = ['deep_1', 'deep_3'] #'basic_1', 'basic_2',  'deep_2',
 
     specs = {
         'test_size': 0.2,
@@ -22,13 +22,13 @@ if __name__ == '__main__':
         'metric': 'accuracy',
         'patience': 10,
         'epochs': 50,
-        'batch_size': 24}
+        'batch_size': 12}
 
     for model in model_types:
         # Train Model using all parameters
         Train_Detect_Model(dataset,
                            sample_lengths[0],
-                           feature_types[0],
+                           feature_types[2],
                            model,
                            specs,
                            testing_path,
