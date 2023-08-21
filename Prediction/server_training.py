@@ -25,10 +25,13 @@ if __name__ == '__main__':
         'batch_size': 24}
 
     # Train Model using all parameters
-    for length in sample_lengths:
-        for feature in feature_types:
-            for model in model_types:
-                Train_Detect_Model(dataset, length, feature, model, specs, testing_path, load_data=False)
+    Train_Detect_Model(dataset,
+                       sample_lengths[0],
+                       feature_types[2],
+                       model_types[0],
+                       specs,
+                       testing_path,
+                       load_data=False)
 
 
 
