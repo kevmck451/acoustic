@@ -27,8 +27,8 @@ if __name__ == '__main__':
     # Train Model using all parameters
     Train_Detect_Model(dataset,
                        sample_lengths[0],
-                       feature_types[2],
-                       model_types[2],
+                       feature_types[0],
+                       model_types[1],
                        specs,
                        testing_path,
                        load_data=True)
