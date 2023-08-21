@@ -32,7 +32,15 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
     y_pred_scores = []
     y_names = []
 
-    features, labels = load_audio_data(Test_Directory, sample_length, feature_type)
+    save_path = f'{Path.cwd()}/Prediction/features_labels'
+
+    try:
+        features = np.load(f'{save_path}/TEST_features_{feature_type}_{sample_length}s.npy')
+        labels = np.load(f'{save_path}/TEST_labels_{feature_type}_{sample_length}s.npy')
+    except:
+        features, labels = load_audio_data(Test_Directory, sample_length, feature_type)
+        np.save(f'{save_path}/TEST_features_{feature_type}_{sample_length}s.npy', features)
+        np.save(f'{save_path}/TEST_labels_{feature_type}_{sample_length}s.npy', labels)
 
     for i, (feature, label) in enumerate(zip(features, labels)):
         feature = np.expand_dims(feature, axis=0)
