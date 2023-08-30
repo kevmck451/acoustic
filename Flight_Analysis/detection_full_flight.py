@@ -71,7 +71,7 @@ def full_flight_detection(audio_object, model_path, display=False):
 
         # display all four channel predicitions and average
         # fig, axs = plt.subplots(5, 1, figsize=(14, 8))
-        # plt.suptitle(f'Sound Source Detection-Model: {Path(model_dir).stem}')
+        # plt.suptitle(f'Sound Source Flight_Analysis-Model: {Path(model_dir).stem}')
         #
         # # Loop over your 4 lists
         # for i in range(4):

@@ -1,4 +1,4 @@
-# Probability Detection Method - Developed by Brad Rowe
+# Probability Flight_Analysis Method - Developed by Brad Rowe
 
 from Acoustic.audio_abstract import Audio_Abstract
 
@@ -11,7 +11,7 @@ import numpy as np
 
 
 
-def generate_spec_comp_predictions(df, i, std_mult, err='RMSE', audio_object=None):
+def generate_spec_comp_predictions(std_mult, audio_object=None):
 
     # Audio Object to Predict
     time_data_ns_temp, sr_ns = audio_object.data, audio_object.sample_rate
@@ -23,7 +23,9 @@ def generate_spec_comp_predictions(df, i, std_mult, err='RMSE', audio_object=Non
     audio_noise_reference = Audio_Abstract(filepath='reference_audios/Noise_Angel_2.wav')
     time_data_n_temp, sr_n = audio_noise_reference.data, audio_noise_reference.sample_rate
 
+    # -------------------------------------------------
     # Check for audio data shape and make adjustments
+    # -------------------------------------------------
     if time_data_ns_temp.shape[1] == time_data_s_temp.shape[1] and time_data_ns_temp.shape[1] == \
             time_data_n_temp.shape[1] and time_data_ns_temp.shape[1] % 2 == 1:
         time_data_ns = np.empty(shape=(time_data_ns_temp.shape[0], time_data_ns_temp.shape[1] - 1))
@@ -77,6 +79,9 @@ def generate_spec_comp_predictions(df, i, std_mult, err='RMSE', audio_object=Non
         time_data_s = time_data_s_temp
         time_data_n = time_data_n_temp
 
+    # -------------------------------------------------
+    # Something
+    # -------------------------------------------------
     time_data_s_temp = time_data_s
     time_data_n_temp = time_data_n
 
@@ -86,53 +91,29 @@ def generate_spec_comp_predictions(df, i, std_mult, err='RMSE', audio_object=Non
     for j in range(4):
         time_data_s[j] = time_data_s_temp[j][0:time_data_ns.shape[1]]
         time_data_n[j] = time_data_n_temp[j][0:time_data_ns.shape[1]]
+
     time_data_s_norm = np.empty(shape=time_data_s.shape)
     time_data_n_norm = np.empty(shape=time_data_n.shape)
     time_data_ns_norm = np.empty(shape=time_data_ns.shape)
-    # time_data_ns_n_norm = np.empty(shape=time_data_ns_n.shape)
 
     for j in range(4):
         time_data_s_norm[j] = (time_data_s[j] - np.mean(time_data_s[j])) / np.std(time_data_s[j])
         time_data_n_norm[j] = (time_data_n[j] - np.mean(time_data_n[j])) / np.std(time_data_n[j])
         time_data_ns_norm[j] = (time_data_ns[j] - np.mean(time_data_ns[j])) / np.std(time_data_ns[j])
-        # time_data_ns_n_norm[j] = (time_data_ns_n[j] - np.mean(time_data_ns_n[j]))/np.std(time_data_ns_n[j])
-    time_data_s_mono = librosa.to_mono(time_data_s)
-    time_data_n_mono = librosa.to_mono(time_data_n)
-    time_data_ns_mono = librosa.to_mono(time_data_ns)
-    # time_data_ns_n_mono = librosa.to_mono(time_data_ns_n)
 
     time_data_s_norm_mono = librosa.to_mono(time_data_s_norm)
     time_data_n_norm_mono = librosa.to_mono(time_data_n_norm)
-    time_data_ns_norm_mono = librosa.to_mono(time_data_ns_norm)
-    # time_data_ns_n_norm_mono = librosa.to_mono(time_data_ns_n_norm)
 
-    # for i in tqdm(range(df.shape[0])):
-    if df.at[i, 'Norm'] == 'None' or df.at[i, 'Norm'] == 'Late':
-        filtered_noise = time_data_n_mono
-        filtered_sig = time_data_s_mono
-        if df.at[i, 'S/N Test'] == 'S':
-            temp = wiener_filt(filtered_sig, time_data_ns[0], filtered_noise)
-            filtered_data = np.empty(shape=(time_data_ns.shape[0], len(temp)))
-            for k in range(4):
-                filtered_data[k] = wiener_filt(filtered_sig, time_data_ns[k], filtered_noise)
-        # else:
-        #     temp = wiener_filt(filtered_sig, time_data_ns_n[0], filtered_noise)
-        #     filtered_data = np.empty(shape=(time_data_ns_n.shape[0], len(temp)))
-        #     for k in range(4):
-        #         filtered_data[k] = wiener_filt(filtered_sig, time_data_ns_n[k], filtered_noise)
-    else:
-        filtered_noise = time_data_n_norm_mono
-        filtered_sig = time_data_s_norm_mono
-        if df.at[i, 'S/N Test'] == 'S':
-            temp = wiener_filt(filtered_sig, time_data_ns_norm[0], filtered_noise)
-            filtered_data = np.empty(shape=(time_data_ns_norm.shape[0], len(temp)))
-            for k in range(4):
-                filtered_data[k] = wiener_filt(filtered_sig, time_data_ns_norm[k], filtered_noise)
-        # else:
-        #     temp = wiener_filt(filtered_sig, time_data_ns_n_norm[0], filtered_noise)
-        #     filtered_data = np.empty(shape=(time_data_ns_n_norm.shape[0], len(temp)))
-        #     for k in range(4):
-        #         filtered_data[k] = wiener_filt(filtered_sig, time_data_ns_n_norm[k], filtered_noise)
+    # -------------------------------------------------
+    # Something
+    # -------------------------------------------------
+    filtered_noise = time_data_n_norm_mono
+    filtered_sig = time_data_s_norm_mono
+
+    temp = wiener_filt(filtered_sig, time_data_ns_norm[0], filtered_noise)
+    filtered_data = np.empty(shape=(time_data_ns_norm.shape[0], len(temp)))
+    for k in range(4):
+        filtered_data[k] = wiener_filt(filtered_sig, time_data_ns_norm[k], filtered_noise)
 
     filtered_noise_2 = matched_filter_freq(filtered_sig, filtered_noise, filtered_noise)
     filtered_sig_2 = matched_filter_freq(filtered_sig, filtered_sig, filtered_noise)
@@ -142,53 +123,20 @@ def generate_spec_comp_predictions(df, i, std_mult, err='RMSE', audio_object=Non
     for k in range(4):
         filtered_data_2[k] = matched_filter_freq(filtered_sig, filtered_data[k], filtered_noise)
 
+    # -------------------------------------------------
+    # Something
+    # -------------------------------------------------
     filtered_data_mono = librosa.to_mono(filtered_data_2)
     filtered_noise_mono = librosa.to_mono(filtered_noise_2)
     filtered_sig_mono = librosa.to_mono(filtered_sig_2)
-
-    # sub_freq, sub_psd = signal.welch(x=filtered_data_mono, fs=sr_ns, nperseg=32768, average='mean')
-    # n_freq, n_psd = signal.welch(x=filtered_noise_mono, fs=sr_n, nperseg=32768, average='mean')
-    # s_freq, s_psd = signal.welch(x=filtered_sig_mono, fs=sr_s, nperseg=32768, average='mean')
-
-    # low_count = len(sub_freq[sub_freq < mat_filt_welch[0]])
-    # high_count = len(sub_freq[sub_freq > mat_filt_welch[1]])
-    # sub_freq = sub_freq[sub_freq >= mat_filt_welch[0]]
-    # sub_freq = sub_freq[sub_freq <= mat_filt_welch[1]]
-    # sub_psd = sub_psd[low_count:-high_count]
-
-    # low_count = len(n_freq[n_freq < mat_filt_welch[0]])
-    # high_count = len(n_freq[n_freq > mat_filt_welch[1]])
-    # n_freq = n_freq[n_freq >= mat_filt_welch[0]]
-    # n_freq = n_freq[n_freq <= mat_filt_welch[1]]
-    # n_psd = n_psd[low_count:-high_count]
-
-    # low_count = len(s_freq[s_freq < mat_filt_welch[0]])
-    # high_count = len(s_freq[s_freq > mat_filt_welch[1]])
-    # s_freq = s_freq[s_freq >= mat_filt_welch[0]]
-    # s_freq = s_freq[s_freq <= mat_filt_welch[1]]
-    # s_psd = s_psd[low_count:-high_count]
-
-    # sub_psd = 10*np.log10(sub_psd/(10**(-12)))
-    # n_psd = 10*np.log10(n_psd/(10**(-12)))
-    # s_psd = 10*np.log10(s_psd/(10**(-12)))
-
-    # plt.plot(sub_freq, sub_psd, label='H(S + N)', lw=1, alpha=0.5)
-    # plt.plot(n_freq, n_psd, label='H(N)', lw=1, alpha=0.5)
-    # plt.plot(s_freq, s_psd, label='H(S)', lw=1, alpha=0.5)
-    # plt.xlabel('Frequency (Hz)')
-    # plt.ylabel('Power')
-    # plt.grid(True)
-    # plt.legend()
-    # plt.show()
 
     fd_freqs, fd_hst = apply_hst(filtered_data_mono, sr_ns)
     n_freqs, n_hst = apply_hst(filtered_noise_mono, sr_n)
     s_freqs, s_hst = apply_hst(filtered_sig_mono, sr_s)
 
-    if df.at[i, 'Norm'] == 'Late' or df.at[i, 'Norm'] == 'Both':
-        fd_hst = np.true_divide(fd_hst - np.mean(fd_hst), np.std(fd_hst))
-        n_hst = np.true_divide(n_hst - np.mean(n_hst), np.std(n_hst))
-        s_hst = np.true_divide(s_hst - np.mean(s_hst), np.std(s_hst))
+    fd_hst = np.true_divide(fd_hst - np.mean(fd_hst), np.std(fd_hst))
+    n_hst = np.true_divide(n_hst - np.mean(n_hst), np.std(n_hst))
+    s_hst = np.true_divide(s_hst - np.mean(s_hst), np.std(s_hst))
 
     fd_freqs_new = np.linspace(np.min(fd_freqs), np.max(fd_freqs), ds, endpoint=True)
     fd_hst_new = np.interp(fd_freqs_new, fd_freqs, fd_hst)
@@ -197,51 +145,19 @@ def generate_spec_comp_predictions(df, i, std_mult, err='RMSE', audio_object=Non
     n_freqs_new = np.linspace(np.min(n_freqs), np.max(n_freqs), ds, endpoint=True)
     n_hst_new = np.interp(n_freqs_new, n_freqs, n_hst)
 
-    # plt.plot(fd_freqs_new, fd_hst_new, label='H(S + N)', lw=1, alpha=0.5)
-    # plt.plot(s_freqs_new, s_hst_new, label='H(S)', lw=1, alpha=0.5)
-    # plt.plot(n_freqs_new, n_hst_new, label='H(N)', lw=1, alpha=0.5)
-    # plt.title('Harmonic Spectral Transform')
-    # plt.xlabel('Frequency (Hz)')
-    # plt.ylabel('Magnitude')
-    # plt.grid(True)
-    # plt.legend()
-    # plt.show()
+    # -------------------------------------------------
+    # Something
+    # -------------------------------------------------
+    NS_Std = np.std(fd_hst_new)
+    s_e = s_hst_new[fd_hst_new > std_mult * NS_Std] - fd_hst_new[fd_hst_new > std_mult * NS_Std]
+    n_e = n_hst_new[fd_hst_new > std_mult * NS_Std] - fd_hst_new[fd_hst_new > std_mult * NS_Std]
+    s_se, n_se = np.square(s_e), np.square(n_e)
+    S_MSE, N_MSE = np.mean(s_se), np.mean(n_se)
+    S_RMSE, N_RMSE = np.sqrt(S_MSE), np.sqrt(N_MSE)
 
-    df.at[i, 'NS Mean'] = np.mean(fd_hst_new)
-    df.at[i, 'NS Std'] = np.std(fd_hst_new)
-    df.at[i, 'NS Max'] = np.max(fd_hst_new)
-    df.at[i, 'NS Freq'] = fd_freqs_new[np.where(fd_hst_new == df.at[i, 'NS Max'])[0][0]]
+    Hypothesis = 1 if S_RMSE < N_RMSE else 0
 
-    df.at[i, 'S Mean'] = np.mean(s_hst_new)
-    df.at[i, 'S Std'] = np.std(s_hst_new)
-    df.at[i, 'S Max'] = np.max(s_hst_new)
-    df.at[i, 'S Freq'] = s_freqs_new[np.where(s_hst_new == df.at[i, 'S Max'])[0][0]]
-
-    df.at[i, 'N Mean'] = np.mean(n_hst_new)
-    df.at[i, 'N Std'] = np.std(n_hst_new)
-    df.at[i, 'N Max'] = np.max(n_hst_new)
-    df.at[i, 'N Freq'] = n_freqs_new[np.where(n_hst_new == df.at[i, 'N Max'])[0][0]]
-
-    # Error Before
-    # s_e = s_hst_new - fd_hst_new
-    # n_e = n_hst_new - fd_hst_new
-    # Error 1, 2, 3, 4 - std_mult = 1, 2, 3, 4
-    s_e = s_hst_new[fd_hst_new > std_mult * df.at[i, 'NS Std']] - fd_hst_new[
-        fd_hst_new > std_mult * df.at[i, 'NS Std']]
-    n_e = n_hst_new[fd_hst_new > std_mult * df.at[i, 'NS Std']] - fd_hst_new[
-        fd_hst_new > std_mult * df.at[i, 'NS Std']]
-    s_ae = np.abs(s_e)
-    n_ae = np.abs(n_e)
-    df.at[i, 'S MAE'] = np.mean(s_ae)
-    df.at[i, 'N MAE'] = np.mean(n_ae)
-    s_se = np.square(s_e)
-    n_se = np.square(n_e)
-    df.at[i, 'S MSE'] = np.mean(s_se)
-    df.at[i, 'N MSE'] = np.mean(n_se)
-    df.at[i, 'S RMSE'] = np.sqrt(df.at[i, 'S MSE'])
-    df.at[i, 'N RMSE'] = np.sqrt(df.at[i, 'N MSE'])
-    df.at[i, 'Hypothesis'] = 'Threat' if df.at[i, 'S ' + err] < df.at[i, 'N ' + err] else 'No Threat'
-    return df
+    return Hypothesis
 
 def wiener_filt(sig, noisy_sig, noise):
     s_per = np.mean(np.square(np.abs(librosa.stft(sig))), axis=1)

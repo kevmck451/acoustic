@@ -18,7 +18,7 @@ import process
 from pathlib import Path
 import numpy as np
 
-time_stats = time_class('Detection')
+time_stats = time_class('Flight_Analysis')
 
 mission = 'Dynamic_1a'
 # mission = 'Dynamic_1b'

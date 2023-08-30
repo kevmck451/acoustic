@@ -1,7 +1,7 @@
 
 
-from Detection.detection_takeoff_audio import takeoff_detection_audio
-from Detection.detection_full_flight import full_flight_detection
+from Flight_Analysis.detection_takeoff_audio import takeoff_detection_audio
+from Flight_Analysis.detection_full_flight import full_flight_detection
 import Acoustic.process as process
 
 import matplotlib.pyplot as plt

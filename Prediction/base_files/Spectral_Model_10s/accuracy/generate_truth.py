@@ -18,6 +18,6 @@ def generate_truth(directory):
 
 if __name__ == '__main__':
     base_path = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data')
-    directory = base_path / Path('ML Model Data/Static Detection/dataset')
+    directory = base_path / Path('ML Model Data/Static Flight_Analysis/dataset')
 
     print(f'truth = {generate_truth(directory)}')

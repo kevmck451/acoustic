@@ -56,7 +56,7 @@ fig, ax = plt.subplots(figsize=(14, 6))
 bars = ax.bar(data['System'], data['Score'], color=data['Score'].apply(lambda x: 'g' if x >= 50 else 'r'))
 
 # Draw a line at 50% score
-ax.axhline(50, color='black', linestyle='dotted', label='Detection Threshold')
+ax.axhline(50, color='black', linestyle='dotted', label='Flight_Analysis Threshold')
 
 # Set title and labels
 ax.set_title(f'Free Flight System Predictions: {accuracy}%', size=14)
@@ -75,7 +75,7 @@ ax.tick_params(axis='x', rotation=90)
 legend_handles = [
     mpatches.Patch(color='g', label='Predicted Correctly'),
     mpatches.Patch(color='r', label='Predicted Incorrect'),
-    mpatches.Patch(color='black', linestyle='dotted', label='Detection Threshold')]
+    mpatches.Patch(color='black', linestyle='dotted', label='Flight_Analysis Threshold')]
 
 ax.legend(loc='upper left', handles=legend_handles)
 

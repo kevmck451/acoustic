@@ -122,7 +122,7 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
 
 if __name__ == '__main__':
 
-    # testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/Test 1'
+    # testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Flight_Analysis/Test 1'
     testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/dataset'
     sample_lengths = [10, 8, 6, 4, 2]
 

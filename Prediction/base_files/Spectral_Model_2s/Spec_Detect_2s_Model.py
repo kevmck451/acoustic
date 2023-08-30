@@ -64,7 +64,7 @@ def spectral_detection_model(dataset, sample_length, load_data=False):
 
 if __name__ == '__main__':
 
-    # dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/dataset')
+    # dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Flight_Analysis/dataset')
     dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/dataset')
     sample_length = 2
 
