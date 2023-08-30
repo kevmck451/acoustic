@@ -1,6 +1,6 @@
 Extract Metadata from UAV Log File
 
-1. Aquire the log.bin file from UAV
+1. Acquire the log.bin file from UAV
 2. Go to https://plot.ardupilot.org/#/
 3. Insert file in dotted box
 4. Expand the Plot Individual Field Option
