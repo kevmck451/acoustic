@@ -45,7 +45,7 @@ def spec_comp_detection(audio_object_list):
             # Save the results as a numpy array with the name format 'RMSE-{std_num}.npy'
             np.save(f'RMSE-{s}.npy', np.array(results))
 
-    print("Prediction files have been saved.")
+    print("CNN_Models files have been saved.")
 
 
 

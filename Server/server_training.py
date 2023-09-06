@@ -1,5 +1,5 @@
 
-from Prediction.template_train_model import Train_Detect_Model
+from CNN_Models.template_train_model import Train_Detect_Model
 
 from pathlib import Path
 
@@ -57,5 +57,5 @@ cd acoustic
 
 git pull
 
-python3 -m Prediction.server_training
+python3 -m CNN_Models.server_training
 '''

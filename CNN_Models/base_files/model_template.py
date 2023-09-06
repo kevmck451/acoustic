@@ -1,9 +1,9 @@
 
 
-from Prediction.base_files.Spectral_Model_10s.accuracy.test_model_accuracy import test_model_accuracy
-from Prediction.base_files.Spectral_Model_10s.accuracy.generate_truth import generate_truth
-from Prediction.save_model import save_model
-from Prediction.dataset_info import *
+from CNN_Models.base_files.Spectral_Model_10s.accuracy.test_model_accuracy import test_model_accuracy
+from CNN_Models.base_files.Spectral_Model_10s.accuracy.generate_truth import generate_truth
+from CNN_Models.save_model import save_model
+from CNN_Models.dataset_info import *
 from Acoustic.audio import Audio
 
 

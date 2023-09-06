@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
     flight_name = 'Angel_2'
     length = 10
-    directory_csv = Path('/Prediction/Brad_Detection/Round 3')
+    directory_csv = Path('/CNN_Models/Brad_Detection/Round 3')
 
     # visualize_csv_predictions(directory_csv)
 

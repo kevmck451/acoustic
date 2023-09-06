@@ -86,16 +86,16 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
         # Plot negatives
         axes[0].bar(negatives['FileName'], negatives['Score'], color=negatives['Predicted'].apply(lambda x: 'g' if x == 0 else 'r'))
         axes[0].set_ylim([0, 100])  # Set y-axis limits for percentage
-        axes[0].axhline(50, c='black', linestyle='dotted', label='Prediction Threshold')
+        axes[0].axhline(50, c='black', linestyle='dotted', label='CNN_Models Threshold')
         axes[0].set_title(f'Negatives: {int(np.round(accuracy_negatives))}%')
-        axes[0].set_ylabel('Prediction %')
+        axes[0].set_ylabel('CNN_Models %')
         axes[0].tick_params(axis='x', rotation=90)
 
         # Create custom legend handles and labels
         legend_handles = [
             mpatches.Patch(color='g', label='Predicted Correctly'),
             mpatches.Patch(color='r', label='Predicted Incorrect'),
-            mpatches.Patch(color='black', label='Prediction Threshold', linestyle='dotted')]
+            mpatches.Patch(color='black', label='CNN_Models Threshold', linestyle='dotted')]
 
         axes[0].legend(loc='upper left', handles=legend_handles)
 
@@ -103,7 +103,7 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
         axes[1].bar(positives['FileName'], positives['Score'], color=positives['Predicted'].apply(lambda x: 'g' if x == 1 else 'r'))
         axes[1].set_ylim([0, 100])  # Set y-axis limits for percentage
         axes[1].axhline(50, c='black', linestyle='dotted')
-        axes[1].set_ylabel('Prediction %')
+        axes[1].set_ylabel('CNN_Models %')
         axes[1].set_title(f'Positives: {int(np.round(accuracy_positives))}%')
         axes[1].tick_params(axis='x', rotation=90)
 
@@ -115,7 +115,7 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
 if __name__ == '__main__':
     # Model List
     model = load_model('Prediction/model_library/basic_1_mfcc_6_99_0.h5')
-    # model = load_model('Prediction/model_library/basic_1_spectral_6_85_0.h5')
+    # model = load_model('CNN_Models/model_library/basic_1_spectral_6_85_0.h5')
     testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Classification/tests'
     sample_lengths = [10, 8, 6, 4, 2]
 
