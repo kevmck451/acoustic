@@ -113,6 +113,6 @@ if __name__ == '__main__':
 
     mission_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/Dynamic_1a.wav'
     # model_path = 'models/model_library/detect_spec_2_96_0.h5'
-    model_path = '../CNN_Models/Prediction/model_library/detect_spec_10_100_0.h5'
+    model_path = '../Detection_Classification/CNN_Models/Prediction/model_library/detect_spec_10_100_0.h5'
     full_flight_detection(mission_path, model_path, display=True)
 

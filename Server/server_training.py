@@ -1,5 +1,5 @@
 
-from CNN_Models.template_train_model import Train_Detect_Model
+from Detection_Classification.CNN_Models.template_train_model import Train_Detect_Model
 
 from pathlib import Path
 
