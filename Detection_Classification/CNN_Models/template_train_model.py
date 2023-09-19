@@ -1,9 +1,9 @@
 
 
-from Prediction.test_model import test_model_accuracy
-import Prediction.create_model as create_model
-from Prediction.load_data import load_audio_data
-from Prediction.save_model import save_model
+from Detection_Classification.CNN_Models.test_model import test_model_accuracy
+import Detection_Classification.CNN_Models.create_model as create_model
+from Detection_Classification.CNN_Models.load_data import load_audio_data
+from Detection_Classification.CNN_Models.save_model import save_model
 from Acoustic.utils import time_class
 
 from pathlib import Path
