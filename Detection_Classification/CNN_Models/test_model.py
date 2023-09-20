@@ -32,7 +32,7 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
     y_pred_scores = []
     y_names = []
 
-    save_path = f'{Path.cwd()}/CNN_Models/features_labels'
+    save_path = f'{Path.cwd()}/Prediction/features_labels'
 
     try:
         features = np.load(f'{save_path}/TEST_features_{feature_type}_{sample_length}s.npy')
@@ -123,7 +123,8 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
 if __name__ == '__main__':
 
     # testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Flight_Analysis/Test 1'
-    testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/dataset'
+    # testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/dataset'
+    testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations'
     sample_lengths = [10, 8, 6, 4, 2]
 
     feature_types = ['spectral', 'filter1', 'mfcc']

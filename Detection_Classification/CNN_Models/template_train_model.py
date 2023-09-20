@@ -103,8 +103,8 @@ if __name__ == '__main__':
         'batch_size': 24}
 
     Train_Detect_Model(dataset,
-                       sample_lengths[4],
-                       feature_types[2],
+                       sample_lengths[0],
+                       feature_types[0],
                        model_types[2],
                        specs,
                        testing_path,
