@@ -1,8 +1,8 @@
 # File to test the accuracy of a model against some known samples that were excluded from test data
 
 
-from Prediction.load_data import load_audio_data
-from Prediction.dataset_info import *
+from Detection_Classification.CNN_Models.load_data import load_audio_data
+from Detection_Classification.CNN_Models.dataset_info import *
 
 from sklearn.metrics import accuracy_score
 from keras.models import load_model
