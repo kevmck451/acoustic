@@ -88,19 +88,26 @@ def make_prediction(model_path, audio_path, display):
 if __name__ == '__main__':
     model_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Detection_Classification/Engine_Classification/Prediction/model_library/basic_1_mfcc_6_99_0.h5'
 
-    # audio_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Campus/Campus Construction/Construction 1.wav'
-    # audio_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Campus/Campus Construction/Construction 2.wav'
-    # audio_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Campus/Campus Construction/Construction 3.wav'
-    # audio_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Campus/Ambient Campus/Ambient Campus.WAV'
-    # audio_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Orlando 23/Samples/Ambient/Orlando Ambient 1.wav'
-    # audio_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Orlando 23/Samples/Ambient/Orlando Ambient 2.wav'
-    audio_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Orlando 23/Samples/Ambient/Orlando Ambient 3.wav'
+    # Experiment 1
+    base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
+    audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 1.wav'
+    # audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 2.wav'
+    # audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 3.wav'
+    # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 1.wav'
+    # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 2.wav'
+    # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 3.wav'
 
+    # make_prediction(model_path, audio_path, display=True)
 
-
+    # Experiment 2
+    base_path_2 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
+    audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 1.wav'
+    # audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 2.wav'
+    # audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 3.wav'
+    # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 1.wav'
+    # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 2.wav'
+    # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 3.wav'
 
     make_prediction(model_path, audio_path, display=True)
-
-
 
 
