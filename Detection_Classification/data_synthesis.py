@@ -1,13 +1,13 @@
 # File to take isolated sound samples are create a dataset to train a CNN model
-
+''''''
 
 '''
 Test 1: Ambient Noise Fixed / Target sound varies:  see what's the softest target can be before detection fails
 Test 2: Ambient Noise varies / Target Sound Fixed (what distance?): see what's the loudness noise level can be before detection fails
 Test 3: Wind Noise Fixed / Target sound varies:  see what's the softest target can be before detection fails
 Test 4: Wind Noise Varies / Target Sound Fixed (what distance?): see what's the loudness noise level can be before detection fails
-
 '''
+
 
 # Sound Combos: Drone + Wind/Ambience + Target
 
@@ -39,34 +39,50 @@ What functionality will i need?
     - change the overall level of sample (amplify) and relate that to a distance
     - add filters to samples to replicate distance or environment
     - mix down multiple audio samples into one track
-    - What length are all these samples going to be?
+    - What length are all these samples going to be? at least 10s
+    
 
 
 '''
 
 
 
-def create_dataset(uav, noise, target):
-    print('Creating Dataset')
-    uav = ''
-    dataset_name = ''
-    dataset_output_directory = ''
-    # If dataset directory exists, add something to name
+
+'''
+What sample combos are desired
+Which ones are fixed and variable
+By how much should they vary?
+
+Test 1 Example:
+Samples: 
+    1. ambient: low noise floor
+    2. target: 
+        a. all diesel samples
+        b. normalization from 98% to 50%
+
+Test 2 Example:
+Samples: 
+    1. ambient: low noise floor
+    2. target: 
+        a. all diesel samples
+        b. normalization from 50% to 10%
+'''
+
+
+'''
+Process:
+1. Select Options: all organized for easy retrieval
+2. Retrieve samples from options
+3. Get samples at levels desired
+4. Mix samples down into mono file
+5. Export sample to appropriate folder
+
+'''
 
 
 
 
 
-    '''
-    What does output look like?
-    
-    There should be a folder called synthetic datasets
-        - Inside folder has each named dataset - how should they be named? three digit number 000, 001, 002? Drone Type
-        - Insdie each named dataset has directory: 0, 1, test and an info.txt file
-        - Inside each of those will be samples - how should they be named?
-    
-    
-    '''
 
 
 
@@ -79,4 +95,3 @@ def create_dataset(uav, noise, target):
 if __name__ == '__main__':
     isolated_sample_directory = ''
 
-    # create_dataset()
