@@ -1,5 +1,5 @@
 # File to load audio and make predictions based on which model is chosen and display those predictions
-
+# Can only load mono files currently
 
 from Acoustic import process
 from Acoustic import audio_abstract
@@ -11,7 +11,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from tqdm import tqdm as progress_bar
-
 
 
 
@@ -86,11 +85,12 @@ def make_prediction(model_path, audio_path, display):
 
 
 if __name__ == '__main__':
+
     model_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Detection_Classification/Engine_Classification/Prediction/model_library/basic_1_mfcc_6_99_0.h5'
 
-    # Experiment 1
-    base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
-    audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 1.wav'
+    # Experiment 1 -------------------------------------------------------------
+    # base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
+    # audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 1.wav'
     # audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 2.wav'
     # audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 3.wav'
     # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 1.wav'
@@ -99,15 +99,18 @@ if __name__ == '__main__':
 
     # make_prediction(model_path, audio_path, display=True)
 
-    # Experiment 2
-    base_path_2 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
-    audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 1.wav'
-    # audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 2.wav'
-    # audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 3.wav'
-    # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 1.wav'
-    # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 2.wav'
-    # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 3.wav'
+
+    # Experiment 2 -------------------------------------------------------------
+    # base_path_2 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
+    # audio_path = f'{base_path_2}/Campus/Generator/19-mono.wav'
+    # audio_path = f'{base_path_2}/Campus/Generator/20-mono.wav'
+
+    # make_prediction(model_path, audio_path, display=True)
+
+
+    # Experiment 3 -------------------------------------------------------------
+    base_path_3 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data'
+    audio_path = f'{base_path_3}/Isolated Samples/Hex/40m-Hover.wav'
+    # audio_path = f'{base_path_3}/Isolated Samples/Hex/Agricenter_2_Hover.wav'
 
     make_prediction(model_path, audio_path, display=True)
-
-
