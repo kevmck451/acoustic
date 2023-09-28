@@ -259,6 +259,7 @@ def generate_windowed_chunks(audio_object, window_size, training=False):
 
 # Function to convert audio sample to a specific length
 def generate_chunks(audio_object, length, training=False):
+
     num_samples = audio_object.sample_rate * length
     start = 0
     end = num_samples
@@ -270,6 +271,8 @@ def generate_chunks(audio_object, length, training=False):
     # If the audio file is too short, pad it with zeroes
     if total_samples < num_samples:
         audio_object.data = np.pad(audio_object.data, (0, num_samples - len(audio_object.data)))
+        audio_object.sample_length = length
+        audio_object.num_samples = length * audio_object.sample_rate
         audio_ob_list.append(audio_object)
         if training:
             label = int(audio_object.path.parent.stem)
@@ -280,6 +283,8 @@ def generate_chunks(audio_object, length, training=False):
         while end <= total_samples:
             audio_copy = deepcopy(audio_object)
             audio_copy.data = audio_object.data[start:end]
+            audio_copy.sample_length = length
+            audio_copy.num_samples = length * audio_copy.sample_rate
             audio_ob_list.append(audio_copy)
             start, end = (start + num_samples), (end + num_samples)
             if training:
@@ -451,6 +456,8 @@ def compression(audio_object, threshold, noise_floor, ratio, attack_time, releas
 
 def to_mono(*args):
     print('to mono')
+    for arg in args:
+        print(arg)
 
 #-----------------------------------
 # PREPROCESSING --------------------
