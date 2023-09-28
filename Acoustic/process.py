@@ -445,6 +445,11 @@ def average_spectrum(audio_object, **kwargs):
 
     return average_spectrum, frequency_bins
 
+# Function to compress audio
+def compression(audio_object, threshold, noise_floor, ratio, attack_time, release_time):
+    print('compression')
+
+
 
 #-----------------------------------
 # PREPROCESSING --------------------
