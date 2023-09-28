@@ -1,0 +1,44 @@
+File to take isolated sound samples are create a dataset to train a CNN model
+
+Loudness of UAV will be fixed bc that's not really changing
+Wind noise will be relatively fixed, but ideal, mount will reduce this as much as possible. Speed also plays a role
+relate loudness of sample to a distance from target
+
+
+Test 1: Ambient Noise Fixed / Target sound varies:  see what's the softest target can be before detection fails
+Test 2: Wind Noise Fixed / Target sound varies:  see what's the softest target can be before detection fails
+
+
+
+Sound Combos: Drone + Wind/Ambience + Target
+
+Ambient Sounds
+Angel UAV
+Angel + Wind
+Diesel Vehicles
+Gas Generators
+Hex UAV
+Hex + Wind
+Penguin UAV
+Wind
+Testing Samples
+
+
+Synthesizing Audio Data:
+- Set Noise Floor: Ambient / Wind / Drone+Wind
+    - Compress
+    - Normalize
+    - Create Chunks of 10s
+
+- Get first target sample
+    - Discard samples less than 10s
+    - Compress
+    - Normalize
+    - Create Chunks of 10s
+    - For each chunk:
+        - For range of amplify values
+            - Put target sample to amp value
+            - Random Select a chunk from list
+            - Mix 2 samples into mono sample
+            - First sample NAME_00_00
+            - Export sample
