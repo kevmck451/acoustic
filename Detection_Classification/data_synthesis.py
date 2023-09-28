@@ -1,83 +1,50 @@
 # File to take isolated sound samples are create a dataset to train a CNN model
-''''''
 
-'''
-Test 1: Ambient Noise Fixed / Target sound varies:  see what's the softest target can be before detection fails
-Test 2: Ambient Noise varies / Target Sound Fixed (what distance?): see what's the loudness noise level can be before detection fails
-Test 3: Wind Noise Fixed / Target sound varies:  see what's the softest target can be before detection fails
-Test 4: Wind Noise Varies / Target Sound Fixed (what distance?): see what's the loudness noise level can be before detection fails
-'''
+from Acoustic.audio_abstract import Audio_Abstract
+import Acoustic.process as process
 
-
-# Sound Combos: Drone + Wind/Ambience + Target
-
-# Ambient Sounds
-# Angel UAV
-# Angel + Wind
-# Diesel Vehicles
-# Gas Generators
-# Hex UAV
-# Hex + Wind
-# Penguin UAV
-# Wind
-# Testing Samples
-
+import numpy as np
 
 uav_options = ['hex', 'angel', 'penguin']
 noise_options = ['ambient', 'wind']
 target_options = ['diesel', 'gas']
 
+sample_length = 10
 
-# Loudness of UAV will be fixed bc that's not really changing
-# Wind noise will be relatively fixed, but ideal, mount will reduce this as much as possible. Speed also plays a role
-# relate loudness of sample to a distance from target
+# What if I want to do this for multiple ambient environments?
+noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Random/home 2.wav'
+noise_floor = Audio_Abstract(filepath=noise_floor_path)
 
+# noise_floor = process.compression(noise_floor)
+noise_floor = process.normalize(noise_floor, percentage=95)
+noise_floor_chunk_list = process.generate_chunks(noise_floor, length=sample_length, training=False)
 
+target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Campus/Construction 2/construction 2-1.wav'
+target = Audio_Abstract(filepath=target_path)
+if target.sample_length < 10:
+    print('Go to Next Target Sample')
+target_chunk_list = process.generate_chunks(target, length=sample_length, training=False)
+target_index = int(len(target_chunk_list)/2)
+target = target_chunk_list[target_index]
 
-'''
-What functionality will i need?
-    - change the overall level of sample (amplify) and relate that to a distance
-    - add filters to samples to replicate distance or environment
-    - mix down multiple audio samples into one track
-    - What length are all these samples going to be? at least 10s
-    
+# target = process.compression(target)
+normalization_values = list(np.arange(95, 45, -5))
 
-
-'''
-
-
-
-
-'''
-What sample combos are desired
-Which ones are fixed and variable
-By how much should they vary?
-
-Test 1 Example:
-Samples: 
-    1. ambient: low noise floor
-    2. target: 
-        a. all diesel samples
-        b. normalization from 98% to 50%
-
-Test 2 Example:
-Samples: 
-    1. ambient: low noise floor
-    2. target: 
-        a. all diesel samples
-        b. normalization from 50% to 10%
-'''
+export_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Engine vs Ambience/dataset 2/1'
+for value in normalization_values:
+    target = process.normalize(target, percentage=value)
+    noise = noise_floor_chunk_list[0]
+    mix = process.to_mono(target, noise)
+    # mix.export(filepath = export_path, name = f'{target.name}_{value}')
 
 
-'''
-Process:
-1. Select Options: all organized for easy retrieval
-2. Retrieve samples from options
-3. Get samples at levels desired
-4. Mix samples down into mono file
-5. Export sample to appropriate folder
 
-'''
+
+
+
+
+
+
 
 
 
