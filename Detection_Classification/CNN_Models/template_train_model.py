@@ -84,8 +84,8 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, 
 
 
 if __name__ == '__main__':
-    dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/dataset')
-    testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/dataset'
+    dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Engine vs Nothing/dataset')
+    testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Engine vs Nothing/test'
 
     sample_lengths = [10, 8, 6, 4, 2]
     feature_types = ['spectral', 'filter1', 'mfcc']
@@ -103,9 +103,9 @@ if __name__ == '__main__':
         'batch_size': 24}
 
     Train_Detect_Model(dataset,
-                       sample_lengths[0],
-                       feature_types[0],
-                       model_types[2],
+                       sample_lengths[2],
+                       feature_types[2],
+                       model_types[0],
                        specs,
                        testing_path,
                        load_data=True)
