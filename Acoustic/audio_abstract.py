@@ -83,12 +83,13 @@ class Audio_Abstract:
     # Function to export an object
     def export(self, **kwargs):
         filepath = kwargs.get('filepath', None)
+        name = kwargs.get('name', self.name)
         # Save/export the audio object
         if filepath is not None:
             if Path(filepath).suffix != '.wav':
                 filepath = filepath + '.wav'
             sf.write(f'{filepath}', self.data, self.sample_rate)
-        else: sf.write(f'{self.name}_export.wav', self.data, self.sample_rate)
+        else: sf.write(f'{name}_export.wav', self.data, self.sample_rate)
 
     # Function to display the waveform of audio
     def waveform(self):
