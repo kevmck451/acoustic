@@ -449,7 +449,8 @@ def average_spectrum(audio_object, **kwargs):
 def compression(audio_object, threshold, noise_floor, ratio, attack_time, release_time):
     print('compression')
 
-
+def to_mono(*args):
+    print('to mono')
 
 #-----------------------------------
 # PREPROCESSING --------------------
