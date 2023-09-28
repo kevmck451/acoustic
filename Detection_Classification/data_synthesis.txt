@@ -42,3 +42,7 @@ Synthesizing Audio Data:
             - Mix 2 samples into mono sample
             - First sample NAME_00_00
             - Export sample
+
+
+
+after creating variation in target loudness in sample, need to vary the amount of time the target's sound is present in the sample
