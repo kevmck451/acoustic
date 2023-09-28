@@ -11,7 +11,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from tqdm import tqdm as progress_bar
-
+import tkinter as tk
+from tkinter import filedialog
 
 
 def make_prediction(model_path, audio_path, display):
@@ -24,13 +25,13 @@ def make_prediction(model_path, audio_path, display):
     # Determine sample length
     path_model = Path(model_path)
     model_name = path_model.stem
-    sample_length = int(model_name.split('_')[3])
+    sample_length = int(model_name.split('_')[1])
 
     chunks_list = process.generate_windowed_chunks(audio, window_size=sample_length)
 
     # EXTRACT ------------------------------------------------------------------------
     print('Extracting Features')
-    feature_type = model_name.split('_')[2]
+    feature_type = model_name.split('_')[0]
     features_list = []
     for audio in progress_bar(chunks_list):
         if feature_type == 'spectral':
@@ -82,23 +83,26 @@ def make_prediction(model_path, audio_path, display):
         plt.tight_layout(pad=1)
         plt.show()
 
-
+def select_file():
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+    file_path = filedialog.askopenfilename()
+    return file_path
 
 if __name__ == '__main__':
 
-    model_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Detection_Classification/Engine_Classification/Prediction/model_library/basic_1_mfcc_6_99_0.h5'
+    # model_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Detection_Classification/Engine_Classification/Prediction/model_library/basic_1_mfcc_6_99_0.h5'
+    model_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Detection_Classification/Engine_Ambient/Prediction/model_library/mfcc_6_basic_1_87_0.h5'
 
     # Experiment 1 -------------------------------------------------------------
     # base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
-    # audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 1.wav'
-    # audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 2.wav'
-    # audio_path = f'{base_path_1}/Campus/Campus Construction/Construction 3.wav'
+    # audio_path = f'{base_path_1}/Campus/Construction 1/Construction 1.wav'
+    # audio_path = f'{base_path_1}/Campus/Construction 1/Construction 2.wav'
+    # audio_path = f'{base_path_1}/Campus/Construction 1/Construction 3.wav'
     # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 1.wav'
     # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 2.wav'
     # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 3.wav'
-
     # make_prediction(model_path, audio_path, display=True)
-
 
     # Experiment 2 -------------------------------------------------------------
     # base_path_2 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
@@ -109,8 +113,34 @@ if __name__ == '__main__':
 
 
     # Experiment 3 -------------------------------------------------------------
-    base_path_3 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data'
-    audio_path = f'{base_path_3}/Isolated Samples/Hex/40m-Hover.wav'
-    # audio_path = f'{base_path_3}/Isolated Samples/Hex/Agricenter_2_Hover.wav'
+    # base_path_3 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Campus/Construction 2'
+    #
+    # for audio_path in Path(base_path_3).iterdir():
+    #     print(audio_path)
+    #     if 'wav' in audio_path.suffix:
+    #         make_prediction(model_path, audio_path, display=True)
 
-    make_prediction(model_path, audio_path, display=True)
+
+    # Experiment 4 -------------------------------------------------------------
+    # base_path_2 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
+    # audio_path = f'{base_path_2}/home 1.wav'
+    # audio_path = f'{base_path_2}/Random/home 2.wav'
+    # audio_path = f'{base_path_2}/Random/restaurant.wav'
+    # audio_path = f'{base_path_2}/Random/restaurant edit.wav'
+    # audio_path = f'{base_path_2}/Random/restaurant edit 2.wav'
+
+    # make_prediction(model_path, audio_path, display=True)
+
+    # Experiment X -------------------------------------------------------------
+    # audio_path = select_file()
+    # print(audio_path)
+    # make_prediction(model_path, audio_path, display=True)
+
+    audio_path = select_file()
+    audio_dir = Path(audio_path).parent
+    # print(audio_dir)
+    # print(audio_path)
+
+    for path in audio_dir.iterdir():
+        if 'wav' in path.suffix:
+            make_prediction(model_path, path, display=True)
