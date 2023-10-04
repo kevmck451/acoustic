@@ -90,9 +90,9 @@ def select_file():
     return file_path
 
 if __name__ == '__main__':
-
-    # model_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Detection_Classification/Engine_Classification/Prediction/model_library/basic_1_mfcc_6_99_0.h5'
-    model_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Detection_Classification/Engine_Ambient/Prediction/model_library/mfcc_6_basic_1_87_0.h5'
+    base_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Detection_Classification'
+    # model_path = f'{base_path}/Engine_Classification/Prediction/model_library/mfcc_6_basic_1_99_0.h5'
+    model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_6_basic_1_87_0.h5'
 
     # Experiment 1 -------------------------------------------------------------
     # base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
@@ -136,11 +136,23 @@ if __name__ == '__main__':
     # print(audio_path)
     # make_prediction(model_path, audio_path, display=True)
 
-    audio_path = select_file()
-    audio_dir = Path(audio_path).parent
-    # print(audio_dir)
-    # print(audio_path)
+    # audio_path = select_file()
+    # audio_dir = Path(audio_path).parent
+    # # print(audio_dir)
+    # # print(audio_path)
+    #
+    # for path in audio_dir.iterdir():
+    #     if 'wav' in path.suffix:
+    #         make_prediction(model_path, path, display=True)
 
-    for path in audio_dir.iterdir():
-        if 'wav' in path.suffix:
-            make_prediction(model_path, path, display=True)
+    # Experiment XX -------------------------------------------------------------
+    # base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
+    # audio_path = f'{base_path_1}/Random/UM Game Generator.wav'
+    # make_prediction(model_path, audio_path, display=True)
+
+    # Experiment XX -------------------------------------------------------------
+    base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
+    # audio_path = f'{base_path_1}/Random/Home/residential_amb_1-1.wav'
+    audio_path = f'{base_path_1}/Random/Home/residential_amb_2-1.wav'
+
+    make_prediction(model_path, audio_path, display=True)
