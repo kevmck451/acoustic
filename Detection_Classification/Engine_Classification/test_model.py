@@ -114,7 +114,7 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
 
 if __name__ == '__main__':
     # Model List
-    model = load_model('Prediction/model_library/basic_1_mfcc_6_99_0.h5')
+    model = load_model('Prediction/model_library/mfcc_6_basic_1_99_0.h5')
     # model = load_model('CNN_Models/model_library/basic_1_spectral_6_85_0.h5')
 
     testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Classification/tests'
