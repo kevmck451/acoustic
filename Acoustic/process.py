@@ -429,17 +429,6 @@ def amplify(audio_object, gain_db):
 
     return Audio_Object_amp
 
-# Function to Normalize Data
-def normalize(audio_object, percentage=95):
-    # make a deep copy of the audio object to preserve the original
-    audio_normalized = deepcopy(audio_object)
-    max_value = np.max(np.abs(audio_normalized.data))
-    normalized_data = audio_normalized.data / max_value * (percentage / 100.0)
-
-    audio_normalized.data = normalized_data
-
-    return audio_normalized
-
 # Function to get average spectral values
 def average_spectrum(audio_object, **kwargs):
     frequency_range = kwargs.get('frequency_range', (0, 20000))
@@ -453,10 +442,7 @@ def average_spectrum(audio_object, **kwargs):
 
     return average_spectrum, frequency_bins
 
-# Function to compress audio
-def compression(audio_object, threshold, noise_floor, ratio, attack_time, release_time):
-    print('compression')
-
+# Function to mix down multiple channels to mono
 def to_mono(*args):
     print('to mono')
     for arg in args:
@@ -465,15 +451,24 @@ def to_mono(*args):
 #-----------------------------------
 # PREPROCESSING --------------------
 #-----------------------------------
+# Function to Normalize Data
+def normalize(audio_object, percentage=95):
+    # make a deep copy of the audio object to preserve the original
+    audio_normalized = deepcopy(audio_object)
+    max_value = np.max(np.abs(audio_normalized.data))
+    normalized_data = audio_normalized.data / max_value * (percentage / 100.0)
+
+    audio_normalized.data = normalized_data
+
+    return audio_normalized
+
+# Function to compress audio
+def compression(audio_object, threshold, noise_floor, ratio, attack_time, release_time):
+    print('compression')
+
 # Function to subtract Hex from sample
 def spectra_subtraction_hex(audio_object, **kwargs):
     pass
-
-
-
-
-
-
 
 
 
