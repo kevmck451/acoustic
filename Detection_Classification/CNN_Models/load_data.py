@@ -35,8 +35,15 @@ def load_audio_data(path, length, feature_type):
     print('Preprocessing Data')
     prepro_ob_list = []
     # for audio in progress_bar(master_ob_list):
-    #     # Spectral Subtraction
-    #     process.spectra_subtraction_hex(audio)
+
+        # Noise Reduction
+
+        # Normalization
+
+        # Compression
+
+        # Spectral Subtraction
+        # process.spectra_subtraction_hex(audio)
 
 
     print('Extracting Features')
