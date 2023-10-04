@@ -70,9 +70,10 @@ def spectrogram(audio_object, range=(130, 1300), **kwargs): #80-2000
 def mfcc(audio_object, n_mfcc=50, **kwargs):
     stats = kwargs.get('stats', False)
 
+    data = audio_object.data
     # Normalize audio data
-    Audio_Object = normalize(audio_object)
-    data = Audio_Object.data
+    # Audio_Object = normalize(audio_object)
+    # data = Audio_Object.data
 
     # Initialize an empty list to store the MFCCs for each channel
     mfccs_all_channels = []
@@ -108,8 +109,9 @@ def custom_filter_1(audio_object, **kwargs):
     # freq_range_high = (2600, 5000)
     freq_range_high = (800, 1300)
 
-    Audio_Object = normalize(audio_object)
-    data = Audio_Object.data
+    data = audio_object.data
+    # Audio_Object = normalize(audio_object)
+    # data = Audio_Object.data
 
     # Initialize an empty list to store the spectrograms for each channel
     spectrograms = []
@@ -171,9 +173,10 @@ def zcr(audio_object, **kwargs):
 
     stats = kwargs.get('stats', False)
 
+    data = audio_object.data
     # Normalize audio data
-    Audio_Object = normalize(audio_object)
-    data = Audio_Object.data
+    # Audio_Object = normalize(audio_object)
+    # data = Audio_Object.data
 
     # Initialize an empty list to store the ZCRs for each channel
     zcr_all_channels = []
