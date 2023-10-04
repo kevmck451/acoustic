@@ -34,16 +34,18 @@ def load_audio_data(path, length, feature_type):
 
     print('Preprocessing Data')
     prepro_ob_list = []
-    # for audio in progress_bar(master_ob_list):
-
-        # Noise Reduction
-
+    for audio in progress_bar(master_ob_list):
+        # Sample Rate Reduction
+        # reduce to 10-12k Hz
         # Normalization
+        prepro_ob_list.append(process.normalize(audio))
 
-        # Compression
 
-        # Spectral Subtraction
-        # process.spectra_subtraction_hex(audio)
+        # Compression (Dynamic Range)
+        # Noise Reduction
+            # Spectral Subtraction
+            # process.spectra_subtraction_hex(audio)
+    master_ob_list = prepro_ob_list
 
 
     print('Extracting Features')
@@ -62,6 +64,8 @@ def load_audio_data(path, length, feature_type):
         features_list.append(feature)  # Add Feature
         # print(feature.shape)
         # print(feature.dtype)
+
+    # Range Normalization
 
     # make into array and reshape to (6788, 1310, 188, 1) - (samples, freq, reduced time, batch)
     features_list = np.array(features_list)
