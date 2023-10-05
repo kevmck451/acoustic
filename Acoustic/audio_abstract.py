@@ -86,16 +86,19 @@ class Audio_Abstract:
         name = kwargs.get('name', self.name)
         # Save/export the audio object
         if filepath is not None:
-            if Path(filepath).suffix != '.wav':
-                filepath = filepath + '.wav'
+            if Path(name).suffix != '.wav':
+                filepath = f'{filepath}/{name}.wav'
+            else: filepath = f'{filepath}/{name}'
             sf.write(f'{filepath}', self.data, self.sample_rate)
         else: sf.write(f'{name}_export.wav', self.data, self.sample_rate)
 
     # Function to display the waveform of audio
     def waveform(self):
         # Calculate the time axis in seconds
-        time_axis = np.arange(len(self.data[0])) / self.sample_rate
-
+        if self.num_channels > 1:
+            time_axis = np.arange(len(self.data[0])) / self.sample_rate
+        else:
+            time_axis = np.arange(len(self.data)) / self.sample_rate
         # Create the figure and axis objects, with subplots equal to number of channels
         fig, axs = plt.subplots(self.num_channels, figsize=(14, (4+self.num_channels)))
 
@@ -105,7 +108,9 @@ class Audio_Abstract:
 
         # Plot the audio data for each channel
         for i in range(self.num_channels):
-            axs[i].plot(time_axis, self.data[i], linewidth=0.5)
+            if self.num_channels > 1:
+                axs[i].plot(time_axis, self.data[i], linewidth=0.5)
+            else: axs[i].plot(time_axis, self.data, linewidth=0.5)
             axs[i].set_ylabel('Amplitude')
             axs[i].set_ylim([-1, 1])  # set the y-axis limits to -1 and 1
             axs[i].axhline(y=0, color='black', linewidth=0.5, linestyle='--')  # add horizontal line at y=0
