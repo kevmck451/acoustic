@@ -90,9 +90,9 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, test_pa
 
     # Test accuracy of Model
     if display:
-        accuracy = test_model_accuracy(model, test_path, sample_length, feature_type, display=True)
+        accuracy = test_model_accuracy(model, test_path, sample_length, feature_type, display=True, feature_params=feature_params)
     else:
-        accuracy = test_model_accuracy(model, test_path, sample_length, feature_type)
+        accuracy = test_model_accuracy(model, test_path, sample_length, feature_type, feature_params=feature_params)
 
     total_runtime = timing_stats.stats()
 
