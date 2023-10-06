@@ -9,24 +9,12 @@ if __name__ == '__main__':
 
     sample_lengths = [10, 8, 6, 4, 2]
     feature_types = ['spectral', 'mfcc', 'filter1']
-    model_types = ['basic_1', 'basic_2', 'deep_1', 'deep_2']
-
-    specs = {
-        'test_size': 0.2,
-        'random_state': 42,
-        'l2_value': 0.01,
-        'optimizer': 'adam',
-        'loss': 'binary_crossentropy',
-        'metric': 'accuracy',
-        'patience': 5,
-        'epochs': 50,
-        'batch_size': 24}
+    model_types = ['basic_1', 'basic_2', 'deep_1', 'deep_2', 'deep_3']
 
     Train_Detect_Model(dataset,
                        sample_lengths[2],
-                       feature_types[1],
-                       model_types[2],
-                       specs,
+                       feature_types[0],
+                       model_types[0],
                        testing_path,
-                       load_data=True)
+                       load_data=False)
 
