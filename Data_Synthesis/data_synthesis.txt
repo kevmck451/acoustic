@@ -46,3 +46,19 @@ Synthesizing Audio Data:
 
 
 after creating variation in target loudness in sample, need to vary the amount of time the target's sound is present in the sample
+
+
+
+
+
+
+Preprocessing Order
+    - Compress
+        - Remove large peaks
+        - offset gain
+    - Normalize to 100
+    - Normalize to 10-15 for ambience -> variable
+
+
+
+

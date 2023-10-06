@@ -4,6 +4,8 @@ from Acoustic.audio_abstract import Audio_Abstract
 import Acoustic.process as process
 
 import numpy as np
+from pathlib import Path
+import random
 
 synthetic_directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Synthetic'
 
@@ -17,31 +19,41 @@ sample_length = 8
 noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/home_amb_1_a.wav'
 noise_floor = Audio_Abstract(filepath=noise_floor_path)
 # noise_floor.waveform()
-noise_floor.export(filepath = synthetic_directory, name = f'{noise_floor.name}_1')
-# noise_floor = process.compression(noise_floor)
-noise_floor = process.normalize(noise_floor, percentage=95)
-# noise_floor.waveform()
-noise_floor.export(filepath = synthetic_directory, name = f'{noise_floor.name}_2')
 
-# noise_floor_chunk_list = process.generate_chunks(noise_floor, length=sample_length, training=False)
+noise_floor = process.normalize(noise_floor, percentage=100)
+noise_floor = process.normalize(noise_floor, percentage=20)
+noise_floor_chunk_list = process.generate_chunks(noise_floor, length=sample_length, training=False)
 #
-# target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Campus/Construction 2/construction 2-1.wav'
-# target = Audio_Abstract(filepath=target_path)
-# if target.sample_length < 10:
-#     print('Go to Next Target Sample')
-# target_chunk_list = process.generate_chunks(target, length=sample_length, training=False)
-# target_index = int(len(target_chunk_list)/2)
-# target = target_chunk_list[target_index]
-#
-# # target = process.compression(target)
-# normalization_values = list(np.arange(95, 45, -5))
-#
-# export_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Engine vs Ambience/dataset 2/1'
-# for value in normalization_values:
-#     target = process.normalize(target, percentage=value)
-#     noise = noise_floor_chunk_list[0]
-#     mix = process.to_mono(target, noise)
-#     # mix.export(filepath = export_path, name = f'{target.name}_{value}')
+# target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Diesel'
+target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Gas'
+
+for file in Path(target_path).iterdir():
+    if 'wav' in file.suffix:
+        target = Audio_Abstract(filepath=file)
+
+        if target.sample_length is None or target.sample_length < sample_length:
+            print(file)
+            print('Go to Next Target Sample')
+            continue
+        if target.num_channels > 1:
+            channel_list = process.channel_to_objects(target)
+            target = channel_list[0]
+        target_chunk_list = process.generate_chunks(target, length=sample_length, training=False)
+
+        normalization_values = list(np.arange(40, 1, -1))
+
+        for value in normalization_values:
+            target = process.normalize(target_chunk_list[random.randint(0, len(target_chunk_list) - 1)], percentage=100)
+            target = process.normalize(target, percentage=value)
+
+            mix = process.mix_to_mono(target, noise_floor_chunk_list[random.randint(0, len(noise_floor_chunk_list)-1)])
+            mix.name = f'{target.name}_{noise_floor.name}_mix'
+
+            mix.export(filepath = synthetic_directory, name = f'{mix.name}_{value}')
+
+
+
+
 
 
 
