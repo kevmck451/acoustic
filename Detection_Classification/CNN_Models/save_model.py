@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-def save_model(model, model_type, feature, input_time, accuracy, specs, runtime):
+def save_model(model, model_type, feature, input_time, accuracy, specs, runtime, **kwargs):
     index = 0
     model_extension = '.h5'
     text_extension = '.txt'
@@ -20,9 +20,11 @@ def save_model(model, model_type, feature, input_time, accuracy, specs, runtime)
     # Save text file with all info about model
     text_saveto = f'{lib_dir}/{feature}_{str(input_time)}_{model_type}_{accuracy}_{str(index)}{text_extension}'
 
+    feature_params = kwargs.get('feature_params', 'None')
     with open(text_saveto, 'w') as f:
         f.write('Model Type: ' + model_type + '\n')
         f.write('Feature: ' + feature + '\n')
+        f.write('Feature Parameters: ' + feature_params + '\n')
         f.write('Sample Length: ' + str(input_time) + 's\n')
         f.write('Accuracy: ' + str(accuracy) + '%\n')
         f.write('Total Runtime: ' + str(runtime) + 's\n')
