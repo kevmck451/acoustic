@@ -35,12 +35,13 @@ def make_prediction(model_path, audio_path, **kwargs):
     features_list = []
     for audio in progress_bar(chunks_list):
         if feature_type == 'spectral':
-            range_given = kwargs.get('range', (70, 4000))
-            feature = process.spectrogram(audio, range=range_given)
+            feature_params = kwargs.get('feature_params', (70, 4000))
+            feature = process.spectrogram(audio, feature_params=feature_params)
         elif feature_type == 'filter1':
             feature = process.custom_filter_1(audio)
         elif feature_type == 'mfcc':
-            feature = process.mfcc(audio)
+            feature_params = kwargs.get('feature_params', (70, 4000))
+            feature = process.mfcc(audio, feature_params=feature_params)
         elif feature_type == 'zcr':
             feature = process.zcr(audio)
 

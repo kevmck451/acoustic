@@ -9,8 +9,9 @@ import numpy as np
 
 
 # Load Data from a Dataset with Labels and Extract Features
-def load_audio_data(path, length, feature_type):
+def load_audio_data(path, length, feature_type, **kwargs):
     print('Loading Dataset')
+    feature_params = kwargs.get('feature_params', 'None')
     audio_ob_list = []
     label_list = []
     for file in progress_bar(Path(path).rglob('*.wav')):
@@ -52,11 +53,11 @@ def load_audio_data(path, length, feature_type):
     features_list = []
     for audio in progress_bar(master_ob_list):
         if feature_type == 'spectral':
-            feature = process.spectrogram(audio)
+            feature = process.spectrogram(audio, feature_params=feature_params)
+        elif feature_type == 'mfcc':
+            feature = process.mfcc(audio, feature_params=feature_params)
         elif feature_type == 'filter1':
             feature = process.custom_filter_1(audio)
-        elif feature_type == 'mfcc':
-            feature = process.mfcc(audio)
         elif feature_type == 'zcr':
             feature = process.zcr(audio)
 

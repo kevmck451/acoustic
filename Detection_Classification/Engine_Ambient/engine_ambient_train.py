@@ -10,11 +10,14 @@ if __name__ == '__main__':
     sample_lengths = [10, 8, 6, 4, 2]
     feature_types = ['spectral', 'mfcc', 'filter1']
     model_types = ['basic_1', 'basic_2', 'deep_1', 'deep_2', 'deep_3']
+    # feature_params = (70, 3000)     # Spectrum
+    feature_params = 100           # MFCC
 
     Train_Detect_Model(dataset,
                        sample_lengths[2],
-                       feature_types[0],
+                       feature_types[1],
                        model_types[0],
                        testing_path,
-                       load_data=False)
+                       load_data=False,
+                       feature_params=feature_params)
 
