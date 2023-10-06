@@ -15,7 +15,7 @@ import tkinter as tk
 from tkinter import filedialog
 
 
-def make_prediction(model_path, audio_path, display):
+def make_prediction(model_path, audio_path, display, **kwargs):
 
     # LOAD DATA ------------------------------------------------------------------------
     print('Loading Mission Audio')
@@ -75,9 +75,11 @@ def make_prediction(model_path, audio_path, display):
         axs.set_ylim((0, 100))
         axs.axhline(50, c='black', linestyle='dotted')
 
+        postive = kwargs.get('positive_label', 'Threat Detected')
+        negative = kwargs.get('negative_label', 'No Threat')
         # Add custom legend for colors
-        red_patch = mpatches.Patch(color='red', label='Threat Detected')
-        green_patch = mpatches.Patch(color='green', label='No Threat')
+        red_patch = mpatches.Patch(color='red', label=postive)
+        green_patch = mpatches.Patch(color='green', label=negative)
         axs.legend(handles=[red_patch, green_patch], loc='upper right')
 
         plt.tight_layout(pad=1)
@@ -92,44 +94,56 @@ def select_file():
 if __name__ == '__main__':
     base_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Detection_Classification'
     # model_path = f'{base_path}/Engine_Classification/Prediction/model_library/mfcc_6_basic_1_99_0.h5'
-    model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_6_basic_1_87_0.h5'
+    model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_6_basic_1_94_0.h5'
 
-    # Experiment 1 -------------------------------------------------------------
-    # base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
-    # audio_path = f'{base_path_1}/Campus/Construction 1/Construction 1.wav'
-    # audio_path = f'{base_path_1}/Campus/Construction 1/Construction 2.wav'
-    # audio_path = f'{base_path_1}/Campus/Construction 1/Construction 3.wav'
-    # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 1.wav'
-    # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 2.wav'
-    # audio_path = f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 3.wav'
-    # make_prediction(model_path, audio_path, display=True)
-
-    # Experiment 2 -------------------------------------------------------------
-    # base_path_2 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
-    # audio_path = f'{base_path_2}/Campus/Generator/19-mono.wav'
-    # audio_path = f'{base_path_2}/Campus/Generator/20-mono.wav'
-
-    # make_prediction(model_path, audio_path, display=True)
+# Experiment 1 -------------------------------------------------------------
+    base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
+    base_path_2 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Testing'
 
 
-    # Experiment 3 -------------------------------------------------------------
-    # base_path_3 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Campus/Construction 2'
-    #
-    # for audio_path in Path(base_path_3).iterdir():
-    #     print(audio_path)
-    #     if 'wav' in audio_path.suffix:
-    #         make_prediction(model_path, audio_path, display=True)
+    audio_paths = [f'{base_path_1}/Campus/Construction 1/Construction 1.wav',
+                    f'{base_path_1}/Campus/Construction 1/Construction 2.wav',
+                    f'{base_path_1}/Campus/Construction 1/Construction 3.wav',
+                    f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 1.wav',
+                    f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 2.wav',
+                    f'{base_path_1}/Orlando 23/Samples/Ambient/Orlando Ambient 3.wav',
+                    f'{base_path_1}/Campus/Generator/19-mono.wav',
+                    f'{base_path_1}/Campus/Generator/20-mono.wav'
+                  ]
+
+    # for audio_path in audio_paths:
+    #     make_prediction(model_path, audio_path, display=True, positive_label='Engine Detected', negative_label='Ambient Noise')
 
 
-    # Experiment 4 -------------------------------------------------------------
-    # base_path_2 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
-    # audio_path = f'{base_path_2}/home 1.wav'
-    # audio_path = f'{base_path_2}/Random/home 2.wav'
-    # audio_path = f'{base_path_2}/Random/restaurant.wav'
-    # audio_path = f'{base_path_2}/Random/restaurant edit.wav'
-    # audio_path = f'{base_path_2}/Random/restaurant edit 2.wav'
+# Experiment 3 -------------------------------------------------------------
+    base_path_3 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Campus/Construction 2'
+    base_path_4 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/Ambient Diesel'
 
-    # make_prediction(model_path, audio_path, display=True)
+    for audio_path in Path(base_path_4).iterdir():
+        print(audio_path)
+        if 'wav' in audio_path.suffix:
+            make_prediction(model_path, audio_path, display=True, positive_label='Engine Detected', negative_label='Ambient Noise')
+
+
+# Experiment 4 -------------------------------------------------------------
+
+    audio_paths = [
+                    f'{base_path_1}/Random/home 1.wav',
+                    f'{base_path_1}/Random/home 2.wav',
+                    f'{base_path_1}/Random/restaurant.wav',
+                    f'{base_path_1}/Random/restaurant edit.wav',
+                    f'{base_path_1}/Random/restaurant edit 2.wav',
+                    f'{base_path_1}/Random/UM Game Generator.wav',
+                    f'{base_path_1}/Random/UM Game Generator Full.wav',
+                    f'{base_path_1}/Random/Home/home_1_a.wav',
+                    f'{base_path_1}/Random/Home/home_1_b.wav',
+                    f'{base_path_1}/Random/Home/home_1_c.wav',
+                    f'{base_path_1}/Random/Home/home_1_d.wav',
+
+                   ]
+
+    # for audio_path in audio_paths:
+    #     make_prediction(model_path, audio_path, display=True, positive_label='Engine Detected', negative_label='Ambient Noise')
 
     # Experiment X -------------------------------------------------------------
     # audio_path = select_file()
@@ -145,14 +159,3 @@ if __name__ == '__main__':
     #     if 'wav' in path.suffix:
     #         make_prediction(model_path, path, display=True)
 
-    # Experiment XX -------------------------------------------------------------
-    # base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
-    # audio_path = f'{base_path_1}/Random/UM Game Generator.wav'
-    # make_prediction(model_path, audio_path, display=True)
-
-    # Experiment XX -------------------------------------------------------------
-    base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests'
-    # audio_path = f'{base_path_1}/Random/Home/residential_amb_1-1.wav'
-    audio_path = f'{base_path_1}/Random/Home/residential_amb_2-1.wav'
-
-    make_prediction(model_path, audio_path, display=True)
