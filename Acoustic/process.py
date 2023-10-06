@@ -18,8 +18,9 @@ from pydub import AudioSegment
 # FEATURES -------------------------
 #-----------------------------------
 # Function to calculate spectrogram of audio (Features are 2D)
-def spectrogram(audio_object, range=(100, 2000), **kwargs): #80-2000
+def spectrogram(audio_object, **kwargs):
     stats = kwargs.get('stats', False)
+    range = kwargs.get('feature_params', 'None')
     window_size = 32768
     hop_length = 512
 
@@ -55,6 +56,9 @@ def spectrogram(audio_object, range=(100, 2000), **kwargs): #80-2000
         frequency_resolution = nyquist_frequency / (window_size / 2)
         frequency_range = np.arange(0, window_size // 2 + 1) * frequency_resolution
 
+        if range == 'None':
+            range = (70, 6000)
+
         bottom_index = int(np.round(range[0] / frequency_resolution))
         top_index = int(np.round(range[1] / frequency_resolution))
 
@@ -70,8 +74,9 @@ def spectrogram(audio_object, range=(100, 2000), **kwargs): #80-2000
     return np.array(spectrograms)
 
 # Function to calculate MFCC of audio (Features are 2D)
-def mfcc(audio_object, n_mfcc=50, **kwargs):
+def mfcc(audio_object, **kwargs):
     stats = kwargs.get('stats', False)
+    n_mfcc = kwargs.get('feature_params', 'None')
 
     data = audio_object.data
     # Normalize audio data
@@ -88,6 +93,8 @@ def mfcc(audio_object, n_mfcc=50, **kwargs):
 
     for channel_data in data:
         # Calculate MFCCs for this channel
+        if n_mfcc == 'None':
+            n_mfcc = 50
         mfccs = librosa.feature.mfcc(y=channel_data, sr=audio_object.sample_rate, n_mfcc=n_mfcc)
 
         # Normalize the MFCCs

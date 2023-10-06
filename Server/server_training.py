@@ -6,42 +6,22 @@ from pathlib import Path
 if __name__ == '__main__':
 
     base_dir = '/home/kmcknze1'
-    dataset = Path(f'{base_dir}/ML Model Data/dataset')
-    testing_path = Path(f'{base_dir}/ML Model Data/accuracy/dataset')
+    dataset = Path(f'{base_dir}/Data/Engine vs Ambience/dataset 2')
+    testing_path = Path(f'{base_dir}/Data/Engine vs Ambience/test')
 
     sample_lengths = [10, 8, 6, 4, 2]
-    feature_types = ['spectral', 'filter1', 'mfcc']
-    model_types = ['deep_1', 'deep_3'] #'basic_1', 'basic_2',  'deep_2',
+    feature_types = ['spectral', 'mfcc', 'filter1']
+    model_types = ['basic_1', 'basic_2', 'deep_1', 'deep_2', 'deep_3']
+    # feature_params = (70, 3000)     # Spectrum
+    feature_params = 120  # MFCC
 
-    specs = {
-        'test_size': 0.2,
-        'random_state': 42,
-        'l2_value': 0.01,
-        'optimizer': 'adam',
-        'loss': 'binary_crossentropy',
-        'metric': 'accuracy',
-        'patience': 10,
-        'epochs': 50,
-        'batch_size': 16}
-
-    for model in model_types:
-        # Train Model using all parameters
-        Train_Detect_Model(dataset,
-                           sample_lengths[0],
-                           feature_types[0],
-                           model,
-                           specs,
-                           testing_path,
-                           load_data=True)
-
-    # # Train Model using all parameters
-    # Train_Detect_Model(dataset,
-    #                    sample_lengths[0],
-    #                    feature_types[1],
-    #                    model_types[0],
-    #                    specs,
-    #                    testing_path,
-    #                    load_data=True)
+    Train_Detect_Model(dataset,
+                       sample_lengths[2],
+                       feature_types[1],
+                       model_types[0],
+                       testing_path,
+                       load_data=False,
+                       feature_params=feature_params)
 
 
 '''
