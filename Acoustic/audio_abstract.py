@@ -125,7 +125,7 @@ class Audio_Abstract:
         fig.tight_layout(pad=1)
 
         save = kwargs.get('save', False)
-        save_path = kwargs.get('save', str(self.path))
+        save_path = kwargs.get('save_path', str(self.path))
         if save:
             plt.savefig(f'{save_path}/{self.name}.png')
         else:
