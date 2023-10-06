@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 
 # Train Spectral_Model
-def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, test_path, load_data=False, display=False):
+def Train_Detect_Model(dataset, sample_length, feature_type, model_type, test_path, load_data=False, display=False, **kwargs):
 
     timing_stats = time_class(name='Model Training')
 
@@ -31,6 +31,19 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, specs, 
 
     # print(X.shape)
     # print(y.shape)
+
+    specs_default = {
+        'test_size': 0.2,
+        'random_state': 42,
+        'l2_value': 0.01,
+        'optimizer': 'adam',
+        'loss': 'binary_crossentropy',
+        'metric': 'accuracy',
+        'patience': 10,
+        'epochs': 50,
+        'batch_size': 24}
+
+    specs = kwargs.get('specs', specs_default)
 
     if model_type == 'basic_1':
         model = create_model.basic_model_1(features, labels, test_size=specs['test_size'],
@@ -106,7 +119,7 @@ if __name__ == '__main__':
                        sample_lengths[2],
                        feature_types[2],
                        model_types[0],
-                       specs,
                        testing_path,
-                       load_data=True)
+                       load_data=True,
+                       specs=specs)
 
