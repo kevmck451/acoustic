@@ -9,13 +9,16 @@ from copy import deepcopy
 from scipy import signal
 import numpy as np
 import librosa
+from pydub import AudioSegment
+
+
 
 
 #-----------------------------------
 # FEATURES -------------------------
 #-----------------------------------
 # Function to calculate spectrogram of audio (Features are 2D)
-def spectrogram(audio_object, range=(130, 1300), **kwargs): #80-2000
+def spectrogram(audio_object, range=(100, 2000), **kwargs): #80-2000
     stats = kwargs.get('stats', False)
     window_size = 32768
     hop_length = 512
@@ -443,10 +446,46 @@ def average_spectrum(audio_object, **kwargs):
     return average_spectrum, frequency_bins
 
 # Function to mix down multiple channels to mono
-def to_mono(*args):
-    print('to mono')
-    for arg in args:
-        print(arg)
+def mix_to_mono(*audio_objects):
+    # Check if audio objects have the same sample rate
+    sample_rate = audio_objects[0].sample_rate
+    for audio in audio_objects:
+        if audio.sample_rate != sample_rate:
+            raise ValueError("All audio objects must have the same sample rate!")
+
+    # Initialize the combined data as zeros, using the maximum number of samples from the audio objects
+    max_samples = max([audio.num_samples for audio in audio_objects])
+    combined_data = np.zeros(max_samples)
+
+    # Iterate through each audio object and sum up the data
+    for audio in audio_objects:
+        # If the audio has multiple channels, sum them to mono first
+        if audio.num_channels > 1:
+            if len(audio.data.shape) == 1:  # if audio.data is 1D
+                mono_data = audio.data
+            else:  # if audio.data is multi-dimensional
+                mono_data = np.mean(audio.data, axis=0)
+            # Ensure that the mono_data length matches the combined_data
+            if len(mono_data) < len(combined_data):
+                padding = np.zeros(len(combined_data) - len(mono_data))
+                mono_data = np.concatenate((mono_data, padding))
+            combined_data += mono_data
+        else:
+            # Ensure that the audio.data length matches the combined_data
+            if len(audio.data) < len(combined_data):
+                padding = np.zeros(len(combined_data) - len(audio.data))
+                combined_data += np.concatenate((audio.data, padding))
+            else:
+                combined_data += audio.data
+
+    # Average the combined data
+    combined_data /= len(audio_objects)
+
+    # Create a new Audio_Abstract object with the combined data
+    mixed_audio = Audio_Abstract(data=combined_data, sample_rate=sample_rate, num_channels=1,
+                                 num_samples=len(combined_data))
+
+    return mixed_audio
 
 #-----------------------------------
 # PREPROCESSING --------------------
@@ -463,8 +502,38 @@ def normalize(audio_object, percentage=95):
     return audio_normalized
 
 # Function to compress audio
-def compression(audio_object, threshold, noise_floor, ratio, attack_time, release_time):
-    print('compression')
+def compression(audio_object, threshold=-20, ratio=3.0, gain=1, attack=5, release=40):
+    # Extracting the audio data
+    audio_data = audio_object.data
+
+    # Ensure audio_data is mono for simplicity
+    if audio_object.num_channels > 1:
+        audio_data = np.mean(audio_data, axis=0)
+
+    # Convert dB threshold to amplitude
+    threshold_amplitude = librosa.db_to_amplitude(threshold)
+
+    # Apply compression
+    compressed_data = np.zeros_like(audio_data)
+    for i, sample in enumerate(audio_data):
+        if abs(sample) > threshold_amplitude:
+            gain_dB = librosa.amplitude_to_db(np.array([abs(sample)]))[0]
+            gain = (gain_dB - threshold) / ratio
+        else:
+            gain = 1.0
+
+        # Attack/release dynamics (basic form)
+        target_gain = min(gain, 1.0)
+        step = (target_gain - gain) / (attack if target_gain < gain else release)
+        gain += step
+
+        compressed_data[i] = sample * gain
+
+    # Return a new Audio_Abstract object with the compressed data
+    compressed_audio = Audio_Abstract(data=compressed_data, sample_rate=audio_object.sample_rate, num_channels=1,
+                                      num_samples=len(compressed_data))
+
+    return compressed_audio
 
 # Function to subtract Hex from sample
 def spectra_subtraction_hex(audio_object, **kwargs):
