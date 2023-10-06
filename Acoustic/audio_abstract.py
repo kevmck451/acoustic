@@ -10,13 +10,17 @@ import wave
 
 class Audio_Abstract:
     def __init__(self, **kwargs):
-        self.path = Path(kwargs.get('filepath', None))
+        filepath = kwargs.get('filepath', None)
+        self.path = Path(filepath) if filepath is not None else None
         self.sample_rate = kwargs.get('sample_rate', 48000)
         self.num_channels = kwargs.get('num_channels', 1)
         self.sample_length = kwargs.get('sample_length', None)
         self.data = kwargs.get('data', None)
         self.num_samples = kwargs.get('num_samples', None)
-        self.name = kwargs.get('name', self.path.stem)
+        if self.path:
+            self.name = kwargs.get('name', self.path.stem)
+        else:
+            self.name = kwargs.get('name', '')
 
         # If given a filepath
         if self.path is not None:
@@ -93,7 +97,7 @@ class Audio_Abstract:
         else: sf.write(f'{name}_export.wav', self.data, self.sample_rate)
 
     # Function to display the waveform of audio
-    def waveform(self):
+    def waveform(self, **kwargs):
         # Calculate the time axis in seconds
         if self.num_channels > 1:
             time_axis = np.arange(len(self.data[0])) / self.sample_rate
@@ -115,11 +119,17 @@ class Audio_Abstract:
             axs[i].set_ylim([-1, 1])  # set the y-axis limits to -1 and 1
             axs[i].axhline(y=0, color='black', linewidth=0.5, linestyle='--')  # add horizontal line at y=0
             axs[i].set_xlabel('Time (s)')
-            axs[i].set_title(f'Waveform: {self.path.stem} - Channel {i + 1}')
+            axs[i].set_title(f'Waveform: {self.name} - Channel {i + 1}')
 
         # Make the layout tight to avoid overlap of subplots
         fig.tight_layout(pad=1)
-        plt.show()
+
+        save = kwargs.get('save', False)
+        save_path = kwargs.get('save', str(self.path))
+        if save:
+            plt.savefig(f'{save_path}/{self.name}.png')
+        else:
+            plt.show()
 
 
 
