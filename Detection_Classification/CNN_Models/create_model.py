@@ -221,9 +221,9 @@ def deep_model_3(features, labels, **kwargs):
     model.add(Dropout(0.5))
 
     # Convolutional Layer 4 (newly added)
-    model.add(Conv2D(256, (3, 3), activation='relu', kernel_regularizer=l2(l2_value)))
+    model.add(Conv2D(256, (3, 3), activation='relu', padding='SAME', kernel_regularizer=l2(l2_value)))
     model.add(BatchNormalization())
-    model.add(Conv2D(256, (3, 3), activation='relu', kernel_regularizer=l2(l2_value)))
+    model.add(Conv2D(256, (3, 3), activation='relu', padding='SAME', kernel_regularizer=l2(l2_value)))
     model.add(BatchNormalization())
     model.add(MaxPooling2D((2, 2)))
     model.add(Dropout(0.6))
