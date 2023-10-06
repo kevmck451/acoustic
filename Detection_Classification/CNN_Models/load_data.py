@@ -27,7 +27,6 @@ def load_audio_data(path, length, feature_type, **kwargs):
                 chunks_list, labels = process.generate_chunks(channel, length=length, training=True)
                 # chunks_list, labels = process.generate_windowed_chunks(audio, window_size=length, training=True)
                 audio_ob_list.extend(chunks_list)
-
                 label_list.extend(labels)  # Flattening the labels
 
     master_ob_list = list(audio_ob_list)  # Creating a new 1D list
@@ -48,7 +47,7 @@ def load_audio_data(path, length, feature_type, **kwargs):
             # process.spectra_subtraction_hex(audio)
     master_ob_list = prepro_ob_list
 
-
+    print()
     print('Extracting Features')
     features_list = []
     for audio in progress_bar(master_ob_list):

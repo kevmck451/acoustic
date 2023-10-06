@@ -11,25 +11,29 @@ import numpy as np
 
 # Train Spectral_Model
 def Train_Detect_Model(dataset, sample_length, feature_type, model_type, test_path, load_data=False, display=False, **kwargs):
-    feature_params = kwargs.get('feature_params', 'None')
     timing_stats = time_class(name='Model Training')
+    feature_params = kwargs.get('feature_params', 'None')
+
+    if feature_type == 'spectral' and feature_params != 'None': feature_save_name = f'{feature_params[0]}-{feature_params[1]}'
+    elif feature_type == 'mfcc' and feature_params != 'None': feature_save_name = f'{feature_params}'
+    else: feature_save_name = 'None'
 
     # -------- Load and preprocess data
     save_path = f'{Path.cwd()}/Prediction/features_labels'
     if load_data:
 
         try:
-            features = np.load(f'{save_path}/features_{feature_type}_{sample_length}s.npy')
-            labels = np.load(f'{save_path}/labels_{feature_type}_{sample_length}s.npy')
+            features = np.load(f'{save_path}/features_{feature_type}_{feature_save_name}_{sample_length}s.npy')
+            labels = np.load(f'{save_path}/labels_{feature_type}_{feature_save_name}_{sample_length}s.npy')
         except:
 
             features, labels = load_audio_data(dataset, sample_length, feature_type, feature_params=feature_params)
-            np.save(f'{save_path}/features_{feature_type}_{sample_length}s.npy', features)
-            np.save(f'{save_path}/labels_{feature_type}_{sample_length}s.npy', labels)
+            np.save(f'{save_path}/features_{feature_type}_{feature_save_name}_{sample_length}s.npy', features)
+            np.save(f'{save_path}/labels_{feature_type}_{feature_save_name}_{sample_length}s.npy', labels)
     else:
         features, labels = load_audio_data(dataset, sample_length, feature_type, feature_params=feature_params)
-        np.save(f'{save_path}/features_{feature_type}_{sample_length}s.npy', features)
-        np.save(f'{save_path}/labels_{feature_type}_{sample_length}s.npy', labels)
+        np.save(f'{save_path}/features_{feature_type}_{feature_save_name}_{sample_length}s.npy', features)
+        np.save(f'{save_path}/labels_{feature_type}_{feature_save_name}_{sample_length}s.npy', labels)
 
     # print(X.shape)
     # print(y.shape)

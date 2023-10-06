@@ -9,16 +9,21 @@ def save_model(model, model_type, feature, input_time, accuracy, specs, runtime,
     text_extension = '.txt'
     lib_dir = f'{Path.cwd()}/Prediction/model_library'
 
-    model_saveto = f'{lib_dir}/{feature}_{str(input_time)}_{model_type}_{accuracy}_{str(index)}{model_extension}'
+    feature_params = kwargs.get('feature_params', 'None')
+    if feature == 'spectral' and feature_params != 'None': feature_save_name = f'{feature_params[0]}-{feature_params[1]}'
+    elif feature == 'mfcc' and feature_params != 'None': feature_save_name = f'{feature_params}'
+    else: feature_save_name = 'None'
+
+    model_saveto = f'{lib_dir}/{feature}_{feature_save_name}_{str(input_time)}_{model_type}_{accuracy}_{str(index)}{model_extension}'
 
     while Path(model_saveto).exists():
         index += 1
-        model_saveto = f'{lib_dir}/{feature}_{str(input_time)}_{model_type}_{accuracy}_{str(index)}{model_extension}'
+        model_saveto = f'{lib_dir}/{feature}_{feature_save_name}_{str(input_time)}_{model_type}_{accuracy}_{str(index)}{model_extension}'
 
     model.save(model_saveto)
 
     # Save text file with all info about model
-    text_saveto = f'{lib_dir}/{feature}_{str(input_time)}_{model_type}_{accuracy}_{str(index)}{text_extension}'
+    text_saveto = f'{lib_dir}/{feature}_{feature_save_name}_{str(input_time)}_{model_type}_{accuracy}_{str(index)}{text_extension}'
 
     feature_params = kwargs.get('feature_params', 'None')
     with open(text_saveto, 'w') as f:
