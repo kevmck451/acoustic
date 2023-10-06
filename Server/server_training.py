@@ -38,4 +38,5 @@ cd acoustic
 git pull
 
 python3 -m CNN_Models.server_training
+python3 -m Server.server_training
 '''
