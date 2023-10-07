@@ -29,7 +29,7 @@ target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolate
 
 for file in Path(target_path).iterdir():
     if 'wav' in file.suffix:
-        target = Audio_Abstract(filepath=file)
+        target = Audio_Abstract(filepath=file, sample_rate=20000)
 
         if target.sample_length is None or target.sample_length < sample_length:
             print(file)
