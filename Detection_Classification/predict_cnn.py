@@ -101,25 +101,27 @@ def select_file():
 
 if __name__ == '__main__':
     base_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Detection_Classification'
-    # model_path = f'{base_path}/Engine_Classification/Prediction/model_library/mfcc_6_basic_1_99_0.h5'
-    # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_6_basic_1_94_0.h5'
-    # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_6_deep_3_100_0.h5'
-    model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_100_6_basic_1_85_0.h5'
+    # model_path = f'{base_path}/Engine_Classification/Prediction/model_library/mfcc_50_6_basic_1_99_0.h5'
+    # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_50_6_basic_1_87_0.h5'
+    # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_50_6_basic_1_94_0.h5'
+    # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_50_6_deep_3_100_0.h5'
+    # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_100_6_basic_1_85_0.h5'
+    model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_100_6_deep_3_85_0.h5'
 
 # Experiment 1 -------------------------------------------------------------
     base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data'
 
     directory_list = [
-                    # f'{base_path_1}/Field Tests/Campus/Construction 2',
-                    # f'{base_path_1}/Field Tests/Random',
-                    # f'{base_path_1}/Isolated Samples/Testing',
-                    # f'{base_path_1}/Field Tests/Orlando 23/Samples/Ambient',
-                    # f'{base_path_1}/Field Tests/Campus/Generator/',
-                    f'{base_path_1}/Combinations/Ambient Diesel'
+                    f'{base_path_1}/Field Tests/Campus/Construction 2',
+                    f'{base_path_1}/Field Tests/Random',
+                    f'{base_path_1}/Isolated Samples/Testing',
+                    f'{base_path_1}/Field Tests/Orlando 23/Samples/Ambient',
+                    f'{base_path_1}/Field Tests/Campus/Generator/',
+                    # f'{base_path_1}/Combinations/Ambient Diesel'
                    ]
 
     save_base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Analysis/'
-    save_directory = f'{save_base_dir}/Engine vs Ambient/MFCC/Model 5-Syn Data'
+    save_directory = f'{save_base_dir}/Engine vs Ambient/MFCC/Model 1'
     for path in directory_list:
         for audio_path in Path(path).iterdir():
             print(audio_path)
