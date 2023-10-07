@@ -15,7 +15,8 @@ import matplotlib.patches as mpatches
 
 
 # Function to test ML Model's Accuracy
-def test_model_accuracy(model, directory, sample_length, feature_type, display=False, stats=False):
+def test_model_accuracy(model, directory, sample_length, feature_type, display=False, stats=False, **kwargs):
+    feature_params = kwargs.get('feature_params', 'None')
     if stats:
         # Get the model's architecture
         model.summary()
@@ -34,13 +35,21 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
 
     save_path = f'{Path.cwd()}/Prediction/features_labels'
 
+    feature_params = kwargs.get('feature_params', 'None')
+    if feature_type == 'spectral' and feature_params != 'None':
+        feature_save_name = f'{feature_params[0]}-{feature_params[1]}'
+    elif feature_type == 'mfcc' and feature_params != 'None':
+        feature_save_name = f'{feature_params}'
+    else:
+        feature_save_name = 'None'
+
     try:
-        features = np.load(f'{save_path}/TEST_features_{feature_type}_{sample_length}s.npy')
-        labels = np.load(f'{save_path}/TEST_labels_{feature_type}_{sample_length}s.npy')
+        features = np.load(f'{save_path}/TEST_features_{feature_type}_{feature_save_name}_{sample_length}s.npy')
+        labels = np.load(f'{save_path}/TEST_labels_{feature_type}_{feature_save_name}_{sample_length}s.npy')
     except:
-        features, labels = load_audio_data(Test_Directory, sample_length, feature_type)
-        np.save(f'{save_path}/TEST_features_{feature_type}_{sample_length}s.npy', features)
-        np.save(f'{save_path}/TEST_labels_{feature_type}_{sample_length}s.npy', labels)
+        features, labels = load_audio_data(Test_Directory, sample_length, feature_type, feature_params=feature_params)
+        np.save(f'{save_path}/TEST_features_{feature_type}_{feature_save_name}_{sample_length}s.npy', features)
+        np.save(f'{save_path}/TEST_labels_{feature_type}_{feature_save_name}_{sample_length}s.npy', labels)
 
     for i, (feature, label) in enumerate(zip(features, labels)):
         feature = np.expand_dims(feature, axis=0)

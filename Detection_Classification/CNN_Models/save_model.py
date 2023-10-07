@@ -29,7 +29,7 @@ def save_model(model, model_type, feature, input_time, accuracy, specs, runtime,
     with open(text_saveto, 'w') as f:
         f.write('Model Type: ' + model_type + '\n')
         f.write('Feature: ' + feature + '\n')
-        f.write('Feature Parameters: ' + feature_params + '\n')
+        f.write('Feature Parameters: ' + feature_save_name + '\n')
         f.write('Sample Length: ' + str(input_time) + 's\n')
         f.write('Accuracy: ' + str(accuracy) + '%\n')
         f.write('Total Runtime: ' + str(runtime) + 's\n')
