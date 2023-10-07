@@ -21,7 +21,8 @@ from pydub import AudioSegment
 def spectrogram(audio_object, **kwargs):
     stats = kwargs.get('stats', False)
     range = kwargs.get('feature_params', 'None')
-    window_size = 32768
+    window_sizes = [65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 254]
+    window_size = window_sizes[2]
     hop_length = 512
 
     data = audio_object.data
