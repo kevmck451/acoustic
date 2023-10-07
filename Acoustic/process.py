@@ -21,13 +21,17 @@ from pydub import AudioSegment
 def spectrogram(audio_object, **kwargs):
     stats = kwargs.get('stats', False)
     range = kwargs.get('feature_params', 'None')
-    window_sizes = [65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 254]
-    window = kwargs.get('window_size', window_sizes)
-    if window == 'None':
-        window_size = window_sizes[2]
-    else: window_size = window
+    window = kwargs.get('window_size', 'None')
+    hop_length = kwargs.get('hop_length', 'None')
 
-    hop_length = 512
+    window_sizes = [65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 254]
+
+    if range == 'None':
+        range = (70, 6000)
+    if window == 'None':
+        window_size = window_sizes[3]
+    if hop_length == 'None':
+        hop_length = 512
 
     data = audio_object.data
     # Audio_Object = normalize(audio_object)
@@ -61,8 +65,7 @@ def spectrogram(audio_object, **kwargs):
         frequency_resolution = nyquist_frequency / (window_size / 2)
         frequency_range = np.arange(0, window_size // 2 + 1) * frequency_resolution
 
-        if range == 'None':
-            range = (70, 6000)
+
 
         bottom_index = int(np.round(range[0] / frequency_resolution))
         top_index = int(np.round(range[1] / frequency_resolution))
