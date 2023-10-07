@@ -25,7 +25,7 @@ def make_prediction(model_path, audio_path, **kwargs):
     # Determine sample length
     path_model = Path(model_path)
     model_name = path_model.stem
-    sample_length = int(model_name.split('_')[1])
+    sample_length = int(model_name.split('_')[2])
 
     chunks_list = process.generate_windowed_chunks(audio, window_size=sample_length)
 
@@ -35,12 +35,13 @@ def make_prediction(model_path, audio_path, **kwargs):
     features_list = []
     for audio in progress_bar(chunks_list):
         if feature_type == 'spectral':
-            feature_params = kwargs.get('feature_params', (70, 4000))
-            feature = process.spectrogram(audio, feature_params=feature_params)
+            feature_params = model_name.split('_')[1]
+            fp1, fp2 = int(feature_params.split('-')[0]), int(feature_params.split('-')[1])
+            feature = process.spectrogram(audio, feature_params=(fp1, fp2))
         elif feature_type == 'filter1':
             feature = process.custom_filter_1(audio)
         elif feature_type == 'mfcc':
-            feature_params = kwargs.get('feature_params', (70, 4000))
+            feature_params = int(model_name.split('_')[1])
             feature = process.mfcc(audio, feature_params=feature_params)
         elif feature_type == 'zcr':
             feature = process.zcr(audio)
@@ -88,6 +89,7 @@ def make_prediction(model_path, audio_path, **kwargs):
     save_path = kwargs.get('save_path', str(audio.path))
     if save:
         plt.savefig(f'{save_path}/{audio.name}.png')
+        plt.close(fig)
     else:
         plt.show()
 
@@ -101,22 +103,23 @@ if __name__ == '__main__':
     base_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Detection_Classification'
     # model_path = f'{base_path}/Engine_Classification/Prediction/model_library/mfcc_6_basic_1_99_0.h5'
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_6_basic_1_94_0.h5'
-    model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_6_deep_3_100_0.h5'
+    # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_6_deep_3_100_0.h5'
+    model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_100_6_basic_1_85_0.h5'
 
 # Experiment 1 -------------------------------------------------------------
     base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data'
 
     directory_list = [
-                    f'{base_path_1}/Field Tests/Campus/Construction 2',
-                    f'{base_path_1}/Field Tests/Random',
-                    f'{base_path_1}/Isolated Samples/Testing',
-                    f'{base_path_1}/Field Tests/Orlando 23/Samples/Ambient',
-                    f'{base_path_1}/Field Tests/Campus/Generator/',
-                    # f'{base_path_1}/Combinations/Ambient Diesel'
+                    # f'{base_path_1}/Field Tests/Campus/Construction 2',
+                    # f'{base_path_1}/Field Tests/Random',
+                    # f'{base_path_1}/Isolated Samples/Testing',
+                    # f'{base_path_1}/Field Tests/Orlando 23/Samples/Ambient',
+                    # f'{base_path_1}/Field Tests/Campus/Generator/',
+                    f'{base_path_1}/Combinations/Ambient Diesel'
                    ]
 
     save_base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Analysis/'
-    save_directory = f'{save_base_dir}/Engine vs Ambient/MFCC/Model 4'
+    save_directory = f'{save_base_dir}/Engine vs Ambient/MFCC/Model 5-Syn Data'
     for path in directory_list:
         for audio_path in Path(path).iterdir():
             print(audio_path)

@@ -18,6 +18,6 @@ if __name__ == '__main__':
                        feature_types[1],
                        model_types[0],
                        testing_path,
-                       load_data=False,
+                       load_data=True,
                        feature_params=feature_params)
 
