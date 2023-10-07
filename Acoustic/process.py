@@ -24,8 +24,8 @@ def spectrogram(audio_object, **kwargs):
     window_sizes = [65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 254]
     window = kwargs.get('window_size', window_sizes)
     if window == 'None':
-        window_size = window[2]
-    window_size = window
+        window_size = window_sizes[2]
+    else: window_size = window
 
     hop_length = 512
 
