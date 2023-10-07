@@ -45,7 +45,7 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, test_pa
         'optimizer': 'adam',
         'loss': 'binary_crossentropy',
         'metric': 'accuracy',
-        'patience': 10,
+        'patience': 8,
         'epochs': 50,
         'batch_size': 24}
 
