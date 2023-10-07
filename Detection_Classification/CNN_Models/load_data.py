@@ -7,135 +7,62 @@ from pathlib import Path
 import numpy as np
 
 
-
-# Load Data from a Dataset with Labels and Extract Features
-# def load_audio_data(path, length, feature_type, **kwargs):
-#     print('Loading Dataset')
-#     feature_params = kwargs.get('feature_params', 'None')
-#     audio_ob_list = []
-#     label_list = []
-#     for file in progress_bar(Path(path).rglob('*.wav')):
-#         audio = Audio_Abstract(filepath=file)
-#         if audio.num_channels == 1:
-#             chunks_list, labels = process.generate_chunks(audio, length=length, training=True)
-#             # chunks_list, labels = process.generate_windowed_chunks(audio, window_size=length, training=True)
-#             audio_ob_list.extend(chunks_list)  # Flattening the chunks_list
-#             label_list.extend(labels)  # Flattening the labels
-#         else: # it's 4 channel
-#             channel_list = process.channel_to_objects(audio)
-#             for channel in channel_list:
-#                 chunks_list, labels = process.generate_chunks(channel, length=length, training=True)
-#                 # chunks_list, labels = process.generate_windowed_chunks(audio, window_size=length, training=True)
-#                 audio_ob_list.extend(chunks_list)
-#                 label_list.extend(labels)  # Flattening the labels
-#
-#     master_ob_list = list(audio_ob_list)  # Creating a new 1D list
-#     master_label_list = list(label_list)  # Creating a new 1D list
-#
-#     print('Preprocessing Data')
-#     prepro_ob_list = []
-#     for audio in progress_bar(master_ob_list):
-#         # Sample Rate Reduction
-#         # reduce to 10-12k Hz
-#         # Normalization
-#         prepro_ob_list.append(process.normalize(audio))
-#
-#
-#         # Compression (Dynamic Range)
-#         # Noise Reduction
-#             # Spectral Subtraction
-#             # process.spectra_subtraction_hex(audio)
-#     master_ob_list = prepro_ob_list
-#
-#     print()
-#     print('Extracting Features')
-#     features_list = []
-#     for audio in progress_bar(master_ob_list):
-#         if feature_type == 'spectral':
-#             feature = process.spectrogram(audio, feature_params=feature_params)
-#         elif feature_type == 'mfcc':
-#             feature = process.mfcc(audio, feature_params=feature_params)
-#         elif feature_type == 'filter1':
-#             feature = process.custom_filter_1(audio)
-#         elif feature_type == 'zcr':
-#             feature = process.zcr(audio)
-#
-#
-#         features_list.append(feature)  # Add Feature
-#         # print(feature.shape)
-#         # print(feature.dtype)
-#
-#     # Range Normalization
-#
-#     # make into array and reshape to (6788, 1310, 188, 1) - (samples, freq, reduced time, batch)
-#     features_list = np.array(features_list)
-#     features_list = np.squeeze(features_list, axis=1)
-#     features_list = features_list[..., np.newaxis]
-#
-#     return features_list, np.array(master_label_list)
-
-# Load Data from a Dataset with Labels and Extract Features
-
 def load_audio_data(path, length, feature_type, **kwargs):
     print('Loading Dataset')
+    print('Preprocessing')
+    print('Extracting Features')
     feature_params = kwargs.get('feature_params', 'None')
+    spec_window_size = kwargs.get('spec_window_size', 'None')
+    hop_size = kwargs.get('hop_length', 'None')
 
-    audio_ob_list = []
+    features_list = []
     label_list = []
+
     for file in progress_bar(Path(path).rglob('*.wav')):
         audio = Audio_Abstract(filepath=file, sample_rate=20000)
-        if audio.num_channels == 1:
-            chunks_list, labels = process.generate_chunks(audio, length=length, training=True)
-            # chunks_list, labels = process.generate_windowed_chunks(audio, window_size=length, training=True)
-            audio_ob_list.extend(chunks_list)  # Flattening the chunks_list
-            label_list.extend(labels)  # Flattening the labels
-        else: # it's 4 channel
-            channel_list = process.channel_to_objects(audio)
-            for channel in channel_list:
-                chunks_list, labels = process.generate_chunks(channel, length=length, training=True)
-                # chunks_list, labels = process.generate_windowed_chunks(audio, window_size=length, training=True)
-                audio_ob_list.extend(chunks_list)
-                label_list.extend(labels)  # Flattening the labels
 
-        print('Preprocessing Data')
-        prepro_ob_list = []
-        for audio in audio_ob_list:
-            # Sample Rate Reduction
-            # reduce to 20k Hz
-            prepro_ob_list.append(process.normalize(audio)) # Normalization
+        # Get list of audio chunks depending on channel count
+        audio_ob_list = get_audio_chunks(audio, length)
+        label_list.extend(audio_ob_list[1])
+
+        # Preprocess and extract features
+        for audio_chunk in audio_ob_list[0]:
+            normalized_audio = process.normalize(audio_chunk)
             # Compression (Dynamic Range)
             # Noise Reduction
-            # Spectral Subtraction
-            # process.spectra_subtraction_hex(audio)
+            feature = extract_feature(normalized_audio, feature_type, feature_params, spec_window_size, hop_size)
+            features_list.append(feature)
 
-        audio_ob_list.clear()
+    features_list = format_features(features_list)
+    return features_list, np.array(label_list)
 
-        print('Extracting Features')
-        features_list = []
-        for audio in prepro_ob_list:
-            if feature_type == 'spectral':
-                feature = process.spectrogram(audio, feature_params=feature_params)
-            elif feature_type == 'mfcc':
-                feature = process.mfcc(audio, feature_params=feature_params)
-            elif feature_type == 'filter1':
-                feature = process.custom_filter_1(audio)
-            elif feature_type == 'zcr':
-                feature = process.zcr(audio)
-            else: raise Exception('Error with feature type')
+def get_audio_chunks(audio, length):
+    chunks_labels_list = []
+    if audio.num_channels == 1:
+        chunks_labels_list.append(process.generate_chunks(audio, length=length, training=True))
+    else:  # it's 4 channel
+        channel_list = process.channel_to_objects(audio)
+        for channel in channel_list:
+            chunks_labels_list.append(process.generate_chunks(channel, length=length, training=True))
+    # Flattening the list of chunks and labels
+    audio_chunks, labels = zip(*chunks_labels_list)
+    return [chunk for sublist in audio_chunks for chunk in sublist], [label for sublist in labels for label in sublist]
 
-            features_list.append(feature)  # Add Feature
+def extract_feature(audio, feature_type, feature_params='None', spec_window_size='None', hop_length='None'):
+    if feature_type == 'spectral':
+        return process.spectrogram(audio, feature_params=feature_params, window_size=spec_window_size, hop_length=hop_length)
+    elif feature_type == 'mfcc':
+        return process.mfcc(audio, feature_params=feature_params)
+    elif feature_type == 'filter1':
+        return process.custom_filter_1(audio)
+    elif feature_type == 'zcr':
+        return process.zcr(audio)
+    else: raise Exception('Error with feature type')
 
-        prepro_ob_list.clear()
-
-    # Range Normalization
-
-    # make into array and reshape to (6788, 1310, 188, 1) - (samples, freq, reduced time, batch)
+def format_features(features_list):
     features_list = np.array(features_list)
     features_list = np.squeeze(features_list, axis=1)
-    features_list = features_list[..., np.newaxis]
-    master_label_list = list(label_list)  # Creating a new 1D list
-
-    return features_list, np.array(master_label_list)
+    return features_list[..., np.newaxis]
 
 
 if __name__ == '__main__':

@@ -21,12 +21,10 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, test_pa
     # -------- Load and preprocess data
     save_path = f'{Path.cwd()}/Prediction/features_labels'
     if load_data:
-
         try:
             features = np.load(f'{save_path}/features_{feature_type}_{feature_save_name}_{sample_length}s.npy')
             labels = np.load(f'{save_path}/labels_{feature_type}_{feature_save_name}_{sample_length}s.npy')
         except:
-
             features, labels = load_audio_data(dataset, sample_length, feature_type, feature_params=feature_params)
             np.save(f'{save_path}/features_{feature_type}_{feature_save_name}_{sample_length}s.npy', features)
             np.save(f'{save_path}/labels_{feature_type}_{feature_save_name}_{sample_length}s.npy', labels)
@@ -45,7 +43,7 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, test_pa
         'optimizer': 'adam',
         'loss': 'binary_crossentropy',
         'metric': 'accuracy',
-        'patience': 8,
+        'patience': 5,
         'epochs': 50,
         'batch_size': 24}
 
