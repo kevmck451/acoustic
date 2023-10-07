@@ -16,7 +16,7 @@ if __name__ == '__main__':
     Train_Detect_Model(dataset,
                        sample_lengths[2],
                        feature_types[1],
-                       model_types[0],
+                       model_types[4],
                        testing_path,
                        load_data=True,
                        feature_params=feature_params)
