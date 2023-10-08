@@ -1,7 +1,6 @@
-from Sample_Library.update_csv_stats import process_directory as pd_csv
-from Sample_Library.update_normalize import process_directory as pd_norm
-from Sample_Library.update_overviews import process_directory as pd_over
-from Sample_Library.update_flight_paths import process_directory as pd_flight
+from Library.Samples.update_csv_stats import process_directory as pd_csv
+from Library.Samples.update_normalize import process_directory as pd_norm
+from Library.Samples.update_overviews import process_directory as pd_over
 from Acoustic import sample_library
 from process import Process
 
