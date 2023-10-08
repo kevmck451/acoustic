@@ -17,6 +17,7 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, test_pa
     if feature_type == 'spectral' and feature_params != 'None': feature_save_name = f'{feature_params[0]}-{feature_params[1]}'
     elif feature_type == 'mfcc' and feature_params != 'None': feature_save_name = f'{feature_params}'
     else: feature_save_name = 'None'
+    feature_shape = None
 
     # -------- Load and preprocess data
     save_path = f'{Path.cwd()}/Prediction/features_labels'
@@ -30,6 +31,7 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, test_pa
             np.save(f'{save_path}/labels_{feature_type}_{feature_save_name}_{sample_length}s.npy', labels)
     else:
         features, labels = load_audio_data(dataset, sample_length, feature_type, feature_params=feature_params)
+        feature_shape = features.shape
         np.save(f'{save_path}/features_{feature_type}_{feature_save_name}_{sample_length}s.npy', features)
         np.save(f'{save_path}/labels_{feature_type}_{feature_save_name}_{sample_length}s.npy', labels)
 
@@ -95,7 +97,7 @@ def Train_Detect_Model(dataset, sample_length, feature_type, model_type, test_pa
     total_runtime = timing_stats.stats()
 
     # Save Model
-    save_model(model, model_type, feature_type, sample_length, accuracy[0], specs, total_runtime, feature_params=feature_params)
+    save_model(model, model_type, feature_type, sample_length, accuracy[0], specs, total_runtime, feature_params=feature_params, feature_shape=feature_shape)
     # if accuracy[0] >= 90:
     #     save_model(model, 'detect', 'spec', sample_length, accuracy[0])
 
