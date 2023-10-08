@@ -322,7 +322,6 @@ def generate_chunks(audio_object, length):
         print(f'Error: {audio_object.path.stem}')
     return audio_ob_list, labels
 
-
 # Function to convert audio sample to a specific length
 def generate_chunks_4ch(audio_object, length, training=False):
     num_samples = audio_object.sample_rate * length
