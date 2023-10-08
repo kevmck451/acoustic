@@ -14,7 +14,7 @@ class Audio_Spectral_Model(Audio):
 
     # Function to calculate spectrogram of audio
     def spectrogram(self, range=(80, 2000), stats=False):
-        # Do not change settings - ML Model depends on it as currently set
+        # Do not change settings - ML Models depends on it as currently set
         window_size = 32768
         hop_length = 512
         frequency_range = range

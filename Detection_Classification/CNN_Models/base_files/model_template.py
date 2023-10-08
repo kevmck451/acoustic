@@ -24,7 +24,7 @@ class Audio_Template(Audio):
 
     # Function to calculate spectrogram of audio
     def spectrogram(self, range=(80, 2000), stats=False):
-        # Do not change settings - ML Model depends on it as currently set
+        # Do not change settings - ML Models depends on it as currently set
         window_size = 32768
         hop_length = 512
         frequency_range = range
@@ -109,8 +109,8 @@ static_dataset = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data
 # -------- Load and preprocess data
 X, y = load_audio_data(static_dataset)
 
-# Create a Model for Trainning
-print('Creating Model')
+# Create a Models for Trainning
+print('Creating Models')
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 input_shape = (X_train.shape[1], X_train.shape[2], 1)
 model = Sequential()
@@ -133,11 +133,11 @@ model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
 model.fit(X_train, y_train, epochs=1, batch_size=12, validation_data=(X_test, y_test))
 
 
-# Test accuracy of Model
+# Test accuracy of Models
 truth = generate_truth(directory_test_1)
 accuracy = test_model_accuracy(model, directory_test_1, truth)
 
-# Save Model if above 90%
+# Save Models if above 90%
 if accuracy[0] > 10:
     save_model(model, 'detect', 'spec', accuracy[0])
 

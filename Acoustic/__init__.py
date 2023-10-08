@@ -16,7 +16,7 @@ Classes:
 
 Modules:
 - Process: Contains functions for audio processing tasks.
-- Sample_Library: Handles user-specific sample library and metadata.
+- Samples: Handles user-specific sample library and metadata.
 - Utils: Provides utility functions for working with files and directories.
 - Visualize: Includes functions for visualizing audio data.
 - Comparisons: Contains classes for comparing audio samples.

@@ -1,4 +1,4 @@
-# Train ML Model on a Dataset and save the model for testing
+# Train ML Models on a Dataset and save the model for testing
 
 
 from pathlib import Path
@@ -123,7 +123,7 @@ model.fit(X_train, y_train, epochs=50, batch_size=12, validation_data=(X_test, y
 
 
 
-# ------- Save Model
+# ------- Save Models
 saveto = 'models/testing/detection_model_test_0.h5'
 num = 1
 while Path(saveto).exists():
