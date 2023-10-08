@@ -10,47 +10,24 @@ import numpy as np
 
 
 def load_features(filepath, length, sample_rate, multi_channel, process_list, feature_type, feature_params):
+    print('Loading Features')
 
-    if not Path(filepath).exists():
-        raise Exception('Directory does not exists')
-    if type(length) is not int:
-        raise Exception('Length needs to be an integer')
-    if length < 1:
-        raise Exception('Length needs to be greater than 1')
-    if type(sample_rate) is not int:
-        raise Exception('Sample Rate needs to be an integer')
-    if sample_rate < 10_000 or sample_rate > 48_0001:
-        raise Exception('Sample Rate Out of Range')
-    if type(feature_params.get('bandwidth')[0]) is not int or type(feature_params.get('bandwidth')[1]) is not int:
-        raise Exception('Bandwidth must be integers')
-    if feature_params.get('bandwidth')[0] < 50 or feature_params.get('bandwidth')[1] > int(sample_rate/2):
-        raise Exception('Bandwidth is out of range')
-    if feature_params.get('window_size') % 2 != 0:
-        raise Exception('Window Size needs to be a power of 2')
+    check_inputs(filepath, length, sample_rate, feature_params)
 
-    feat = 'None'
-    if feature_type == 'spectral':
-        bandwidth = feature_params.get('bandwidth')
-        window = feature_params.get('window_size')
-        feat = f'{bandwidth[0]}-{bandwidth[1]}-{window}'
-    if feature_type == 'mfcc':
-        feat = feature_params.get('n_coeffs')
-
-    feature_label_dir_path = Path(f'{Path.cwd()}/features_labels')
-    feature_label_dir_path.mkdir(exist_ok=True)
-    feature_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_features.npy'
-    label_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_labels_.npy'
-
-    if Path(feature_path).exists() and Path(label_path):
+    # returns true is file exists
+    if check_if_data_exists(filepath, length, feature_type, feature_params):
+        print('Features Exist')
+        feature_path, label_path, _ = feature_labels_file_names(length, feature_type, feature_params)
         feature_list_master = np.load(feature_path)
         label_list_master = np.load(label_path)
-
     else:
-        print('Loading Features')
+        print('Creating Features')
         label_list_master = []
         feature_list_master = []
+        audio_name_master = []
 
         for file in progress_bar(Path(filepath).rglob('*.wav')):
+            audio_name_master.append(file.stem)
             for audio_list, label_list in load_audio_generator(file, sample_rate, length, multi_channel):
                 for audio, label in zip(audio_list, label_list):
                     label_list_master.append(label)
@@ -72,12 +49,15 @@ def load_features(filepath, length, sample_rate, multi_channel, process_list, fe
         feature_list_master = np.squeeze(feature_list_master, axis=1)
         feature_list_master = feature_list_master[..., np.newaxis]
 
+
+        feature_path, label_path, audio_names_path = feature_labels_file_names(length, feature_type, feature_params)
         np.save(feature_path, feature_list_master)
         np.save(label_path, label_list_master)
+        write_filenames_to_file(audio_name_master, audio_names_path)
 
-    # return feature_list_master, label_list_master
     return feature_list_master, label_list_master
 
+# Function to generator audio files and keep memory usage low
 def load_audio_generator(filepath, sample_rate, length, multi_channel):
     audio = Audio_Abstract(filepath=filepath, sample_rate=sample_rate)
     audio_list_master = []
@@ -90,8 +70,9 @@ def load_audio_generator(filepath, sample_rate, length, multi_channel):
         pass
     elif multi_channel == multi_channel_options[2]:
         pass
-    elif multi_channel == multi_channel_options[2]:
-        pass
+    elif multi_channel == multi_channel_options[3]:
+        channel_list = process.channel_to_objects(audio)
+        audio = process.mix_to_mono(audio for audio in channel_list)
     else:
         pass
 
@@ -111,6 +92,7 @@ def load_audio_generator(filepath, sample_rate, length, multi_channel):
 
     yield audio_list_master, label_list_master
 
+# Function for Extracting Features from audio object
 def extract_feature(audio, feature_type, feature_params):
     if feature_type == 'spectral':
         return process.spectrogram(audio, feature_params=feature_params)
@@ -121,6 +103,85 @@ def extract_feature(audio, feature_type, feature_params):
     elif feature_type == 'zcr':
         return process.zcr(audio)
     else: raise Exception('Error with feature type')
+
+# Function for Input Checking
+def check_inputs(filepath, length, sample_rate, feature_params):
+
+    if not Path(filepath).exists():
+        raise Exception('Directory does not exists')
+    if type(length) is not int:
+        raise Exception('Length needs to be an integer')
+    if length < 1:
+        raise Exception('Length needs to be greater than 1')
+    if type(sample_rate) is not int:
+        raise Exception('Sample Rate needs to be an integer')
+    if sample_rate < 10_000 or sample_rate > 48_0001:
+        raise Exception('Sample Rate Out of Range')
+    if feature_type == 'spectral':
+        if type(feature_params.get('bandwidth')[0]) is not int or type(feature_params.get('bandwidth')[1]) is not int:
+            raise Exception('Bandwidth must be integers')
+        if feature_params.get('bandwidth')[0] < 50 or feature_params.get('bandwidth')[1] > int(sample_rate/2):
+            raise Exception('Bandwidth is out of range')
+        if feature_params.get('window_size') % 2 != 0:
+            raise Exception('Window Size needs to be a power of 2')
+    if feature_type == 'mfcc':
+        if type(feature_params.get('n_coeffs')) is not int:
+            raise Exception('Number of Coefficients must be integer')
+
+# Function to create the features / labels / audio names file names for storage
+def feature_labels_file_names(length, feature_type, feature_params):
+    # Parsing Feature Parameters for Saving Data after Processing
+    feat = 'None'
+    if feature_type == 'spectral':
+        bandwidth = feature_params.get('bandwidth')
+        window = feature_params.get('window_size')
+        feat = f'{bandwidth[0]}-{bandwidth[1]}-{window}'
+    if feature_type == 'mfcc':
+        feat = feature_params.get('n_coeffs')
+
+    # Make features_label folder if doesnt exist
+    feature_label_dir_path = Path(f'{Path.cwd()}/features_labels')
+    feature_label_dir_path.mkdir(exist_ok=True)
+
+    feature_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_features.npy'
+    label_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_labels_.npy'
+    audio_names_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_features.txt'
+
+    return feature_path, label_path, audio_names_path
+
+# Function to see if data request already exists or needs to be created
+def check_if_data_exists(filepath, length, feature_type, feature_params):
+
+    feature_path, label_path, audio_names_path = feature_labels_file_names(length, feature_type, feature_params)
+
+    # If files wanted already exist, return them instead of loading data again
+    if Path(feature_path).exists() and Path(label_path).exists():
+        audio_name_master = []
+        for file in Path(filepath).rglob('*.wav'):
+            audio_name_master.append(file.stem)
+        if not Path(audio_names_path).exists():
+            write_filenames_to_file(audio_name_master, audio_names_path)
+
+        with open(audio_names_path, 'r') as f:
+            filenames_from_file = set(line.strip() for line in f)
+
+        if set(audio_name_master) == filenames_from_file:
+            return True
+        else: return False
+    else: return False
+
+# Function to write a list to a text file
+def write_filenames_to_file(filenames, output_file):
+    """
+    Write each filename from a list to a new line in an output file.
+
+    :param filenames: List of filenames.
+    :param output_file: The name of the output file.
+    """
+    filenames.sort()
+    with open(output_file, 'w') as f:
+        for filename in filenames:
+            f.write(filename + '\n')
 
 
 if __name__ == '__main__':
@@ -134,12 +195,17 @@ if __name__ == '__main__':
     feature_type = ['spectral', 'mfcc']
     window_sizes = [65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 256]
     hop_sizes = [1024, 512, 256, 128]
-    feature_params = {'bandwidth':(70, 5000), 'window_size':window_sizes[4], 'hop_size':hop_sizes[1]}  # Spectrum
-    # feature_params = {'n_coeffs':150}           # MFCC
+    # feature_params = {'bandwidth':(70, 5000), 'window_size':window_sizes[4], 'hop_size':hop_sizes[1]}  # Spectrum
+    feature_params = {'n_coeffs':13}           # MFCC
 
 
-    features, labels = load_features(filepath, length[2], sample_rate[0], multi_channel[0],
-                  process_list, feature_type[0], feature_params)
+    features, labels = load_features(filepath,
+                                     length[2],
+                                     sample_rate[0],
+                                     multi_channel[0],
+                                     process_list,
+                                     feature_type[1],
+                                     feature_params)
 
     total_runtime = timing_stats.stats()
 
