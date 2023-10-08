@@ -188,20 +188,20 @@ if __name__ == '__main__':
     timing_stats = time_class(name='Load Features')
     filepath = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/'
                     '1 Acoustic/Data/ML Model Data/Engine vs Ambience/dataset 2')
-    length = [10, 8, 6, 4, 2]
-    sample_rate = [20_000, 48_000]
+    length = [2, 4, 6, 8, 10]
+    sample_rate = [12_000, 18_000, 24_000, 36_000, 48_000]
     multi_channel = ['original', 'ch_1', 'ch_n', 'split_ch', 'mix_mono']
-    process_list = ['normalize'] # add labels to list in order to create new processing chain
+    process_list = ['normalize']  # add labels to list in order to create new processing chain
     feature_type = ['spectral', 'mfcc']
-    window_sizes = [65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 256]
-    hop_sizes = [1024, 512, 256, 128]
-    # feature_params = {'bandwidth':(70, 5000), 'window_size':window_sizes[4], 'hop_size':hop_sizes[1]}  # Spectrum
-    feature_params = {'n_coeffs':13}           # MFCC
+    window_sizes = [256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536]
+    hop_sizes = [128, 256, 512, 1024]
+    # feature_params = {'bandwidth':(70, 5000), 'window_size':window_sizes[4], 'hop_size':hop_sizes[2]}  # Spectrum
+    feature_params = {'n_coeffs': 13}  # MFCC
 
 
     features, labels = load_features(filepath,
                                      length[2],
-                                     sample_rate[0],
+                                     sample_rate[2],
                                      multi_channel[0],
                                      process_list,
                                      feature_type[1],
