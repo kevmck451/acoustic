@@ -14,7 +14,7 @@ import matplotlib.patches as mpatches
 
 
 
-# Function to test ML Model's Accuracy
+# Function to test ML Models's Accuracy
 def test_model_accuracy(model, directory, sample_length, feature_type, display=False, stats=False, **kwargs):
     feature_params = kwargs.get('feature_params', 'None')
     if stats:
@@ -27,7 +27,7 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
 
     Test_Directory = Path(str(directory))
 
-    # Test accuracy of Model
+    # Test accuracy of Models
     y_true = []
     y_pred = []
     y_pred_scores = []
@@ -131,8 +131,8 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
 
 if __name__ == '__main__':
 
-    # testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Flight_Analysis/Test 1'
-    # testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Static Detection/dataset'
+    # testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Models Data/Static Flight_Analysis/Test 1'
+    # testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Models Data/Static Detection/dataset'
     testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations'
     sample_lengths = [10, 8, 6, 4, 2]
 

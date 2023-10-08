@@ -14,7 +14,7 @@ import matplotlib.patches as mpatches
 
 
 
-# Function to test ML Model's Accuracy
+# Function to test ML Models's Accuracy
 def test_model_accuracy(model, directory, sample_length, feature_type, display=False, stats=False):
     if stats:
         # Get the model's architecture
@@ -26,7 +26,7 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
 
     Test_Directory = Path(str(directory))
 
-    # Test accuracy of Model
+    # Test accuracy of Models
     y_true = []
     y_pred = []
     y_pred_scores = []
@@ -113,7 +113,7 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
     return accuracy, y_pred_scores
 
 if __name__ == '__main__':
-    # Model List
+    # Models List
     model = load_model('Prediction/model_library/mfcc_6_basic_1_99_0.h5')
     # model = load_model('CNN_Models/model_library/basic_1_spectral_6_85_0.h5')
 

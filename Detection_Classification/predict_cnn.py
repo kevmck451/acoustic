@@ -106,12 +106,13 @@ if __name__ == '__main__':
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_50_6_basic_1_94_0.h5'
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_50_6_deep_3_100_0.h5'
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_100_6_basic_1_85_0.h5'
-    model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_100_6_deep_3_83_0.h5'
+    # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_100_6_deep_3_83_0.h5'
+    model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/spectral_70-2600_6_basic_1_24_0.h5'
 
 # Experiment 1 -------------------------------------------------------------
     save_base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Analysis/'
-    save_directory_1 = f'{save_base_dir}/Engine vs Ambient/MFCC/Model 6'
-    save_directory_2 = f'{save_base_dir}/Engine vs Ambient/MFCC/Model 6-Syn Data'
+    save_directory_1 = f'{save_base_dir}/Engine vs Ambient/Spectral/Model 1'
+    save_directory_2 = f'{save_base_dir}/Engine vs Ambient/Spectral/Model 1-Syn Data'
 
     base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data'
     directory_list = [
