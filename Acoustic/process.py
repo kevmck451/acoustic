@@ -6,6 +6,7 @@ from Acoustic import utils
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 from copy import deepcopy
+from copy import copy
 from scipy import signal
 import numpy as np
 import librosa
@@ -20,18 +21,19 @@ from pydub import AudioSegment
 # Function to calculate spectrogram of audio (Features are 2D)
 def spectrogram(audio_object, **kwargs):
     stats = kwargs.get('stats', False)
-    range = kwargs.get('feature_params', 'None')
-    window = kwargs.get('window_size', 'None')
-    hop_length = kwargs.get('hop_length', 'None')
+    feature_params = kwargs.get('feature_params', 'None')
 
     window_sizes = [65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 254]
 
-    if range == 'None':
-        range = (70, 6000)
-    if window == 'None':
+    if feature_params == 'None':
+        bandwidth = (70, 6000)
         window_size = window_sizes[3]
-    if hop_length == 'None':
         hop_length = 512
+    else:
+        bandwidth = feature_params.get('bandwidth')
+        window_size = feature_params.get('window_size')
+        hop_length = feature_params.get('hop_length')
+
 
     data = audio_object.data
     # Audio_Object = normalize(audio_object)
@@ -60,22 +62,22 @@ def spectrogram(audio_object, **kwargs):
         # print(spectrogram_db_max)
         # print(spectrogram_db)
 
-        # Calculate frequency range and resolution
+        # Calculate frequency bandwidth and resolution
         nyquist_frequency = audio_object.sample_rate / 2
         frequency_resolution = nyquist_frequency / (window_size / 2)
         frequency_range = np.arange(0, window_size // 2 + 1) * frequency_resolution
 
 
 
-        bottom_index = int(np.round(range[0] / frequency_resolution))
-        top_index = int(np.round(range[1] / frequency_resolution))
+        bottom_index = int(np.round(bandwidth[0] / frequency_resolution))
+        top_index = int(np.round(bandwidth[1] / frequency_resolution))
 
         if stats:
             print(f'Spectro_dB: {spectrogram_db}')
-            print(f'Freq Range: ({range[0]},{range[1]}) Hz')
+            print(f'Freq Range: ({bandwidth[0]},{bandwidth[1]}) Hz')
             print(f'Freq Resolution: {frequency_resolution} Hz')
 
-        # Cut the spectrogram to the desired frequency range and append to the list
+        # Cut the spectrogram to the desired frequency bandwidth and append to the list
         spectrograms.append(spectrogram_db[bottom_index:top_index])
 
     # Convert the list of spectrograms to a numpy array and return
@@ -84,7 +86,12 @@ def spectrogram(audio_object, **kwargs):
 # Function to calculate MFCC of audio (Features are 2D)
 def mfcc(audio_object, **kwargs):
     stats = kwargs.get('stats', False)
-    n_mfcc = kwargs.get('feature_params', 'None')
+    feature_params = kwargs.get('feature_params', 'None')
+
+    if feature_params == 'None':
+        n_mfcc = 50
+    else:
+        n_mfcc = feature_params.get('n_coeffs')
 
     data = audio_object.data
     # Normalize audio data
@@ -279,7 +286,7 @@ def generate_windowed_chunks(audio_object, window_size, training=False):
     else: return audio_ob_list
 
 # Function to convert audio sample to a specific length
-def generate_chunks(audio_object, length, training=False):
+def generate_chunks(audio_object, length):
 
     num_samples = audio_object.sample_rate * length
     start = 0
@@ -295,28 +302,26 @@ def generate_chunks(audio_object, length, training=False):
         audio_object.sample_length = length
         audio_object.num_samples = length * audio_object.sample_rate
         audio_ob_list.append(audio_object)
-        if training:
-            label = int(audio_object.path.parent.stem)
-            labels.append(label)  # Add Label (folder name)
+        label = int(audio_object.path.parent.stem)
+        labels.append(label)  # Add Label (folder name)
     # If the audio file is too long, shorten it
 
     else:
         while end <= total_samples:
-            audio_copy = deepcopy(audio_object)
+            audio_copy = copy(audio_object)
             audio_copy.data = audio_object.data[start:end]
             audio_copy.sample_length = length
             audio_copy.num_samples = length * audio_copy.sample_rate
             audio_ob_list.append(audio_copy)
             start, end = (start + num_samples), (end + num_samples)
-            if training:
-                label = int(audio_object.path.parent.stem)
-                labels.append(label)  # Add Label (folder name)
+            label = int(audio_object.path.parent.stem)
+            labels.append(label)  # Add Label (folder name)
 
-    if training:
-        if len(audio_ob_list) != len(labels):
-            print(f'Error: {audio_object.path.stem}')
-        return audio_ob_list, labels
-    else: return audio_ob_list
+
+    if len(audio_ob_list) != len(labels):
+        print(f'Error: {audio_object.path.stem}')
+    return audio_ob_list, labels
+
 
 # Function to convert audio sample to a specific length
 def generate_chunks_4ch(audio_object, length, training=False):
