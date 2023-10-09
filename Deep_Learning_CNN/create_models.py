@@ -18,7 +18,6 @@ def create_model(input_shape, conv_layers, dense_layers, l2_value=0.01, dropout_
 
     Returns: model: Keras Sequential model
     """
-    print(input_shape)
     model = Sequential()
 
     # First convolutional layer with input shape
