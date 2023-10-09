@@ -12,7 +12,7 @@ import numpy as np
 def load_features(filepath, length, sample_rate, multi_channel, process_list, feature_type, feature_params):
     print('Loading Features')
 
-    check_inputs(filepath, length, sample_rate, feature_params)
+    check_inputs(filepath, length, sample_rate, feature_type, feature_params)
 
     # returns true is file exists
     if check_if_data_exists(filepath, length, feature_type, feature_params):
@@ -105,7 +105,7 @@ def extract_feature(audio, feature_type, feature_params):
     else: raise Exception('Error with feature type')
 
 # Function for Input Checking
-def check_inputs(filepath, length, sample_rate, feature_params):
+def check_inputs(filepath, length, sample_rate, feature_type, feature_params):
 
     if not Path(filepath).exists():
         raise Exception('Directory does not exists')

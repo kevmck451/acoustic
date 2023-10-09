@@ -21,10 +21,7 @@ def train_model(features, labels, test_size, random_state, model, optimizer, los
 
     X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=test_size,
                                                         random_state=random_state)
-    input_shape = (X_train.shape[1], X_train.shape[2], 1)
 
-    if features.shape != input_shape:
-        raise Exception('Input Shapes not as Expected')
 
     # gc.collect()
 
@@ -34,5 +31,5 @@ def train_model(features, labels, test_size, random_state, model, optimizer, los
               callbacks=[early_stopping])
 
 
-
+    return model
 

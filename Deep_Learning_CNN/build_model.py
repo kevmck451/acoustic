@@ -6,28 +6,25 @@ from Acoustic.utils import time_class
 
 
 from pathlib import Path
-import numpy as np
-
-
 
 
 def build_model(filepath, length, sample_rate, multi_channel, process_list, feature_type, feature_params,
                 conv_layers, dense_layers, l2_value, dropout_rate, activation,
                 test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size):
 
-    timing_stats = time_class(name='Load Features')
+
 
     features, labels = load_features(filepath,
-                                     length[2],
-                                     sample_rate[2],
-                                     multi_channel[0],
+                                     length,
+                                     sample_rate,
+                                     multi_channel,
                                      process_list,
-                                     feature_type[1],
+                                     feature_type,
                                      feature_params)
 
-
     # Create a flexible model
-    input_shape = features.shape
+    input_shape = features.shape[1:]
+    print(input_shape)
     model = create_model(input_shape,
                          conv_layers,
                          dense_layers,
@@ -36,19 +33,21 @@ def build_model(filepath, length, sample_rate, multi_channel, process_list, feat
                          activation)
 
     # Train Model
-    train_model(features,
-                labels,
-                test_size,
-                random_state,
-                model, optimizer,
-                loss, metric,
-                patience,
-                epochs,
-                batch_size)
+    model = train_model(features,
+                        labels,
+                        test_size,
+                        random_state,
+                        model, optimizer,
+                        loss, metric,
+                        patience,
+                        epochs,
+                        batch_size)
 
-    total_runtime = timing_stats.stats()
-
-
+    # Save Model
+    # save_model(model, model_type, feature_type, sample_length, accuracy[0], specs, total_runtime,
+    #            feature_params=feature_params, feature_shape=feature_shape)
+    # if accuracy[0] >= 90:
+    #     save_model(model, 'detect', 'spec', sample_length, accuracy[0])
 
 if __name__ == '__main__':
     filepath = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/'
@@ -69,16 +68,19 @@ if __name__ == '__main__':
     dropout_rate = 0.5
     activation = 'relu'
 
-    test_size = 0.2,
-    random_state = 42,
-    optimizer = 'adam',
-    loss = 'binary_crossentropy',
-    metric = 'accuracy',
-    patience = 5,
-    epochs = 50,
+    test_size = 0.2
+    random_state = 42
+    optimizer = 'adam'
+    loss = 'binary_crossentropy'
+    metric = 'accuracy'
+    patience = 5
+    epochs = 50
     batch_size = 24
 
+    timing_stats = time_class(name='Build Model')
 
     build_model(filepath, length[2], sample_rate[2], multi_channel[0], process_list, feature_type[1], feature_params,
                 conv_layers, dense_layers, l2_value, dropout_rate, activation,
                 test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size)
+
+    total_runtime = timing_stats.stats()
