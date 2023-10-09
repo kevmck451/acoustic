@@ -65,7 +65,7 @@ if __name__ == '__main__':
     optimizer = 'adam'
     loss = 'binary_crossentropy'
     metric = 'accuracy'
-    patience = 5
+    patience = 3
     epochs = 50
     batch_size = 24
 
