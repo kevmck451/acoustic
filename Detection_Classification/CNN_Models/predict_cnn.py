@@ -100,7 +100,7 @@ def select_file():
     return file_path
 
 if __name__ == '__main__':
-    base_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Detection_Classification'
+    base_path = '/Detection_Classification'
     # model_path = f'{base_path}/Engine_Classification/Prediction/model_library/mfcc_50_6_basic_1_99_0.h5'
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_50_6_basic_1_87_0.h5'
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_50_6_basic_1_94_0.h5'
