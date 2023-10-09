@@ -8,7 +8,7 @@ from tqdm import tqdm as progress_bar
 from pathlib import Path
 import numpy as np
 
-
+# Main File for Loading Features
 def load_features(filepath, length, sample_rate, multi_channel, process_list, feature_type, feature_params):
     print('Loading Features')
 
@@ -49,11 +49,14 @@ def load_features(filepath, length, sample_rate, multi_channel, process_list, fe
         feature_list_master = np.squeeze(feature_list_master, axis=1)
         feature_list_master = feature_list_master[..., np.newaxis]
 
+        feature_stats = stats_file_create(feature_list_master, length, feature_type, feature_params, sample_rate, multi_channel, filepath, process_list)
 
         feature_path, label_path, audio_names_path = feature_labels_file_names(length, feature_type, feature_params)
+        feature_stat_path = f"{audio_names_path.split('.')[0]}_stats.txt"
         np.save(feature_path, feature_list_master)
         np.save(label_path, label_list_master)
         write_filenames_to_file(audio_name_master, audio_names_path)
+        write_filenames_to_file(feature_stats, feature_stat_path, sort=False)
 
     return feature_list_master, label_list_master
 
@@ -171,17 +174,47 @@ def check_if_data_exists(filepath, length, feature_type, feature_params):
     else: return False
 
 # Function to write a list to a text file
-def write_filenames_to_file(filenames, output_file):
+def write_filenames_to_file(filenames, output_file, sort=True):
     """
     Write each filename from a list to a new line in an output file.
 
     :param filenames: List of filenames.
     :param output_file: The name of the output file.
     """
-    filenames.sort()
+    if sort:filenames.sort()
+
     with open(output_file, 'w') as f:
         for filename in filenames:
             f.write(filename + '\n')
+
+# Functiion to get stats and write them to a file
+def stats_file_create(feature_list, length, feature_type, feature_params, sample_rate, multi_channel, filepath, process_list):
+
+    feat = 'None'
+    if feature_type == 'spectral':
+        bandwidth = feature_params.get('bandwidth')
+        window = feature_params.get('window_size')
+        feat = f'Bandwidth: ({bandwidth[0]}-{bandwidth[1]}) / Window Size: {window}'
+    if feature_type == 'mfcc':
+        feat = feature_params.get('n_coeffs')
+        feat = f'Num Coeffs: {feat}'
+
+    feat_type = f'Feature Type: {feature_type.upper()}'
+    params = f'Feature Parameters: {feat}'
+    sr = f'Sample Rate: {sample_rate} Hz'
+    len = f'Sample Length: {length} sec'
+    shape = f'Shape: {feature_list.shape}'
+    max = f'Max: {feature_list.max()}'
+    min = f'Min: {feature_list.min()}'
+    mean = f'Mean: {feature_list.mean()}'
+    std = f'Std: {feature_list.std()}'
+    multch = f'Multi Channel: {multi_channel.title()}'
+    path = f'Filepath: {filepath}'
+    pro_list = f'Processes Applied: {process_list}'
+
+    stats_list = [path, multch, sr, len, pro_list, feat_type, params, shape, max, min, mean, std]
+
+    return stats_list
 
 
 if __name__ == '__main__':
@@ -206,6 +239,8 @@ if __name__ == '__main__':
                                      process_list,
                                      feature_type[1],
                                      feature_params)
+
+
 
     total_runtime = timing_stats.stats()
 
