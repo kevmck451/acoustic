@@ -148,7 +148,7 @@ def feature_labels_file_names(length, feature_type, feature_params):
 
     feature_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_features.npy'
     label_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_labels_.npy'
-    audio_names_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_features.txt'
+    audio_names_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_features_files.txt'
 
     return feature_path, label_path, audio_names_path
 
@@ -194,7 +194,8 @@ def stats_file_create(feature_list, length, feature_type, feature_params, sample
     if feature_type == 'spectral':
         bandwidth = feature_params.get('bandwidth')
         window = feature_params.get('window_size')
-        feat = f'Bandwidth: ({bandwidth[0]}-{bandwidth[1]}) / Window Size: {window}'
+        hop_size = feature_params.get('hop_size')
+        feat = f'Bandwidth: ({bandwidth[0]}-{bandwidth[1]}) / Window Size: {window} / Hop Size: {hop_size}'
     if feature_type == 'mfcc':
         feat = feature_params.get('n_coeffs')
         feat = f'Num Coeffs: {feat}'
@@ -228,16 +229,16 @@ if __name__ == '__main__':
     feature_type = ['spectral', 'mfcc']
     window_sizes = [256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536]
     hop_sizes = [128, 256, 512, 1024]
-    # feature_params = {'bandwidth':(70, 5000), 'window_size':window_sizes[4], 'hop_size':hop_sizes[2]}  # Spectrum
-    feature_params = {'n_coeffs': 13}  # MFCC
+    feature_params = {'bandwidth':(70, 10000), 'window_size':window_sizes[4], 'hop_size':hop_sizes[2]}  # Spectrum
+    # feature_params = {'n_coeffs': 100}  # MFCC
 
 
     features, labels = load_features(filepath,
-                                     length[2],
-                                     sample_rate[2],
+                                     length[4],
+                                     sample_rate[4],
                                      multi_channel[0],
                                      process_list,
-                                     feature_type[1],
+                                     feature_type[0],
                                      feature_params)
 
 
