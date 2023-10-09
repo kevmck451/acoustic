@@ -12,7 +12,7 @@ def save_model(filepath, length, sample_rate, multi_channel, process_list, featu
     text_extension = '.txt'
     lib_dir = f'{Path.cwd()}/model_library'
     save_label_dir_path = Path(lib_dir)
-    save_label_dir_path.mkdir(exist_ok=True)
+    Path(save_label_dir_path).mkdir(exist_ok=True)
 
     if feature_type == 'spectral' and feature_params != 'None': feature_save_name = f'{feature_params[0]}-{feature_params[1]}'
     elif feature_type == 'mfcc' and feature_params != 'None': feature_save_name = f'{feature_params}'
