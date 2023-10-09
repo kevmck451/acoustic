@@ -77,6 +77,3 @@ for file in Path(target_path).iterdir():
 
 
 
-if __name__ == '__main__':
-    isolated_sample_directory = ''
-
