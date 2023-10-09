@@ -47,13 +47,3 @@ def create_model(input_shape, conv_layers, dense_layers, l2_value=0.01, dropout_
     return model
 
 
-
-if __name__ == '__main__':
-    input_shape = (64, 64, 3),
-    conv_layers = [(32, (3, 3)), (64, (3, 3))],
-    dense_layers = [128, 64],
-    l2_value = 0.01,
-    dropout_rate = 0.5,
-    activation = 'relu'
-
-
