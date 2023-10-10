@@ -88,7 +88,7 @@ def load_audio_generator(filepath, sample_rate, length, multi_channel):
     else:  # it's 4 channel
         channel_list = process.channel_to_objects(audio)
         for channel in channel_list:
-            audio_list, label_list = process.generate_chunks(audio, length=length)
+            audio_list, label_list = process.generate_chunks(channel, length=length)
             for audio, label in zip(audio_list, label_list):
                 audio_list_master.append(audio)
                 label_list_master.append(label)
