@@ -14,23 +14,25 @@ def save_model(filepath, length, sample_rate, multi_channel, process_list, featu
     save_label_dir_path = Path(lib_dir)
     Path(save_label_dir_path).mkdir(exist_ok=True)
 
-    if feature_type == 'spectral' and feature_params != 'None': feature_save_name = f'{feature_params[0]}-{feature_params[1]}'
-    elif feature_type == 'mfcc' and feature_params != 'None': feature_save_name = f'{feature_params}'
+    if feature_type == 'spectral':
+        bandwidth = feature_params.get('bandwidth')
+        feature_save_name = f'{bandwidth[0]}-{bandwidth[1]}'
+    elif feature_type == 'mfcc': feature_save_name = f"{feature_params.get('n_coeffs')}"
     else: feature_save_name = 'None'
 
     model_layers = len(conv_layers) + len(dense_layers)
     model_type = f'{model_layers}-layers'
 
-    model_saveto = f'{lib_dir}/{feature_type}_{feature_save_name}_{str(length)}_{model_type}_{str(index)}{model_extension}'
+    model_saveto = f'{lib_dir}/{feature_type}_{feature_save_name}_{str(length)}s_{model_type}_{str(index)}{model_extension}'
 
     while Path(model_saveto).exists():
         index += 1
-        model_saveto = f'{lib_dir}/{feature_type}_{feature_save_name}_{str(length)}_{model_type}_{str(index)}{model_extension}'
+        model_saveto = f'{lib_dir}/{feature_type}_{feature_save_name}_{str(length)}s_{model_type}_{str(index)}{model_extension}'
 
     model.save(model_saveto)
 
     # Save text file with all info about model
-    text_saveto = f'{lib_dir}/{feature_type}_{feature_save_name}_{str(length)}_{model_type}_{str(index)}{text_extension}'
+    text_saveto = f'{lib_dir}/{feature_type}_{feature_save_name}_{str(length)}s_{model_type}_{str(index)}{text_extension}'
 
     feat = 'None'
     if feature_type == 'spectral':
@@ -42,13 +44,13 @@ def save_model(filepath, length, sample_rate, multi_channel, process_list, featu
         feat = feature_params.get('n_coeffs')
         feat = f'Num Coeffs: {feat}'
 
-    model.summary()
+    # model.summary()
     optimizer_config = model.optimizer.get_config()
 
     feat_type = f'Feature Type: {feature_type.upper()}'
     params = f'Feature Parameters: {feat}'
     sr = f'Sample Rate: {sample_rate} Hz'
-    len = f'Sample Length: {length} sec'
+    leng = f'Sample Length: {length} sec'
     shape = f'Shape: {input_shape}'
     multch = f'Multi Channel: {multi_channel.title()}'
     path = f'Filepath: {filepath}'
@@ -70,7 +72,7 @@ def save_model(filepath, length, sample_rate, multi_channel, process_list, featu
     opt_con = f'Model Config File: {optimizer_config}'
 
 
-    filenames = [path, multch, sr, len, pro_list, feat_type, params, shape, conv_lay, den_lay, l2_val, drop_rate, act_funct, test_siz,
+    filenames = [path, multch, sr, leng, pro_list, feat_type, params, shape, conv_lay, den_lay, l2_val, drop_rate, act_funct, test_siz,
                  rand_st, opt, los, met, pat, ep, bs, bt, opt_con]
 
     with open(text_saveto, 'w') as f:
