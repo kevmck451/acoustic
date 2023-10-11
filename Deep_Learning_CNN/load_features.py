@@ -49,7 +49,7 @@ def load_features(filepath, length, sample_rate, multi_channel, process_list, fe
         write_filenames_to_file(audio_name_master, audio_names_path)
         write_filenames_to_file(feature_stats, feature_stat_path, sort=False)
 
-    return feature_list_master, label_list_master
+    return feature_list_master, np.array(label_list_master)
 
 # Function to generator audio files and keep memory usage low
 def load_audio_generator(filepath, sample_rate, length, multi_channel):
@@ -88,11 +88,12 @@ def load_audio_generator(filepath, sample_rate, length, multi_channel):
 
 # Function to preprocess audio files
 def preprocess_files(audio_object, processes):
+    audio = audio_object
     for pro in processes:
         if pro == 'normalize':
-            audio = process.normalize(audio_object)
+            audio = process.normalize(audio)
         if pro == 'compression':
-            audio = process.compression(audio_object)
+            audio = process.compression(audio)
         if pro == 'noise_reduction':
             pass
 
