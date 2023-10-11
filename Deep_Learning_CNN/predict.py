@@ -2,7 +2,11 @@
 # Can only load mono files currently
 
 from Acoustic import process
-from Acoustic import audio_abstract
+from Acoustic.audio_abstract import Audio_Abstract
+from Deep_Learning_CNN.load_features import load_audio_generator
+from Deep_Learning_CNN.load_features import preprocess_files
+from Deep_Learning_CNN.load_features import extract_feature
+from Deep_Learning_CNN.load_features import format_features
 
 
 from keras.models import load_model
@@ -10,48 +14,31 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from tqdm import tqdm as progress_bar
 import tkinter as tk
 from tkinter import filedialog
 
 
 def make_prediction(model_path, audio_path, **kwargs):
+    audio_base = Audio_Abstract(filepath=audio_path)
 
-    # LOAD DATA ------------------------------------------------------------------------
-    print('Loading Mission Audio')
-    audio = audio_abstract.Audio_Abstract(filepath=audio_path)
-    # print(audio)
-
-    # Determine sample length
+    model_info = load_model_text_file(model_path)
     path_model = Path(model_path)
     model_name = path_model.stem
-    sample_length = int(model_name.split('_')[2])
 
-    chunks_list = process.generate_windowed_chunks(audio, window_size=sample_length)
+    # LOAD DATA ----------------------------------------------------------------------
+    print('Loading Features')
+    feature_list_master = []
+    for audio_list, _ in load_audio_generator(audio_path,
+                                         model_info.get('Sample Rate'),
+                                         model_info.get('Sample Length'),
+                                         model_info.get('Multi Channel')):
+        for audio in audio_list:
+            audio = preprocess_files(audio, model_info.get('Process Applied'))
+            features = extract_feature(audio, model_info.get('Feature Type'),
+                                       model_info.get('Feature Parameters'))
+            feature_list_master.append(features)
 
-    # EXTRACT ------------------------------------------------------------------------
-    print('Extracting Features')
-    feature_type = model_name.split('_')[0]
-    features_list = []
-    for audio in progress_bar(chunks_list):
-        if feature_type == 'spectral':
-            feature_params = model_name.split('_')[1]
-            fp1, fp2 = int(feature_params.split('-')[0]), int(feature_params.split('-')[1])
-            feature = process.spectrogram(audio, feature_params=(fp1, fp2))
-        elif feature_type == 'filter1':
-            feature = process.custom_filter_1(audio)
-        elif feature_type == 'mfcc':
-            feature_params = int(model_name.split('_')[1])
-            feature = process.mfcc(audio, feature_params=feature_params)
-        elif feature_type == 'zcr':
-            feature = process.zcr(audio)
-
-        features_list.append(feature)  # Add Feature
-
-    features_list = np.array(features_list)
-    features_list = np.squeeze(features_list, axis=1)
-    features_list = features_list[..., np.newaxis]
-
+    features_list = format_features(feature_list_master)
 
     # PREDICT ------------------------------------------------------------------------
     print('Making Predictions')
@@ -68,8 +55,8 @@ def make_prediction(model_path, audio_path, **kwargs):
     fig, axs = plt.subplots(1, 1, figsize=(12, 4))
     plt.suptitle(f'Ambient vs Engine Model: {model_name}')
     bar_colors = ['r' if value >= 50 else 'g' for value in predictions]
-    axs.bar(time, predictions, width=int(sample_length/sample_length), color=bar_colors)
-    axs.set_title(f'Predictions of {audio.name}')
+    axs.bar(time, predictions, width=int(model_info.get('Sample Length')/model_info.get('Sample Length')), color=bar_colors)
+    axs.set_title(f'Predictions of {audio_base.name}')
     axs.set_xlabel('Time')
     axs.set_ylabel('Predictions')
     axs.set_ylim((0, 100))
@@ -85,12 +72,46 @@ def make_prediction(model_path, audio_path, **kwargs):
     plt.tight_layout(pad=1)
 
     save = kwargs.get('save', False)
-    save_path = kwargs.get('save_path', str(audio.path))
+    save_path = kwargs.get('save_path', str(audio_base.path))
     if save:
-        plt.savefig(f'{save_path}/{audio.name}.png')
+        plt.savefig(f'{save_path}/{audio_base.name}.png')
         plt.close(fig)
     else:
         plt.show()
+
+
+def load_model_text_file(model_path):
+    text_path_base = model_path.split('.')[0]
+    text_path = f'{text_path_base}.txt'
+
+    model_info = {}
+
+    with open(text_path, 'r') as f:
+        for line in f:
+            key, value = line.strip().split(': ', 1)
+
+            # Remove any additional spaces
+            key = key.strip()
+            value = value.strip()
+
+            # Convert the value into suitable format
+            if key in ['Convolutional Layers', 'Dense Layers']:
+                model_info[key] = eval(value)
+            elif key in ['Feature Parameters', 'Model Config File']:
+                model_info[key] = eval(value.replace(' /', ','))
+            elif key == 'Shape':
+                model_info[key] = tuple(map(int, value.strip('()').split(', ')))
+            elif key in ['Sample Rate', 'Sample Length', 'Shape', 'Kernal Reg-l2 Value',
+                         'Dropout Rate', 'Test Data Size', 'Random State', 'Epochs', 'Batch Size', 'Build Time']:
+                try:
+                    model_info[key] = int(value.split()[0])
+                except ValueError:
+                    model_info[key] = float(value.split()[0])
+            else:
+                model_info[key] = value
+
+    return model_info
+
 
 def select_file():
     root = tk.Tk()
@@ -108,7 +129,7 @@ if __name__ == '__main__':
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_100_6_deep_3_83_0.h5'
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/spectral_70-2600_6_basic_1_24_0.h5'
     model_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/' \
-                 'Deep_Learning_CNN/model_library/spectral_70-2600_6_5-layer_0.h5'
+                 'Deep_Learning_CNN/model_library/spectral_70-10000_10s_4-layers_0.h5'
 # Experiment 1 -------------------------------------------------------------
     save_base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Analysis/'
     save_directory_1 = f'{save_base_dir}/Engine vs Ambient/Spectral/Model 1'
