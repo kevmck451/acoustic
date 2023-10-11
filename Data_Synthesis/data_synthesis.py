@@ -16,16 +16,16 @@ target_options = ['engine', 'diesel', 'gas']
 sample_length = 8
 
 # What if I want to do this for multiple ambient environments?
-noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/home_amb_1_a.wav'
+noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/ag_amb_2-1.wav'
 noise_floor = Audio_Abstract(filepath=noise_floor_path)
 # noise_floor.waveform()
 
 noise_floor = process.normalize(noise_floor, percentage=100)
-noise_floor = process.normalize(noise_floor, percentage=20)
-noise_floor_chunk_list = process.generate_chunks(noise_floor, length=sample_length, training=False)
+noise_floor = process.normalize(noise_floor, percentage=50)
+noise_floor_chunk_list, _ = process.generate_chunks(noise_floor, length=sample_length)
 #
-# target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Diesel'
-target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Gas'
+target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Diesel'
+# target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Gas'
 
 for file in Path(target_path).iterdir():
     if 'wav' in file.suffix:
@@ -38,9 +38,9 @@ for file in Path(target_path).iterdir():
         if target.num_channels > 1:
             channel_list = process.channel_to_objects(target)
             target = channel_list[0]
-        target_chunk_list = process.generate_chunks(target, length=sample_length, training=False)
+        target_chunk_list, _ = process.generate_chunks(target, length=sample_length)
 
-        normalization_values = list(np.arange(40, 1, -1))
+        normalization_values = list(np.arange(10, 60, 2))
 
         for value in normalization_values:
             target = process.normalize(target_chunk_list[random.randint(0, len(target_chunk_list) - 1)], percentage=100)
@@ -60,7 +60,9 @@ for file in Path(target_path).iterdir():
 
 
 
+# List of ambient background already used
 
+# noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/home_amb_1_a.wav'
 
 
 
