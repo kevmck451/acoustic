@@ -32,22 +32,13 @@ def load_features(filepath, length, sample_rate, multi_channel, process_list, fe
                 for audio, label in zip(audio_list, label_list):
                     label_list_master.append(label)
 
-                    # process data
-                    for pro in process_list:
-                        if pro == 'normalize':
-                            audio = process.normalize(audio)
-                        if pro == 'compression':
-                            audio = process.compression(audio)
-                        if pro == 'noise_reduction':
-                            pass
+                    audio = preprocess_files(audio, process_list)
 
                     features = extract_feature(audio, feature_type, feature_params)
                     feature_list_master.append(features)
 
         # return features_array, labels, metadata
-        feature_list_master = np.array(feature_list_master)
-        feature_list_master = np.squeeze(feature_list_master, axis=1)
-        feature_list_master = feature_list_master[..., np.newaxis]
+        feature_list_master = format_features(feature_list_master)
 
         feature_stats = stats_file_create(feature_list_master, length, feature_type, feature_params, sample_rate, multi_channel, filepath, process_list)
 
@@ -95,6 +86,18 @@ def load_audio_generator(filepath, sample_rate, length, multi_channel):
 
     yield audio_list_master, label_list_master
 
+# Function to preprocess audio files
+def preprocess_files(audio_object, processes):
+    for pro in processes:
+        if pro == 'normalize':
+            audio = process.normalize(audio_object)
+        if pro == 'compression':
+            audio = process.compression(audio_object)
+        if pro == 'noise_reduction':
+            pass
+
+    return audio
+
 # Function for Extracting Features from audio object
 def extract_feature(audio, feature_type, feature_params):
     if feature_type == 'spectral':
@@ -106,6 +109,14 @@ def extract_feature(audio, feature_type, feature_params):
     elif feature_type == 'zcr':
         return process.zcr(audio)
     else: raise Exception('Error with feature type')
+
+# Function to format features for CNN model
+def format_features(feature_list):
+    feature_list_format = np.array(feature_list)
+    feature_list_format = np.squeeze(feature_list_format, axis=1)
+    feature_list_format = feature_list_format[..., np.newaxis]
+
+    return feature_list_format
 
 # Function for Input Checking
 def check_inputs(filepath, length, sample_rate, feature_type, feature_params):
