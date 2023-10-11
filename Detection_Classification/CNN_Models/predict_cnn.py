@@ -25,7 +25,7 @@ def make_prediction(model_path, audio_path, **kwargs):
     # Determine sample length
     path_model = Path(model_path)
     model_name = path_model.stem
-    sample_length = int(model_name.split('_')[2])
+    sample_length = int((model_name.split('_')[2])[:-1])
 
     chunks_list = process.generate_windowed_chunks(audio, window_size=sample_length)
 
@@ -37,7 +37,8 @@ def make_prediction(model_path, audio_path, **kwargs):
         if feature_type == 'spectral':
             feature_params = model_name.split('_')[1]
             fp1, fp2 = int(feature_params.split('-')[0]), int(feature_params.split('-')[1])
-            feature = process.spectrogram(audio, feature_params=(fp1, fp2))
+            feature_params = {'bandwidth': (fp1, fp2), 'window_size':4096, 'hop_size':512}
+            feature = process.spectrogram(audio, feature_params=feature_params)
         elif feature_type == 'filter1':
             feature = process.custom_filter_1(audio)
         elif feature_type == 'mfcc':
@@ -93,6 +94,13 @@ def make_prediction(model_path, audio_path, **kwargs):
     else:
         plt.show()
 
+
+
+
+
+
+
+
 def select_file():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
@@ -107,7 +115,7 @@ if __name__ == '__main__':
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_50_6_deep_3_100_0.h5'
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_100_6_basic_1_85_0.h5'
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_100_6_deep_3_83_0.h5'
-    model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/spectral_70-2600_6_basic_1_24_0.h5'
+    model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/spectral_70-10000_10s_4-layers_0.h5'
 
 # Experiment 1 -------------------------------------------------------------
     save_base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Analysis/'
