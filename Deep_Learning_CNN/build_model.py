@@ -49,7 +49,7 @@ if __name__ == '__main__':
     feature_type = ['spectral', 'mfcc']
     window_sizes = [256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536]
     hop_sizes = [128, 256, 512, 1024]
-    feature_params = {'bandwidth':(70, 10000), 'window_size':window_sizes[4], 'hop_size':hop_sizes[2]}  # Spectrum
+    feature_params = {'bandwidth':(70, 6000), 'window_size':window_sizes[4], 'hop_size':hop_sizes[2]}  # Spectrum
     # feature_params = {'n_coeffs': 13}  # MFCC
 
     # Create Model
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     epochs = 50
     batch_size = 24
 
-    build_model(filepath, length[4], sample_rate[4], multi_channel[0], process_list, feature_type[0], feature_params,
+    build_model(filepath, length[4], sample_rate[2], multi_channel[0], process_list, feature_type[0], feature_params,
                 conv_layers, dense_layers, l2_value, dropout_rate, activation,
                 test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size)
 
