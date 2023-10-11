@@ -48,7 +48,8 @@ def save_model(filepath, length, sample_rate, multi_channel, process_list, featu
     optimizer_config = model.optimizer.get_config()
 
     feat_type = f'Feature Type: {feature_type.upper()}'
-    params = f'Feature Parameters: {feat}'
+    # params = f'Feature Parameters: {feat}'
+    params = f'Feature Parameters: {feature_params}'
     sr = f'Sample Rate: {sample_rate} Hz'
     leng = f'Sample Length: {length} sec'
     shape = f'Shape: {input_shape}'
