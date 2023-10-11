@@ -18,6 +18,7 @@ import tkinter as tk
 from tkinter import filedialog
 
 
+# Function to make prediction and display it
 def make_prediction(model_path, audio_path, **kwargs):
     audio_base = Audio_Abstract(filepath=audio_path)
 
@@ -34,7 +35,8 @@ def make_prediction(model_path, audio_path, **kwargs):
                                          model_info.get('Multi Channel')):
         for audio in audio_list:
             audio = preprocess_files(audio, model_info.get('Process Applied'))
-            features = extract_feature(audio, model_info.get('Feature Type'),
+            features = extract_feature(audio,
+                                       model_info.get('Feature Type').lower(),
                                        model_info.get('Feature Parameters'))
             feature_list_master.append(features)
 
@@ -46,6 +48,7 @@ def make_prediction(model_path, audio_path, **kwargs):
 
     predictions = []
     for feature in features_list:
+        feature = np.expand_dims(feature, axis=0)
         y_new_pred = model.predict(feature)
         percent = np.round((y_new_pred[0][0] * 100), 2)
         predictions.append(percent)
@@ -79,7 +82,7 @@ def make_prediction(model_path, audio_path, **kwargs):
     else:
         plt.show()
 
-
+# Function to use model text file to get parameter info
 def load_model_text_file(model_path):
     text_path_base = model_path.split('.')[0]
     text_path = f'{text_path_base}.txt'
@@ -112,7 +115,7 @@ def load_model_text_file(model_path):
 
     return model_info
 
-
+# Function to use GUI to load file / directory
 def select_file():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
@@ -120,7 +123,7 @@ def select_file():
     return file_path
 
 if __name__ == '__main__':
-    base_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/Detection_Classification'
+    base_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py'
     # model_path = f'{base_path}/Engine_Classification/Prediction/model_library/mfcc_50_6_basic_1_99_0.h5'
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_50_6_basic_1_87_0.h5'
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_50_6_basic_1_94_0.h5'
@@ -128,12 +131,12 @@ if __name__ == '__main__':
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_100_6_basic_1_85_0.h5'
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_100_6_deep_3_83_0.h5'
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/spectral_70-2600_6_basic_1_24_0.h5'
-    model_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py/' \
-                 'Deep_Learning_CNN/model_library/spectral_70-10000_10s_4-layers_0.h5'
+    # model_path = f'{base_path}/Deep_Learning_CNN/model_library/spectral_70-10000_10s_4-layers_0.h5'
+    model_path = f'{base_path}/Deep_Learning_CNN/model_library/mfcc_13_6s_4-layers_0.h5'
 # Experiment 1 -------------------------------------------------------------
-    save_base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Analysis/'
-    save_directory_1 = f'{save_base_dir}/Engine vs Ambient/Spectral/Model 1'
-    save_directory_2 = f'{save_base_dir}/Engine vs Ambient/Spectral/Model 1-Syn Data'
+    save_base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Analysis'
+    save_directory_1 = f'{save_base_dir}/Engine vs Ambient/MFCC/test'
+    save_directory_2 = f'{save_base_dir}/Engine vs Ambient/MFCC/test'
 
     base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data'
     directory_list = [
