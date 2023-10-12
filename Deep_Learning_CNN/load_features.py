@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 
 # Main File for Loading Features
-def load_features(filepath, length, sample_rate, multi_channel, process_list, feature_type, feature_params):
+def load_features(filepath, length, sample_rate, multi_channel, chunk_type, process_list, feature_type, feature_params):
     print('Loading Features')
 
     check_inputs(filepath, length, sample_rate, feature_type, feature_params)
@@ -28,7 +28,7 @@ def load_features(filepath, length, sample_rate, multi_channel, process_list, fe
 
         for file in progress_bar(Path(filepath).rglob('*.wav')):
             audio_name_master.append(file.stem)
-            for audio_list, label_list in load_audio_generator(file, sample_rate, length, multi_channel):
+            for audio_list, label_list in load_audio_generator(file, sample_rate, length, multi_channel, chunk_type):
                 for audio, label in zip(audio_list, label_list):
                     label_list_master.append(label)
 
@@ -53,7 +53,7 @@ def load_features(filepath, length, sample_rate, multi_channel, process_list, fe
     return feature_list_master, np.array(label_list_master)
 
 # Function to generator audio files and keep memory usage low
-def load_audio_generator(filepath, sample_rate, length, multi_channel):
+def load_audio_generator(filepath, sample_rate, length, multi_channel, chunking_type):
     audio = Audio_Abstract(filepath=filepath, sample_rate=sample_rate)
     audio_list_master = []
     label_list_master = []
@@ -71,19 +71,35 @@ def load_audio_generator(filepath, sample_rate, length, multi_channel):
     else:
         pass
 
-    if audio.num_channels == 1:
-        audio_list, label_list = process.generate_chunks(audio, length=length)
-        for audio, label in zip(audio_list, label_list):
-            audio_list_master.append(audio)
-            label_list_master.append(label)
-
-    else:  # it's 4 channel
-        channel_list = process.channel_to_objects(audio)
-        for channel in channel_list:
-            audio_list, label_list = process.generate_chunks(channel, length=length)
+    if chunking_type == 'window':
+        if audio.num_channels == 1:
+            audio_list, label_list = process.generate_windowed_chunks(audio, window_size=length)
             for audio, label in zip(audio_list, label_list):
                 audio_list_master.append(audio)
                 label_list_master.append(label)
+
+        else:  # it's 4 channel
+            channel_list = process.channel_to_objects(audio)
+            for channel in channel_list:
+                audio_list, label_list = process.generate_windowed_chunks(channel, window_size=length)
+                for audio, label in zip(audio_list, label_list):
+                    audio_list_master.append(audio)
+                    label_list_master.append(label)
+
+    else:
+        if audio.num_channels == 1:
+            audio_list, label_list = process.generate_chunks(audio, length=length)
+            for audio, label in zip(audio_list, label_list):
+                audio_list_master.append(audio)
+                label_list_master.append(label)
+
+        else:  # it's 4 channel
+            channel_list = process.channel_to_objects(audio)
+            for channel in channel_list:
+                audio_list, label_list = process.generate_chunks(channel, length=length)
+                for audio, label in zip(audio_list, label_list):
+                    audio_list_master.append(audio)
+                    label_list_master.append(label)
 
     yield audio_list_master, label_list_master
 

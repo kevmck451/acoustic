@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-def save_model(filepath, length, sample_rate, multi_channel, process_list, feature_type, feature_params,
+def save_model(filepath, length, sample_rate, multi_channel, chunk_type, process_list, feature_type, feature_params,
                input_shape, conv_layers, dense_layers, l2_value, dropout_rate, activation,
                test_size, random_state, model, optimizer, loss, metric, patience, epochs, batch_size, runtime):
 
@@ -54,6 +54,7 @@ def save_model(filepath, length, sample_rate, multi_channel, process_list, featu
     leng = f'Sample Length: {length} sec'
     shape = f'Shape: {input_shape}'
     multch = f'Multi Channel: {multi_channel.title()}'
+    chunk = f'Chunk Type: {chunk_type}'
     path = f'Filepath: {filepath}'
     pro_list = f'Process Applied: {process_list}'
     conv_lay = f'Convolutional Layers: {conv_layers}'
@@ -73,7 +74,7 @@ def save_model(filepath, length, sample_rate, multi_channel, process_list, featu
     opt_con = f'Model Config File: {optimizer_config}'
 
 
-    filenames = [path, multch, sr, leng, pro_list, feat_type, params, shape, conv_lay, den_lay, l2_val, drop_rate, act_funct, test_siz,
+    filenames = [path, multch, sr, leng, chunk, pro_list, feat_type, params, shape, conv_lay, den_lay, l2_val, drop_rate, act_funct, test_siz,
                  rand_st, opt, los, met, pat, ep, bs, bt, opt_con]
 
     with open(text_saveto, 'w') as f:

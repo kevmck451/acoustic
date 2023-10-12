@@ -19,7 +19,7 @@ from tkinter import filedialog
 
 
 # Function to make prediction and display it
-def make_prediction(model_path, audio_path, **kwargs):
+def make_prediction(model_path, audio_path, chunk_type, **kwargs):
     audio_base = Audio_Abstract(filepath=audio_path)
 
     model_info = load_model_text_file(model_path)
@@ -32,7 +32,8 @@ def make_prediction(model_path, audio_path, **kwargs):
     for audio_list, _ in load_audio_generator(audio_path,
                                          model_info.get('Sample Rate'),
                                          model_info.get('Sample Length'),
-                                         model_info.get('Multi Channel')):
+                                         model_info.get('Multi Channel'),
+                                         chunk_type):
         for audio in audio_list:
             audio = preprocess_files(audio, model_info.get('Process Applied'))
             features = extract_feature(audio,
@@ -58,7 +59,7 @@ def make_prediction(model_path, audio_path, **kwargs):
     fig, axs = plt.subplots(1, 1, figsize=(12, 4))
     plt.suptitle(f'Ambient vs Engine Model: {model_name}')
     bar_colors = ['r' if value >= 50 else 'g' for value in predictions]
-    axs.bar(time, predictions, width=int(model_info.get('Sample Length')/model_info.get('Sample Length')), color=bar_colors)
+    axs.bar(time, predictions, width=1, color=bar_colors)
     axs.set_title(f'Predictions of {audio_base.name}')
     axs.set_xlabel('Time')
     axs.set_ylabel('Predictions')
@@ -146,12 +147,12 @@ if __name__ == '__main__':
                     f'{base_path_1}/Field Tests/Orlando 23/Samples/Ambient',
                     f'{base_path_1}/Field Tests/Campus/Generator/',
                    ]
-
+    chunk_type = ['regular', 'window']
     for path in directory_list:
         for audio_path in Path(path).iterdir():
             print(audio_path)
             if 'wav' in audio_path.suffix:
-                make_prediction(model_path, audio_path, save=True, save_path=save_directory_1,
+                make_prediction(model_path, audio_path, chunk_type[1], save=True, save_path=save_directory_1,
                                 positive_label='Engine Detected', negative_label='Ambient Noise')
 
     directory_list = [f'{base_path_1}/Combinations/Ambient Diesel']
@@ -159,7 +160,7 @@ if __name__ == '__main__':
         for audio_path in Path(path).iterdir():
             print(audio_path)
             if 'wav' in audio_path.suffix:
-                make_prediction(model_path, audio_path, save=True, save_path=save_directory_2,
+                make_prediction(model_path, audio_path, chunk_type[1], save=True, save_path=save_directory_2,
                                 positive_label='Engine Detected', negative_label='Ambient Noise')
 
     # Experiment X -------------------------------------------------------------

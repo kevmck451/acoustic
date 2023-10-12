@@ -10,7 +10,8 @@ if __name__ == '__main__':
     # model_path = f'{base_path}/Deep_Learning_CNN/model_library/spectral_70-10000_10s_4-layers_0.h5'
     # model_path = f'{base_path}/Deep_Learning_CNN/model_library/spectral_70-6000_10s_4-layers_0.h5'
     # model_path = f'{base_path}/Deep_Learning_CNN/model_library/spectral_70-6000_10s_4-layers_0.h5'
-    model_path = f'{base_path}/Deep_Learning_CNN/model_library/mfcc_13_6s_4-layers_0.h5'
+    # model_path = f'{base_path}/Deep_Learning_CNN/model_library/mfcc_13_6s_4-layers_0.h5'
+    model_path = f'{base_path}/Detection_Classification/Engine_Ambient/model_library/mfcc_100_6s_4-layers_0.h5'
 
 # Experiment 1 -------------------------------------------------------------
 
@@ -27,10 +28,11 @@ if __name__ == '__main__':
                     f'{base_path_1}/Combinations/Ambient Diesel'
                    ]
 
+    chunk_type = ['regular', 'window']
     for path in directory_list:
         for audio_path in Path(path).iterdir():
             print(audio_path)
             if 'wav' in audio_path.suffix:
-                make_prediction(model_path, audio_path, save=True, save_path=save_directory_1,
+                make_prediction(model_path, audio_path, chunk_type[1], save=True, save_path=save_directory_1,
                                 positive_label='Engine Detected', negative_label='Ambient Noise')
 
