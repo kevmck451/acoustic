@@ -43,7 +43,8 @@ def load_features(filepath, length, sample_rate, multi_channel, process_list, fe
         feature_stats = stats_file_create(feature_list_master, length, feature_type, feature_params, sample_rate, multi_channel, filepath, process_list)
 
         feature_path, label_path, audio_names_path = feature_labels_file_names(length, feature_type, feature_params)
-        feature_stat_path = f"{audio_names_path.split('.')[0]}_stats.txt"
+        feature_stat_path = (audio_names_path.split('.')[0].split('_')[:-1])
+        feature_stat_path = f"{'_'.join(feature_stat_path)}_stats.txt"
         np.save(feature_path, feature_list_master)
         np.save(label_path, label_list_master)
         write_filenames_to_file(audio_name_master, audio_names_path)
