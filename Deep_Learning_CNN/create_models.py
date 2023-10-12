@@ -25,11 +25,13 @@ def create_model(input_shape, conv_layers, dense_layers, l2_value=0.01, dropout_
     filters, kernel_size = conv_layers[0]
     model.add(Conv2D(filters=filters, kernel_size=kernel_size, activation=activation, input_shape=input_shape, kernel_regularizer=l2(l2_value)))
     model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(dropout_rate))
 
     # Adding subsequent convolutional layers
     for filters, kernel_size in conv_layers[1:]:
         model.add(Conv2D(filters=filters, kernel_size=kernel_size, activation=activation))
         model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(Dropout(dropout_rate))
 
     # Flatten the features for dense layers
     model.add(Flatten())
