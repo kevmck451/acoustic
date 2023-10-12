@@ -248,7 +248,7 @@ def takeoff_trim(audio_object, takeoff_time):
     return audio_copy
 
 # Function to window over a sample of a specific length
-def generate_windowed_chunks(audio_object, window_size, training=False):
+def generate_windowed_chunks(audio_object, window_size):
     window_samples = audio_object.sample_rate * window_size
     half_window_samples = window_samples // 2
     total_samples = len(audio_object.data)
@@ -261,29 +261,36 @@ def generate_windowed_chunks(audio_object, window_size, training=False):
         if window_start < half_window_samples:
             start = 0
             end = window_samples
-            if training:
+            try:
                 label = int(audio_object.path.parent.stem)
-                labels.append(label)  # Add Label (folder name)
+            except:
+                label = audio_object.path.parent.stem
+            labels.append(label)  # Add Label (folder name)
         elif window_start >= total_samples - half_window_samples:
             start = total_samples - window_samples
             end = total_samples
-            if training:
+            try:
                 label = int(audio_object.path.parent.stem)
-                labels.append(label)  # Add Label (folder name)
+            except:
+                label = audio_object.path.parent.stem
+            labels.append(label)  # Add Label (folder name)
         else:
             start = window_start - half_window_samples
             end = start + window_samples
-            if training:
+            try:
                 label = int(audio_object.path.parent.stem)
-                labels.append(label)  # Add Label (folder name)
+            except:
+                label = audio_object.path.parent.stem
+            labels.append(label)  # Add Label (folder name)
         audio_copy.data = audio_object.data[start:end]
         audio_ob_list.append(audio_copy)
 
-    if training:
-        if len(audio_ob_list) != len(labels):
-            print(f'Error: {audio_object.path.stem}')
-        return audio_ob_list, labels
-    else: return audio_ob_list
+
+    if len(audio_ob_list) != len(labels):
+        print(f'Error: {audio_object.path.stem}')
+        raise Exception('Audio Object List and Label List Length dont Match')
+    return audio_ob_list, labels
+
 
 # Function to convert audio sample to a specific length
 def generate_chunks(audio_object, length):
