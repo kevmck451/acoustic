@@ -23,7 +23,7 @@ if __name__ == '__main__':
     dense_layers = [128, 64]
     l2_value = 0.01
     dropout_rate = 0.5
-    activation = 'elu' # 'relu'
+    activation = 'relu' # 'relu'
 
     # Train Model
     test_size = 0.2
