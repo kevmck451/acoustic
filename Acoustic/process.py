@@ -28,12 +28,11 @@ def spectrogram(audio_object, **kwargs):
     if feature_params == 'None':
         bandwidth = (70, 6000)
         window_size = window_sizes[3]
-        hop_length = 512
+        hop_length = window_size // 4
     else:
         bandwidth = feature_params.get('bandwidth')
         window_size = feature_params.get('window_size')
         hop_length = feature_params.get('hop_length')
-
 
     data = audio_object.data
     # Audio_Object = normalize(audio_object)
@@ -46,13 +45,24 @@ def spectrogram(audio_object, **kwargs):
     if len(data.shape) == 1:
         # Mono audio data, convert to a list with a single item for consistency
         data = [data]
-
     for channel_data in data:
         # Calculate the spectrogram using Short-Time Fourier Transform (STFT)
-        spectrogram = np.abs(librosa.stft(channel_data, n_fft=window_size, hop_length=hop_length)) ** 2
-
+        # spectrogram = np.abs(librosa.stft(channel_data, n_fft=window_size, hop_length=hop_length)) ** 2
+        spectrogram_db = librosa.amplitude_to_db(
+            np.abs(librosa.stft(channel_data, n_fft=window_size, hop_length=hop_length)), ref=np.max)
         # Convert to decibels (log scale) for better visualization
-        spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
+        # spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
+        # spectrogram_db = librosa.amplitude_to_db(spectrogram, ref=np.max)
+        # print(spectrogram_db)
+
+
+        spec_mean = np.mean(spectrogram_db)
+        if spec_mean > -40:
+            print(spec_mean)
+
+        # plt.imshow(spectrogram_db)
+        # plt.colorbar()
+        # plt.show()
 
         # Apply Min-Max normalization to the spectrogram_db
         spectrogram_db_min, spectrogram_db_max = spectrogram_db.min(), spectrogram_db.max()
@@ -62,12 +72,14 @@ def spectrogram(audio_object, **kwargs):
         # print(spectrogram_db_max)
         # print(spectrogram_db)
 
+        # plt.imshow(spectrogram_db)
+        # plt.colorbar()
+        # plt.show()
+
         # Calculate frequency bandwidth and resolution
         nyquist_frequency = audio_object.sample_rate / 2
         frequency_resolution = nyquist_frequency / (window_size / 2)
         frequency_range = np.arange(0, window_size // 2 + 1) * frequency_resolution
-
-
 
         bottom_index = int(np.round(bandwidth[0] / frequency_resolution))
         top_index = int(np.round(bandwidth[1] / frequency_resolution))
@@ -80,8 +92,11 @@ def spectrogram(audio_object, **kwargs):
         # Cut the spectrogram to the desired frequency bandwidth and append to the list
         spectrograms.append(spectrogram_db[bottom_index:top_index])
 
-    # Convert the list of spectrograms to a numpy array and return
-    return np.array(spectrograms)
+    spectrograms = np.array(spectrograms)
+
+    spectrograms = np.squeeze(spectrograms) # removes all singular axis
+
+    return spectrograms
 
 # Function to calculate MFCC of audio (Features are 2D)
 def mfcc(audio_object, **kwargs):
@@ -122,7 +137,10 @@ def mfcc(audio_object, **kwargs):
         mfccs_all_channels.append(mfccs)
 
     # Convert the list of MFCCs to a numpy array and return
-    return np.array(mfccs_all_channels)
+    mfccs_all_channels = np.array(mfccs_all_channels)
+    mfccs_all_channels = np.squeeze(mfccs_all_channels)  # removes all singular axis
+
+    return mfccs_all_channels
 
 # Function to calculate spectrogram of audio (Features are 2D)
 def custom_filter_1(audio_object, **kwargs):
@@ -290,7 +308,6 @@ def generate_windowed_chunks(audio_object, window_size):
         print(f'Error: {audio_object.path.stem}')
         raise Exception('Audio Object List and Label List Length dont Match')
     return audio_ob_list, labels
-
 
 # Function to convert audio sample to a specific length
 def generate_chunks(audio_object, length):
