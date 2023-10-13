@@ -50,7 +50,9 @@ class Audio_Abstract:
             try:
                 self.data = self.data.reshape(-1, self.num_channels)  # Reshape to match the number of channels
             except ValueError:
-                print("The audio data cannot be reshaped to match the number of channels.")
+                # print("The audio data cannot be reshaped to match the number of channels.")
+                # print(f'Path: {self.path}')
+                # print(f'Num Channels: {self.num_channels}')
                 return
 
             # Convert the interleaved data to deinterleaved format
