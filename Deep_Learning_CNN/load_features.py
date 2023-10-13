@@ -18,8 +18,7 @@ def load_features(filepath, length, sample_rate, multi_channel, chunk_type, proc
     if check_if_data_exists(filepath, length, feature_type, feature_params):
         print('Features Exist')
         feature_path, label_path, _ = feature_labels_file_names(length, feature_type, feature_params)
-        feature_list_master = np.load(feature_path)
-        label_list_master = np.load(label_path)
+
     else:
         print('Creating Features')
         label_list_master = []
@@ -50,7 +49,12 @@ def load_features(filepath, length, sample_rate, multi_channel, chunk_type, proc
         write_filenames_to_file(audio_name_master, audio_names_path)
         write_filenames_to_file(feature_stats, feature_stat_path, sort=False)
 
-    return feature_list_master, np.array(label_list_master)
+    feature_list_master = np.load(feature_path, mmap_mode='r')
+    label_list_master = np.load(label_path, mmap_mode='r')
+    label_list_master = np.array(label_list_master)
+    label_list_master = np.squeeze(label_list_master)
+
+    return feature_list_master, label_list_master
 
 # Function to generator audio files and keep memory usage low
 def load_audio_generator(filepath, sample_rate, length, multi_channel, chunking_type):
@@ -131,9 +135,8 @@ def extract_feature(audio, feature_type, feature_params):
 # Function to format features for CNN model
 def format_features(feature_list):
     feature_list_format = np.array(feature_list)
-    feature_list_format = np.squeeze(feature_list_format, axis=1)
+    feature_list_format = np.squeeze(feature_list_format)
     feature_list_format = feature_list_format[..., np.newaxis]
-
     return feature_list_format
 
 # Function for Input Checking
@@ -254,11 +257,12 @@ if __name__ == '__main__':
     length = [2, 4, 6, 8, 10]
     sample_rate = [12_000, 18_000, 24_000, 36_000, 48_000]
     multi_channel = ['original', 'ch_1', 'ch_n', 'split_ch', 'mix_mono']
+    chunk_type = ['regular', 'window']
     process_list = ['normalize']  # add labels to list in order to create new processing chain
     feature_type = ['spectral', 'mfcc']
     window_sizes = [256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536]
     hop_sizes = [128, 256, 512, 1024]
-    feature_params = {'bandwidth':(70, 10000), 'window_size':window_sizes[4], 'hop_size':hop_sizes[2]}  # Spectrum
+    feature_params = {'bandwidth':(70, 20000), 'window_size':window_sizes[0], 'hop_size':hop_sizes[2]}  # Spectrum
     # feature_params = {'n_coeffs': 100}  # MFCC
 
 
@@ -266,6 +270,7 @@ if __name__ == '__main__':
                                      length[4],
                                      sample_rate[4],
                                      multi_channel[0],
+                                     chunk_type[0],
                                      process_list,
                                      feature_type[0],
                                      feature_params)
