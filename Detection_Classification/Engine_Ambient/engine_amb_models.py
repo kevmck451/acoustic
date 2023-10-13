@@ -26,7 +26,7 @@ if __name__ == '__main__':
     dense_layers = [128, 64]
     l2_value = 0.01
     dropout_rate = 0.5
-    activation = 'relu'
+    activation = 'elu' # 'relu'
 
     # Train Model
     test_size = 0.2
@@ -40,15 +40,15 @@ if __name__ == '__main__':
 
 
     # Spectral Model
-    # feature_params = {'bandwidth' :(70, 3000), 'window_size' :window_sizes[7], 'hop_size' :hop_sizes[2]}  # Spectrum
-    # build_model(filepath, length[4], sample_rate[2], multi_channel[0], chunk_type, process_list, feature_type[0], feature_params,
-    #             conv_layers, dense_layers, l2_value, dropout_rate, activation,
-    #             test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size)
+    feature_params = {'bandwidth' :(70, 20000), 'window_size' :window_sizes[4], 'hop_size' :hop_sizes[2]}  # Spectrum
+    build_model(filepath, length[4], sample_rate[4], multi_channel[0], chunk_type, process_list, feature_type[0], feature_params,
+                conv_layers, dense_layers, l2_value, dropout_rate, activation,
+                test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size)
 
 
 
     # MFCC Model
-    feature_params = {'n_coeffs': 100}  # MFCC
-    build_model(filepath, length[2], sample_rate[2], multi_channel[0], chunk_type, process_list, feature_type[1], feature_params,
-                conv_layers, dense_layers, l2_value, dropout_rate, activation,
-                test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size)
+    # feature_params = {'n_coeffs': 100}  # MFCC
+    # build_model(filepath, length[2], sample_rate[2], multi_channel[0], chunk_type, process_list, feature_type[1], feature_params,
+    #             conv_layers, dense_layers, l2_value, dropout_rate, activation,
+    #             test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size)
