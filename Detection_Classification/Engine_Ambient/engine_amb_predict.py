@@ -7,11 +7,10 @@ if __name__ == '__main__':
     save_base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Analysis'
     base_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py'
 
-    model_path = f'{base_path}/Detection_Classification/Engine_Ambient/model_library/spectral_70-3000_10s_4-layers_0.h5'
+    # model_path = f'{base_path}/Detection_Classification/Engine_Ambient/model_library/spectral_70-3000_10s_4-layers_0.h5'
     # model_path = f'{base_path}/Detection_Classification/Engine_Ambient/model_library/mfcc_13_6s_4-layers_0.h5'
     # model_path = f'{base_path}/Detection_Classification/Engine_Ambient/model_library/mfcc_100_6s_4-layers_0.h5'
-
-# Experiment 1 -------------------------------------------------------------
+    model_path = f'{base_path}/Detection_Classification/Engine_Ambient/model_library/mfcc_80_6s_4-layers_0.h5'
 
     save_directory_1 = f'{save_base_dir}/Engine vs Ambient/{Path(model_path).stem}'
     Path(save_directory_1).mkdir(exist_ok=True)

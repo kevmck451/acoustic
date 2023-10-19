@@ -30,7 +30,7 @@ def build_model(filepath, length, sample_rate, multi_channel, chunk_type, proces
     total_runtime = timing_stats.stats()
 
     # Save Model
-    save_model(filepath, length, sample_rate, multi_channel, process_list, feature_type, feature_params, input_shape, conv_layers, dense_layers,
+    save_model(filepath, length, sample_rate, multi_channel, chunk_type, process_list, feature_type, feature_params, input_shape, conv_layers, dense_layers,
                l2_value, dropout_rate, activation, test_size, random_state, model, optimizer, loss, metric, patience, epochs, batch_size, total_runtime)
     # if accuracy[0] >= 90:
     #     save_model(model, 'detect', 'spec', sample_length, accuracy[0])
