@@ -7,7 +7,7 @@ from pathlib import Path
 if __name__ == '__main__':
 
     filepath = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/'
-                    '1 Acoustic/Data/ML Model Data/Engine vs Ambience/dataset 3')
+                    '1 Acoustic/Data/ML Model Data/Engine vs Ambience/dataset 4')
 
     # Loading Features
     length = [2, 4, 6, 8, 10]
@@ -16,7 +16,7 @@ if __name__ == '__main__':
     chunk_type = ['regular', 'window']
     process_list = ['normalize']  # add labels to list in order to create new processing chain
     feature_type = 'mfcc'
-    feature_params = {'n_coeffs': 80}  # MFCC
+    feature_params = {'n_coeffs': 60}  # MFCC
 
     # Create Model
     conv_layers = [(32, (3, 3)), (64, (3, 3))]
