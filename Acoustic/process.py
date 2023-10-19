@@ -497,7 +497,7 @@ def mix_to_mono(*audio_objects):
     sample_rate = audio_objects[0].sample_rate
     for audio in audio_objects:
         if audio.sample_rate != sample_rate:
-            raise ValueError("All audio objects must have the same sample rate!")
+            audio.data = librosa.resample(y=audio.data, orig_sr=audio.sample_rate, target_sr=sample_rate)
 
     # Initialize the combined data as zeros, using the maximum number of samples from the audio objects
     max_samples = max([audio.num_samples for audio in audio_objects])
