@@ -29,10 +29,10 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
                 continue
             if target.num_channels > 1:
                 channel_list = process.channel_to_objects(target)
-                target = channel_list[0]
+                target = process.mix_to_mono(x for x in channel_list)
             target_chunk_list, _ = process.generate_chunks(target, length=sample_length)
 
-            normalization_values = list(np.arange(range_of_target_sound[0], range_of_target_sound[1], 2))
+            normalization_values = list(np.arange(range_of_target_sound[0], range_of_target_sound[1], range_of_target_sound[2]))
 
             for value in normalization_values:
                 target = process.normalize(target_chunk_list[random.randint(0, len(target_chunk_list) - 1)],
@@ -49,36 +49,29 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
 
 
 if __name__ == '__main__':
-
-    noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/ag_amb_2-1.wav'
-    # target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Diesel'
-    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Gas'
-
+    noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/residential_amb_2-1_clip.wav'
     synthetic_directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Synthetic'
-    new_path = synthetic_directory + '/gas_mix_2'
+    mix_num = 3
     sample_length = 8
     sample_rate = 24_000
-    noise_floor_level = 50
-    range_of_target_sound = (10, 60)
+    noise_floor_level = 80
+    range_of_target_sound = (10, 80, 2)
 
-    # uav_options = ['hex', 'angel', 'penguin']
-    # noise_options = ['ambient', 'wind']
-    # target_options = ['engine', 'diesel', 'gas']
-
+    # Diesel Samples
+    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Diesel'
+    new_path = synthetic_directory + f'/diesel_mix_{mix_num}'
     generate_synthetic_data(noise_floor_path, target_path, new_path, sample_length, sample_rate, noise_floor_level, range_of_target_sound)
 
-
-
-
-
-
-
+    # Gas Samples
+    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Gas'
+    new_path = synthetic_directory + f'/gas_mix_{mix_num}'
+    generate_synthetic_data(noise_floor_path, target_path, new_path, sample_length, sample_rate, noise_floor_level, range_of_target_sound)
 
 
     # List of ambient background already used
 
     # noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/home_amb_1_a.wav'
-
+    # noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/ag_amb_2-1.wav'
 
 
 
