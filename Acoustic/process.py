@@ -492,7 +492,7 @@ def average_spectrum(audio_object, **kwargs):
     return average_spectrum, frequency_bins
 
 # Function to mix down multiple channels to mono
-def mix_to_mono(*audio_objects):
+def mix_to_mono(audio_objects):
     # Check if audio objects have the same sample rate
     sample_rate = audio_objects[0].sample_rate
     for audio in audio_objects:
