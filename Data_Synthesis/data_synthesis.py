@@ -9,7 +9,7 @@ from pathlib import Path
 import random
 
 def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_length, sample_rate, noise_floor_level, range_of_target_sound):
-    Path(new_path).mkdir()
+    Path(new_path).mkdir(exist_ok=True)
 
     noise_floor = Audio_Abstract(filepath=noise_floor_path, sample_rate=sample_rate)
     # noise_floor.waveform()
@@ -19,27 +19,31 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
     for file in progress_bar(Path(target_path).iterdir()):
         if 'wav' in file.suffix:
             target = Audio_Abstract(filepath=file, sample_rate=sample_rate)
-
+            print(target)
             if target.sample_length is None:  # or target.sample_length < sample_length
                 # print(file)
                 # print('Go to Next Target Sample')
                 continue
             if target.num_channels > 1:
                 channel_list = process.channel_to_objects(target)
-                target = process.mix_to_mono(channel_list)
+                target_new = process.mix_to_mono(channel_list)
+                target_new.path = target.path
+                target = target_new
             target_chunk_list, _ = process.generate_chunks(target, length=sample_length)
-
+            print(target_chunk_list[0])
             normalization_values = list(np.arange(range_of_target_sound[0], range_of_target_sound[1], range_of_target_sound[2]))
 
             for value in normalization_values:
                 target = process.normalize(target_chunk_list[random.randint(0, len(target_chunk_list) - 1)],
                                            percentage=100)
                 target = process.normalize(target, percentage=value)
+                print(target)
                 noise_floor_sample = noise_floor_chunk_list[random.randint(0, len(noise_floor_chunk_list) - 1)]
                 noise_floor_edit = process.normalize(noise_floor_sample, percentage=100)
                 noise_floor_edit = process.normalize(noise_floor_edit, percentage=noise_floor_level)
-
+                print(target)
                 mix = process.mix_to_mono([target, noise_floor_edit])
+                print(target)
                 mix.name = f'{target.name}_{noise_floor.name}_mix'
 
                 mix.export(filepath=new_path, name=f'{mix.name}_{value}')
