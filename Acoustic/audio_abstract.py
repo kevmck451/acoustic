@@ -11,7 +11,7 @@ import wave
 class Audio_Abstract:
     def __init__(self, **kwargs):
         filepath = kwargs.get('filepath', None)
-        self.path = Path(filepath) if filepath is not None else None
+        self.path = Path(str(filepath)) if filepath is not None else None
         self.sample_rate = kwargs.get('sample_rate', 48000)
         self.num_channels = kwargs.get('num_channels', 1)
         self.sample_length = kwargs.get('sample_length', None)
@@ -32,6 +32,8 @@ class Audio_Abstract:
 
     def __str__(self):
         return f'---------Audio Object---------\n' \
+               f'path: {self.path}\n' \
+               f'name: {self.name}\n' \
                f'sample_rate: {self.sample_rate} Hz\n' \
                f'num_channels: {self.num_channels}\n' \
                f'sample_length: {self.sample_length} s\n' \
