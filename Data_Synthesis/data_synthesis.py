@@ -8,9 +8,6 @@ import numpy as np
 from pathlib import Path
 import random
 
-
-
-
 def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_length, sample_rate, noise_floor_level, range_of_target_sound):
     Path(new_path).mkdir()
 
@@ -42,11 +39,10 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
                 noise_floor_edit = process.normalize(noise_floor_sample, percentage=100)
                 noise_floor_edit = process.normalize(noise_floor_edit, percentage=noise_floor_level)
 
-                mix = process.mix_to_mono(target, noise_floor_edit)
+                mix = process.mix_to_mono([target, noise_floor_edit])
                 mix.name = f'{target.name}_{noise_floor.name}_mix'
 
                 mix.export(filepath=new_path, name=f'{mix.name}_{value}')
-
 
 if __name__ == '__main__':
     noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/residential_amb_2-1_clip.wav'
@@ -72,6 +68,7 @@ if __name__ == '__main__':
 
     # noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/home_amb_1_a.wav'
     # noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/ag_amb_2-1.wav'
+    # noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/residential_amb_2-1_clip.wav'
 
 
 

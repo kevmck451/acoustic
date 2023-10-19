@@ -341,7 +341,10 @@ def generate_chunks(audio_object, length):
             try:
                 label = int(audio_object.path.parent.stem)
             except:
-                label = audio_object.path.parent.stem
+                try:
+                    label = audio_object.path.parent.stem
+                except:
+                    label = ''
             labels.append(label)  # Add Label (folder name)
 
 
