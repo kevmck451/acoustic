@@ -29,7 +29,7 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
                 continue
             if target.num_channels > 1:
                 channel_list = process.channel_to_objects(target)
-                target = process.mix_to_mono(x for x in channel_list)
+                target = process.mix_to_mono(channel_list)
             target_chunk_list, _ = process.generate_chunks(target, length=sample_length)
 
             normalization_values = list(np.arange(range_of_target_sound[0], range_of_target_sound[1], range_of_target_sound[2]))
