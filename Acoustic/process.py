@@ -4,6 +4,7 @@ from Acoustic.audio_abstract import Audio_Abstract
 from Acoustic import utils
 
 from sklearn.preprocessing import StandardScaler
+from scipy.signal import resample
 import matplotlib.pyplot as plt
 from copy import deepcopy
 from copy import copy
@@ -500,7 +501,8 @@ def mix_to_mono(audio_objects):
     sample_rate = audio_objects[0].sample_rate
     for audio in audio_objects:
         if audio.sample_rate != sample_rate:
-            audio.data = librosa.resample(y=audio.data, orig_sr=audio.sample_rate, target_sr=sample_rate)
+            # audio.data = librosa.resample(y=audio.data, orig_sr=audio.sample_rate, target_sr=sample_rate)
+            audio.data = resample(audio.data, sample_rate)
 
     # Initialize the combined data as zeros, using the maximum number of samples from the audio objects
     max_samples = max([audio.num_samples for audio in audio_objects])
@@ -541,8 +543,19 @@ def mix_to_mono(audio_objects):
 #-----------------------------------
 # Function to Normalize Data
 def normalize(audio_object, percentage=95):
+    max_value = np.max(audio_object.data).round(5)
+    if max_value == 0:
+        print(audio_object.path)
+        raise Exception('Max Value is Zero')
+
+    # Assuming your audio data is in a variable called 'audio_data'
+    audio_object.data = np.nan_to_num(audio_object.data)
+
     # make a deep copy of the audio object to preserve the original
     audio_normalized = deepcopy(audio_object)
+
+
+
     max_value = np.max(np.abs(audio_normalized.data))
     normalized_data = audio_normalized.data / max_value * (percentage / 100.0)
 

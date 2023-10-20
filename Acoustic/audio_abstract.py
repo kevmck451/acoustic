@@ -1,10 +1,11 @@
 
-
+from scipy.signal import resample
 import matplotlib.pyplot as plt
 from pathlib import Path
 import soundfile as sf
 import numpy as np
 import librosa
+
 import wave
 
 
@@ -30,6 +31,18 @@ class Audio_Abstract:
             self.num_channels = info.channels
             self.load_data(self.path)
 
+        # Assuming your audio data is in a variable called 'audio_data'
+        if not np.isfinite(self.data).all():
+            self.data[np.isnan(self.data)] = 0
+            self.data[np.isinf(self.data)] = 0
+
+        max_value = np.max(self.data).round(5)
+        if max_value == 0:
+            print(self.path)
+            raise Exception('Max Value is Zero')
+
+
+
     def __str__(self):
         return f'---------Audio Object---------\n' \
                f'path: {self.path}\n' \
@@ -47,8 +60,8 @@ class Audio_Abstract:
         if self.num_channels > 1:
             self.data, samplerate = sf.read(str(filepath), dtype='float32')
             if samplerate != self.sample_rate:
-                self.data = librosa.resample(y=self.data, orig_sr=samplerate, target_sr=self.sample_rate)
-
+                # self.data = librosa.resample(y=self.data, orig_sr=samplerate, target_sr=self.sample_rate)
+                self.data = resample(self.data, self.sample_rate)
             try:
                 self.data = self.data.reshape(-1, self.num_channels)  # Reshape to match the number of channels
             except ValueError:
