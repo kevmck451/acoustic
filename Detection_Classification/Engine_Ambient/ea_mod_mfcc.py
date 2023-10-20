@@ -16,14 +16,13 @@ if __name__ == '__main__':
     chunk_type = ['regular', 'window']
     process_list = ['normalize']  # add labels to list in order to create new processing chain
     feature_type = 'mfcc'
-    feature_params = {'n_coeffs': 60}  # MFCC
 
     # Create Model
     conv_layers = [(32, (3, 3)), (64, (3, 3))]
     dense_layers = [128, 64]
     l2_value = 0.01
     dropout_rate = 0.5
-    activation = 'elu' # 'relu'
+    activation = 'relu' # 'elu'
 
     # Train Model
     test_size = 0.2
@@ -35,9 +34,14 @@ if __name__ == '__main__':
     epochs = 50
     batch_size = 48
 
+    # feature_params = {'n_coeffs': 40}  # MFCC
+    # build_model(filepath, length[2], sample_rate[2], multi_channel[0], chunk_type,
+    #              process_list, feature_type, feature_params, conv_layers, dense_layers, l2_value,
+    #              dropout_rate, activation,test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size)
 
-    # MFCC Model
+    feature_params_list = [{'n_coeffs': 80}, {'n_coeffs': 100}, {'n_coeffs': 120}]
+    for feature_params in feature_params_list:
+        build_model(filepath, length[2], sample_rate[2], multi_channel[0], chunk_type, process_list, feature_type, feature_params,
+                    conv_layers, dense_layers, l2_value, dropout_rate, activation,
+                    test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size)
 
-    build_model(filepath, length[2], sample_rate[1], multi_channel[0], chunk_type, process_list, feature_type, feature_params,
-                conv_layers, dense_layers, l2_value, dropout_rate, activation,
-                test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size)
