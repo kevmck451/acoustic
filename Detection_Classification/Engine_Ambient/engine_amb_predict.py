@@ -41,8 +41,8 @@ if __name__ == '__main__':
 
     # run_analysis_set_1(model_path)
 
-    n_mfcc_list = [80, 100, 120]
+    n_mfcc_list = [40, 80, 120]
 
     for num_mfcc in n_mfcc_list:
-        model_path = f'{base_path}/Detection_Classification/Engine_Ambient/model_library/mfcc_{num_mfcc}_6s_4-layers_2.h5'
+        model_path = f'{base_path}/Detection_Classification/Engine_Ambient/model_library/mfcc_{num_mfcc}_6s_6-layers_1.h5'
         run_analysis_set_1(model_path)

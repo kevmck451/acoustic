@@ -1,13 +1,11 @@
 
 from Deep_Learning_CNN.build_model import build_model
 
-from pathlib import Path
-
 
 if __name__ == '__main__':
 
-    filepath = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/'
-                    '1 Acoustic/Data/ML Model Data/Engine vs Ambience/dataset 4')
+    filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/' \
+               '1 Acoustic/Data/ML Model Data/Engine vs Ambience/dataset 6'
 
     # Loading Features
     length = [2, 4, 6, 8, 10]
@@ -18,11 +16,11 @@ if __name__ == '__main__':
     feature_type = 'mfcc'
 
     # Create Model
-    conv_layers = [(32, (3, 3)), (64, (3, 3))]
-    dense_layers = [128, 64]
+    conv_layers = [(32, (3, 3)), (64, (3, 3)), (128, (3, 3))]
+    dense_layers = [512, 256, 128]
     l2_value = 0.01
     dropout_rate = 0.5
-    activation = 'relu' # 'elu'
+    activation = 'relu' # 'elu' or 'relu'
 
     # Train Model
     test_size = 0.2
@@ -30,7 +28,7 @@ if __name__ == '__main__':
     optimizer = 'adam'
     loss = 'binary_crossentropy'
     metric = 'accuracy'
-    patience = 15
+    patience = 8
     epochs = 50
     batch_size = 48
 
@@ -39,7 +37,7 @@ if __name__ == '__main__':
     #              process_list, feature_type, feature_params, conv_layers, dense_layers, l2_value,
     #              dropout_rate, activation,test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size)
 
-    feature_params_list = [{'n_coeffs': 80}, {'n_coeffs': 100}, {'n_coeffs': 120}]
+    feature_params_list = [{'n_coeffs': 50}, {'n_coeffs': 70}, {'n_coeffs': 90}]
     for feature_params in feature_params_list:
         build_model(filepath, length[2], sample_rate[2], multi_channel[0], chunk_type, process_list, feature_type, feature_params,
                     conv_layers, dense_layers, l2_value, dropout_rate, activation,

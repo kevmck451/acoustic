@@ -16,6 +16,8 @@ def build_model(filepath, length, sample_rate, multi_channel, chunk_type, proces
 
     timing_stats = time_class(name='Build Model')
 
+    filepath = Path(filepath)
+
     features, labels = load_features(filepath, length, sample_rate, multi_channel, chunk_type, process_list, feature_type, feature_params)
 
     # Create a flexible model
@@ -38,8 +40,8 @@ def build_model(filepath, length, sample_rate, multi_channel, chunk_type, proces
 
 
 if __name__ == '__main__':
-    filepath = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/'
-                    '1 Acoustic/Data/ML Model Data/Engine vs Ambience/dataset 2')
+    filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/' \
+                    '1 Acoustic/Data/ML Model Data/Engine vs Ambience/dataset 2'
 
     # Loading Features
     length = [2, 4, 6, 8, 10]
