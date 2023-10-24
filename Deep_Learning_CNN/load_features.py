@@ -17,7 +17,7 @@ def load_features(filepath, length, sample_rate, multi_channel, chunk_type, proc
     # returns true is file exists
     if check_if_data_exists(filepath, length, feature_type, feature_params):
         print('Features Exist')
-        feature_path, label_path, _ = feature_labels_file_names(length, feature_type, feature_params)
+        feature_path, label_path, _ = feature_labels_file_names(filepath, length, feature_type, feature_params)
 
     else:
         print('Creating Features')
@@ -41,9 +41,9 @@ def load_features(filepath, length, sample_rate, multi_channel, chunk_type, proc
 
         feature_stats = stats_file_create(feature_list_master, length, feature_type, feature_params, sample_rate, multi_channel, filepath, process_list)
 
-        feature_path, label_path, audio_names_path = feature_labels_file_names(length, feature_type, feature_params)
+        feature_path, label_path, audio_names_path = feature_labels_file_names(filepath, length, feature_type, feature_params)
         feature_stat_path = (audio_names_path.split('.')[0].split('_')[:-1])
-        feature_stat_path = f"{'_'.join(feature_stat_path)}_stats.txt"
+        feature_stat_path = f"{'_'.join(feature_stat_path)}_{Path(filepath).stem}_stats.txt"
         np.save(feature_path, feature_list_master)
         np.save(label_path, label_list_master)
         write_filenames_to_file(audio_name_master, audio_names_path)
@@ -164,7 +164,7 @@ def check_inputs(filepath, length, sample_rate, feature_type, feature_params):
             raise Exception('Number of Coefficients must be integer')
 
 # Function to create the features / labels / audio names file names for storage
-def feature_labels_file_names(length, feature_type, feature_params):
+def feature_labels_file_names(filepath, length, feature_type, feature_params):
     # Parsing Feature Parameters for Saving Data after Processing
     feat = 'None'
     if feature_type == 'spectral':
@@ -178,9 +178,11 @@ def feature_labels_file_names(length, feature_type, feature_params):
     feature_label_dir_path = Path(f'{Path.cwd()}/features_labels')
     feature_label_dir_path.mkdir(exist_ok=True)
 
-    feature_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_features.npy'
-    label_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_labels_.npy'
-    audio_names_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_features_files.txt'
+    dataset = Path(filepath)
+
+    feature_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_{dataset.stem}_features.npy'
+    label_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_{dataset.stem}_labels_.npy'
+    audio_names_path = f'{feature_label_dir_path}/{feature_type}_{feat}_{length}s_{dataset.stem}_features_files.txt'
 
     return feature_path, label_path, audio_names_path
 
