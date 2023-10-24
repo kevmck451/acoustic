@@ -44,13 +44,13 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
                 mix.export(filepath=new_path, name=f'{mix.name}_{value}')
 
 if __name__ == '__main__':
-    noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/residential_amb_2-1_clip.wav'
+    noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/cafe_1.wav'
     synthetic_directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Synthetic'
-    range_of_target_sound = (11, 71, 2)
-    noise_floor_level = 90
+    range_of_target_sound = (4, 41, 2)
+    noise_floor_level = 80
     sample_rate = 24_000
     sample_length = 8
-    mix_num = 4
+    mix_num = 5
 
     # Diesel Samples
     target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Diesel'
