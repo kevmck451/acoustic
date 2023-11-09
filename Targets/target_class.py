@@ -28,4 +28,4 @@ class Target:
 
 if __name__ == '__main__':
 
-    deocy = Target()
+    target = Target()
