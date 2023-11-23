@@ -42,7 +42,6 @@ class Audio_Abstract:
             raise Exception('Max Value is Zero')
 
 
-
     def __str__(self):
         return f'---------Audio Object---------\n' \
                f'path: {self.path}\n' \
@@ -142,11 +141,15 @@ class Audio_Abstract:
         fig.tight_layout(pad=1)
 
         save = kwargs.get('save', False)
+        display = kwargs.get('display', False)
+        ret = kwargs.get('ret', False)
         save_path = kwargs.get('save_path', str(self.path))
         if save:
             plt.savefig(f'{save_path}/{self.name}.png')
-        else:
+        if display:
             plt.show()
+        if ret:
+            return fig
 
 
 

@@ -116,7 +116,7 @@ def load_model_text_file(model_path):
 
     return model_info
 
-# Function to use GUI to load file / directory
+# Function to use GUI Examples to load file / directory
 def select_file():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
