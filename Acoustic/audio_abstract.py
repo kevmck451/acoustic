@@ -41,7 +41,6 @@ class Audio_Abstract:
             print(self.path)
             raise Exception('Max Value is Zero')
 
-
     def __str__(self):
         return f'---------Audio Object---------\n' \
                f'path: {self.path}\n' \
@@ -76,6 +75,8 @@ class Audio_Abstract:
 
         else:
             self.data, samplerate = sf.read(str(filepath), dtype='float32')
+            # average = np.mean(audio.data)
+            # self.data = self.data - average
             if samplerate != self.sample_rate:
                 self.data = librosa.resample(y=self.data, orig_sr=samplerate, target_sr=self.sample_rate)
             self.sample_length = round((len(self.data) / self.sample_rate), 2)
@@ -156,19 +157,42 @@ class Audio_Abstract:
 
 if __name__ == '__main__':
 
-    a = Audio_Abstract(stats=True)
+    # a = Audio_Abstract(stats=True)
+    #
+    # print('-' * 50)
+    #
+    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Orlando/mission 5/Hex_FullFlight_5.wav'
+    # b = Audio_Abstract(filepath=filepath, stats=True)
+    #
+    # print('-'*50)
+    #
+    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Orlando/dataset 5/1/5_target_1_a.wav'
+    # c = Audio_Abstract(filepath=filepath, stats=True)
 
-    print('-' * 50)
 
-    filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Orlando/mission 5/Hex_FullFlight_5.wav'
-    b = Audio_Abstract(filepath=filepath, stats=True)
-
-    print('-'*50)
-
-    filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Model Data/Orlando/dataset 5/1/5_target_1_a.wav'
-    c = Audio_Abstract(filepath=filepath, stats=True)
-
-
+    filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Hex/hex_hover_8_thin.wav'
+    audio = Audio_Abstract(filepath=filepath)
+    print(audio)
+    # # audio.waveform(display=True)
+    # max = np.max(audio.data)
+    # min = np.min(audio.data)
+    # mean = np.mean(audio.data)
+    #
+    # print(f'Max: {max}\nMin: {min}\nMean: {mean}')
+    #
+    # audio.data = audio.data - mean
+    #
+    # max = np.max(audio.data)
+    # min = np.min(audio.data)
+    # mean = np.round(np.mean(audio.data), 7)
+    #
+    # print(f'Max: {max}\nMin: {min}\nMean: {mean}')
+    #
+    # absolute = np.abs(audio.data)
+    # print(absolute)
+    # audio.data = absolute
+    #
+    # audio.waveform(display=True)
 
 
 

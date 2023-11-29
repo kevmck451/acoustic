@@ -84,14 +84,21 @@ def stats(audio_object):
 
 # Function to display the Spectral Plot
 def spectral_plot(audio_object):
+    frequency_range = (0, 2000)
+    spectrum = np.fft.fft(audio_object.data)  # Apply FFT to the audio data
+    magnitude = np.abs(spectrum)
 
-    average_spectrum, frequency_bins = audio_object.average_spectrum()
+    # Calculate frequency bins and positive frequency mask for each sample
+    frequency_bins = np.fft.fftfreq(len(audio_object.data), d=1 / audio_object.sample_rate)
+    positive_freq_mask = (frequency_bins >= frequency_range[0]) & (frequency_bins <= frequency_range[1])
+    channel_spectrums = [magnitude[positive_freq_mask][:len(frequency_bins)]]
+    average_spectrum = np.mean(channel_spectrums, axis=0)
 
     fig, ax = plt.subplots(figsize=FIG_SIZE_SMALL)
     ax.plot(frequency_bins[:len(average_spectrum)], average_spectrum, color='b')
     ax.set_xlabel('Frequency (Hz)', fontweight='bold')
     ax.set_ylabel('Magnitude', fontweight='bold')
-    ax.set_title(f'Spectral Plot: {audio_object.filepath.name}')
+    ax.set_title(f'Spectral Plot: {audio_object.name}')
     ax.grid(True)
     fig.tight_layout(pad=1)
     plt.show()

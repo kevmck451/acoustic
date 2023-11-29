@@ -11,6 +11,7 @@ from copy import copy
 from scipy import signal
 import numpy as np
 import librosa
+from math import ceil
 from pydub import AudioSegment
 
 
@@ -19,28 +20,75 @@ from pydub import AudioSegment
 #-----------------------------------
 # FEATURES -------------------------
 #-----------------------------------
+# Function to calculate the 1D average spectrum of audio (Features are 1D)
+def average_spectrum(audio_object, **kwargs):
+    frequency_range = kwargs.get('frequency_range', (0, audio_object.sample_rate//2))
+    data = audio_object.data
+    spectrum = np.fft.fft(data)  # Apply FFT to the audio data
+    magnitude = np.abs(spectrum)
+    frequency_bins = np.fft.fftfreq(len(data), d=1 / audio_object.sample_rate)
+    positive_freq_mask = (frequency_bins >= frequency_range[0]) & (frequency_bins <= frequency_range[1])
+    channel_spectrums = [magnitude[positive_freq_mask][:len(frequency_bins)]]
+    average_spectrum = np.mean(channel_spectrums, axis=0)
+
+    # Apply Min-Max normalization to the
+    norm = kwargs.get('norm', True)
+    if norm:
+        spectrogram_min, spectrogram_max = average_spectrum.min(), average_spectrum.max()
+        average_spectrum = (average_spectrum - spectrogram_min) / (spectrogram_max - spectrogram_min)
+
+    # average_spectrum = [0 if v <= 0.1 else v for v in average_spectrum]
+
+    display = kwargs.get('display', False)
+    plt.plot(frequency_bins[:len(average_spectrum)], average_spectrum)
+    plt.xlabel('Frequency (Hz)', fontweight='bold')
+    plt.ylabel('Magnitude', fontweight='bold')
+    plt.title(f'Spectral Plot: {audio_object.name}')
+    plt.grid(True)
+    plt.tight_layout(pad=1)
+    if display:
+        plt.show()
+
+    return average_spectrum, frequency_bins
+
 # Function to calculate spectrogram of audio (Features are 2D)
 def spectrogram(audio_object, **kwargs):
-    stats = kwargs.get('stats', False)
-    feature_params = kwargs.get('feature_params', 'None')
+    '''
+    :param audio_object: audio object from Audio Abstract
+    :param kwargs:
+        - feature_params (dictionary with bandwidth, window_size, or hop_length)
+        - normalize (True or False) default is True
+        - display (True or False) default is False
+        - details (True or False) default is False
+    :return: numpy array either 1 channel or multi channel of spectrogram values in dB from 0 - 24,000 Hz
+            if details True then returns spec, freqs, and time arrays
+    '''
 
+
+    feature_params = kwargs.get('feature_params', 'None')
     window_sizes = [65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 254]
 
     if feature_params == 'None':
-        bandwidth = (70, 6000)
-        window_size = window_sizes[3]
+        bandwidth = (0, audio_object.sample_rate//2)
+        window_size = window_sizes[4]
         hop_length = window_size // 4
     else:
-        bandwidth = feature_params.get('bandwidth')
-        window_size = feature_params.get('window_size')
-        hop_length = feature_params.get('hop_length')
+        if 'bandwidth' in feature_params:
+            bandwidth = feature_params.get('bandwidth')
+        else: bandwidth = (0, audio_object.sample_rate//2)
+        if 'window_size' in feature_params:
+            window_size = feature_params.get('window_size')
+        else: window_size = window_sizes[0]
+        if 'hop_length' in feature_params:
+            hop_length = feature_params.get('hop_length')
+        else: hop_length = window_size // 4
 
     data = audio_object.data
-    # Audio_Object = normalize(audio_object)
-    # data = Audio_Object.data
 
     # Initialize an empty list to store the spectrograms for each channel
     spectrograms = []
+    frequencies = []
+    times = []
 
     # Check if audio_object is multi-channel
     if len(data.shape) == 1:
@@ -48,56 +96,80 @@ def spectrogram(audio_object, **kwargs):
         data = [data]
     for channel_data in data:
         # Calculate the spectrogram using Short-Time Fourier Transform (STFT)
-        # spectrogram = np.abs(librosa.stft(channel_data, n_fft=window_size, hop_length=hop_length)) ** 2
-        spectrogram_db = librosa.amplitude_to_db(
-            np.abs(librosa.stft(channel_data, n_fft=window_size, hop_length=hop_length)), ref=np.max)
-        # Convert to decibels (log scale) for better visualization
-        # spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
-        # spectrogram_db = librosa.amplitude_to_db(spectrogram, ref=np.max)
-        # print(spectrogram_db)
+        frequency_list, times_list, Zxx = signal.stft(channel_data, nfft=window_size, fs=audio_object.sample_rate)
+        frequency_list = [int(np.round(f)) for f in frequency_list]
+        # print(len(frequency_list), Zxx.shape)
+        frequencies.append(frequency_list)
+        times.append(times_list)
+        # print(f'frequencies: {frequency_list}')
+        # print(f'times: {times_list}')
+        # print(f'Zxx: {Zxx}')
+        # print(f'Zxx Shape: {Zxx.shape}')
 
+        # Calculate the magnitude of the STFT (spectrogram)
+        spectrogram = np.abs(Zxx)
+        # mins = np.min(spectrogram)
+        # maxs = np.max(spectrogram)
+        # means = np.mean(spectrogram)
+        # print(f'Spec Values:\nMin: {mins}\nMax: {maxs}\nMean: {means}')
 
-        spec_mean = np.mean(spectrogram_db)
-        if spec_mean > -40:
-            print(spec_mean)
+        # Convert to decibels
+        # spectrogram = 20 * np.log10(spectrogram + 1e-10)
+        # minsd = np.min(spectrogram_db)
+        # maxsd = np.max(spectrogram_db)
+        # meansd = np.mean(spectrogram_db)
+        # print(f'Spec_dB Values:\nMin d: {minsd}\nMaxd: {maxsd}\nMeand: {meansd}')
+        # print(f'Spec Shape: {spectrogram_db.shape}')
 
-        # plt.imshow(spectrogram_db)
-        # plt.colorbar()
-        # plt.show()
+        # Apply Min-Max normalization to the
+        norm = kwargs.get('norm', True)
+        if norm:
+            spectrogram_min, spectrogram_max = spectrogram.min(), spectrogram.max()
+            spectrogram = (spectrogram - spectrogram_min) / (spectrogram_max - spectrogram_min)
+            # print(spectrogram_db_min)
+            # print(spectrogram_db_max)
+            # print(spectrogram_db)
 
-        # Apply Min-Max normalization to the spectrogram_db
-        spectrogram_db_min, spectrogram_db_max = spectrogram_db.min(), spectrogram_db.max()
-        spectrogram_db = (spectrogram_db - spectrogram_db_min) / (spectrogram_db_max - spectrogram_db_min)
-
-        # print(spectrogram_db_min)
-        # print(spectrogram_db_max)
-        # print(spectrogram_db)
-
-        # plt.imshow(spectrogram_db)
-        # plt.colorbar()
-        # plt.show()
-
-        # Calculate frequency bandwidth and resolution
+        # Connect freq index to freq band
         nyquist_frequency = audio_object.sample_rate / 2
         frequency_resolution = nyquist_frequency / (window_size / 2)
-        frequency_range = np.arange(0, window_size // 2 + 1) * frequency_resolution
 
-        bottom_index = int(np.round(bandwidth[0] / frequency_resolution))
-        top_index = int(np.round(bandwidth[1] / frequency_resolution))
+        def find_closest_index(lst, target): return min(range(len(lst)), key=lambda i: abs(lst[i] - target))
+        bottom_index = find_closest_index(frequency_list, bandwidth[0])
+        top_index = find_closest_index(frequency_list, bandwidth[1])
 
+        # Cut the spectrogram to the desired frequency bandwidth and append to the
+        spectrograms.append(spectrogram[bottom_index:top_index+1])
+
+        stats = kwargs.get('stats', False)
         if stats:
-            print(f'Spectro_dB: {spectrogram_db}')
+            # print(f'Spectro_dB: {spectrogram_db}')
+            print(f'Spectro_dB Shape: {spectrogram.shape}')
             print(f'Freq Range: ({bandwidth[0]},{bandwidth[1]}) Hz')
             print(f'Freq Resolution: {frequency_resolution} Hz')
+            # print(f'Freq List: {freq_list}')
 
-        # Cut the spectrogram to the desired frequency bandwidth and append to the list
-        spectrograms.append(spectrogram_db[bottom_index:top_index])
+        display = kwargs.get('display', False)
+        if display:
+            plt.imshow(spectrogram, aspect='auto', origin='lower',
+                       extent=[times_list[0], times_list[-1], frequency_list[0], frequency_list[-1]])
+            plt.colorbar()
+            plt.xlabel('Time [sec]')
+            plt.ylabel('Frequency [Hz]')
+            plt.title('Spectrogram')
+            plt.show()
 
     spectrograms = np.array(spectrograms)
+    frequencies = np.array(frequencies)
+    times = np.array(times)
 
     spectrograms = np.squeeze(spectrograms) # removes all singular axis
+    frequencies = np.squeeze(frequencies)  # removes all singular axis
+    times = np.squeeze(times)  # removes all singular axis
 
-    return spectrograms
+    details = kwargs.get('details', False)
+    if details: return spectrograms, frequencies, times
+    else: return spectrograms
 
 # Function to calculate MFCC of audio (Features are 2D)
 def mfcc(audio_object, **kwargs):
@@ -268,46 +340,85 @@ def takeoff_trim(audio_object, takeoff_time):
 
 # Function to window over a sample of a specific length
 def generate_windowed_chunks(audio_object, window_size):
-    window_samples = audio_object.sample_rate * window_size
+    # window_samples = audio_object.sample_rate * window_size
+    # half_window_samples = window_samples // 2
+    # total_samples = len(audio_object.data)
+    #
+    # audio_ob_list = []
+    # labels = []
+    #
+    # for window_start in range(0, total_samples, audio_object.sample_rate):
+    #     audio_copy = deepcopy(audio_object)
+    #     if window_start < half_window_samples:
+    #         start = 0
+    #         end = window_samples
+    #         try:
+    #             label = int(audio_object.path.parent.stem)
+    #         except:
+    #             label = audio_object.path.parent.stem
+    #         labels.append(label)  # Add Label (folder name)
+    #     elif window_start >= total_samples - half_window_samples:
+    #         start = total_samples - window_samples
+    #         end = total_samples
+    #         try:
+    #             label = int(audio_object.path.parent.stem)
+    #         except:
+    #             label = audio_object.path.parent.stem
+    #         labels.append(label)  # Add Label (folder name)
+    #     else:
+    #         start = window_start - half_window_samples
+    #         end = start + window_samples
+    #         try:
+    #             label = int(audio_object.path.parent.stem)
+    #         except:
+    #             label = audio_object.path.parent.stem
+    #         labels.append(label)  # Add Label (folder name)
+    #     audio_copy.data = audio_object.data[start:end]
+    #     audio_ob_list.append(audio_copy)
+    #
+    #
+    # if len(audio_ob_list) != len(labels):
+    #     print(f'Error: {audio_object.path.stem}')
+    #     raise Exception('Audio Object List and Label List Length dont Match')
+    # return audio_ob_list, labels
+
+    # Ensure window_samples is an integer, round up to ensure the window is not smaller than intended
+    window_samples = int(ceil(audio_object.sample_rate * window_size))
     half_window_samples = window_samples // 2
     total_samples = len(audio_object.data)
 
     audio_ob_list = []
     labels = []
 
-    for window_start in range(0, total_samples, audio_object.sample_rate):
+    # Ensure we step through the audio in increments that are multiples of the window_samples
+    for window_start in range(0, total_samples, half_window_samples):
         audio_copy = deepcopy(audio_object)
         if window_start < half_window_samples:
             start = 0
             end = window_samples
-            try:
-                label = int(audio_object.path.parent.stem)
-            except:
-                label = audio_object.path.parent.stem
-            labels.append(label)  # Add Label (folder name)
         elif window_start >= total_samples - half_window_samples:
             start = total_samples - window_samples
             end = total_samples
-            try:
-                label = int(audio_object.path.parent.stem)
-            except:
-                label = audio_object.path.parent.stem
-            labels.append(label)  # Add Label (folder name)
         else:
             start = window_start - half_window_samples
             end = start + window_samples
-            try:
-                label = int(audio_object.path.parent.stem)
-            except:
-                label = audio_object.path.parent.stem
-            labels.append(label)  # Add Label (folder name)
+
+        # Ensure the window doesn't exceed the audio length
+        end = min(end, total_samples)
+
+        try:
+            label = int(audio_object.path.parent.stem)
+        except ValueError:
+            label = audio_object.path.parent.stem
+        labels.append(label)  # Add Label (folder name)
+
         audio_copy.data = audio_object.data[start:end]
         audio_ob_list.append(audio_copy)
 
-
     if len(audio_ob_list) != len(labels):
         print(f'Error: {audio_object.path.stem}')
-        raise Exception('Audio Object List and Label List Length dont Match')
+        raise Exception('Audio Object List and Label List Length don\'t Match')
+
     return audio_ob_list, labels
 
 # Function to convert audio sample to a specific length
@@ -482,19 +593,6 @@ def amplify(audio_object, gain_db):
 
     return Audio_Object_amp
 
-# Function to get average spectral values
-def average_spectrum(audio_object, **kwargs):
-    frequency_range = kwargs.get('frequency_range', (0, 20000))
-    data = audio_object.data
-    spectrum = np.fft.fft(data)  # Apply FFT to the audio data
-    magnitude = np.abs(spectrum)
-    frequency_bins = np.fft.fftfreq(len(data), d=1 / audio_object.sample_rate)
-    positive_freq_mask = (frequency_bins >= frequency_range[0]) & (frequency_bins <= frequency_range[1])
-    channel_spectrums = [magnitude[positive_freq_mask][:len(frequency_bins)]]
-    average_spectrum = np.mean(channel_spectrums, axis=0)
-
-    return average_spectrum, frequency_bins
-
 # Function to mix down multiple channels to mono
 def mix_to_mono(audio_objects):
     # Check if audio objects have the same sample rate
@@ -606,16 +704,6 @@ def spectra_subtraction_hex(audio_object, **kwargs):
 
 
 
-
-
-
-
-
-
-
-
-
-
 class Process:
     def __init__(self, source_directory, dest_directory):
 
@@ -626,10 +714,10 @@ class Process:
 
 if __name__ == '__main__':
 
-    filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Experiments/Static Tests/Static Test 1/Samples/Engine_1/3_10m-D-DEIdle.wav'
-    audio = Audio_Abstract(filepath=filepath)
-    audio.data = audio.data[2]
-    audio = normalize(audio)
+    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Experiments/Static Tests/Static Test 1/Samples/Engine_1/3_10m-D-DEIdle.wav'
+    # audio = Audio_Abstract(filepath=filepath)
+    # audio.data = audio.data[2]
+    # audio = normalize(audio)
     # print(audio)
 
     # feature = zcr(audio, stats=False)
@@ -641,4 +729,34 @@ if __name__ == '__main__':
     # feature = mfcc(audio)
     # print(feature.shape)
 
-    spectra_subtraction_hex(audio)
+    # spectra_subtraction_hex(audio)
+
+    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Hex/hex_hover_8_thin.wav'
+    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Experiments/Static Tests/Static Test 2/Samples/0/hover_10m_M.wav'
+    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Experiments/Static Tests/Static Test 2/Samples/1/40m_deidle_M.wav'
+    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Experiments/Static Tests/Static Test 1/Samples/Tones/Signal/1000.wav'
+    filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Experiments/Static Tests/Static Test 1/Samples/Tones/Noisy Signal/10_D_1000_M.wav'
+    audio = Audio_Abstract(filepath=filepath)
+
+    # audio.av_spec = average_spectrum(audio, display=True)
+
+    # audio.spectrogram = spectrogram(audio, stats=False, feature_params={'bandwidth': (0, 20000)}, display=True)
+    audio.spectrogram, audio.spec_freqs, audio.spec_times = spectrogram(audio, stats=False, feature_params={'bandwidth':(0, 24000)}, display=False, details=True, norm=True)
+    print(f'Max: {np.max(audio.spectrogram)}\nMin: {np.min(audio.spectrogram)}\nMean: {np.mean(audio.spectrogram)}')
+    
+    fig, ax = plt.subplots()
+    for i in range(0, len(audio.spec_times)):
+        if i%20 == 0:
+            ax.plot(audio.spec_freqs, audio.spectrogram[:, i])
+            ax.set_xlabel('Frequency (Hz)', fontweight='bold')
+            ax.set_ylabel('Magnitude', fontweight='bold')
+            ax.set_title(f'Spectral Plot: {audio.name}')
+            ax.grid(True)
+            fig.tight_layout(pad=1)
+    plt.show()
+
+    # audio_list, _ = generate_windowed_chunks(audio, window_size=0.1)
+    #
+    # for audio in audio_list:
+    #     audio.av_spec = average_spectrum(audio, display=False)
+    # plt.show()
