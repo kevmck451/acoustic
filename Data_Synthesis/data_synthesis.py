@@ -2,6 +2,7 @@
 
 from Acoustic.audio_abstract import Audio_Abstract
 import Acoustic.process as process
+import audio_filepaths as af
 
 from tqdm import tqdm as progress_bar
 import numpy as np
@@ -44,22 +45,26 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
                 mix.export(filepath=new_path, name=f'{mix.name}_{value}')
 
 if __name__ == '__main__':
-    noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Ambient/cafe_1.wav'
+
     synthetic_directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Synthetic'
-    range_of_target_sound = (4, 41, 2)
-    noise_floor_level = 80
+    range_of_target_sound = (1, 100, 2)
+    noise_floor_level = 75
     sample_rate = 24_000
-    sample_length = 8
-    mix_num = 5
+    sample_length = 9
 
     # Diesel Samples
-    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Diesel'
-    new_path = synthetic_directory + f'/diesel_mix_{mix_num}'
+    mix_num = 1
+    noise_floor_path = af.hex_hover_combo_thin
+    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/amb dies 2'
+    new_path = synthetic_directory + f'/diesel_hex_mix_{mix_num}'
     generate_synthetic_data(noise_floor_path, target_path, new_path, sample_length, sample_rate, noise_floor_level, range_of_target_sound)
 
+
     # Gas Samples
-    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Gas'
-    new_path = synthetic_directory + f'/gas_mix_{mix_num}'
+    mix_num = 1
+    noise_floor_path = af.amb_orlando_1
+    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/amb dies 2'
+    new_path = synthetic_directory + f'/diesel_amb_mix_{mix_num}'
     generate_synthetic_data(noise_floor_path, target_path, new_path, sample_length, sample_rate, noise_floor_level, range_of_target_sound)
 
 
