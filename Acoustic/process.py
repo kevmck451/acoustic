@@ -2,6 +2,7 @@
 
 from Acoustic.audio_abstract import Audio_Abstract
 from Acoustic import utils
+import audio_filepaths as af
 
 from sklearn.preprocessing import StandardScaler
 from scipy.signal import resample
@@ -13,6 +14,7 @@ import numpy as np
 import librosa
 from math import ceil
 from pydub import AudioSegment
+import seaborn as sns
 
 
 
@@ -197,8 +199,8 @@ def mfcc(audio_object, **kwargs):
     for channel_data in data:
         # Calculate MFCCs for this channel
         if n_mfcc == 'None':
-            n_mfcc = 50
-        mfccs = librosa.feature.mfcc(y=channel_data, sr=audio_object.sample_rate, n_mfcc=n_mfcc)
+            n_mfcc = 40
+        mfccs = librosa.feature.mfcc(y=channel_data, sr=audio_object.sample_rate, n_mfcc=n_mfcc, n_fft=2048, n_mels=128)
 
         # Normalize the MFCCs
         mfccs = StandardScaler().fit_transform(mfccs)
@@ -212,6 +214,69 @@ def mfcc(audio_object, **kwargs):
     # Convert the list of MFCCs to a numpy array and return
     mfccs_all_channels = np.array(mfccs_all_channels)
     mfccs_all_channels = np.squeeze(mfccs_all_channels)  # removes all singular axis
+
+    display = kwargs.get('display', False)
+    if display:
+        # plt.imshow(mfccs_all_channels, aspect='auto', origin='lower')
+        # plt.colorbar()
+        # plt.xlabel('Time [sec]')
+        # plt.ylabel('Frequency [Hz]')
+        # plt.title('Spectrogram')
+        # plt.show()
+
+        # Number of MFCCs to plot individually
+        num_individual_mfccs = n_mfcc
+
+        # Setup the matplotlib figure
+        fig, axes = plt.subplots(nrows=4, ncols=1, figsize=(14,10))
+        fig.subplots_adjust(hspace=0.5)
+
+        # Heatmap of All Coefficients
+        sns.heatmap(mfccs_all_channels, cmap='coolwarm', ax=axes[0])
+        axes[0].set_title('MFCC Heatmap')
+        axes[0].set_xlabel('Time')
+        axes[0].set_ylabel('MFCC Coefficients')
+
+        # Line Plots for Select Coefficients
+        for i in range(num_individual_mfccs):
+            axes[1].plot(mfccs_all_channels[i], label=f'MFCC {i}')
+        axes[1].set_title('Line Plots of Individual MFCCs')
+        axes[1].set_xlabel('Time')
+        axes[1].set_ylabel('Coefficient Value')
+        # axes[1].legend(loc='right')
+
+        # Histograms for Distribution Analysis
+        for i in range(num_individual_mfccs):
+            sns.histplot(mfccs_all_channels[i], kde=True, ax=axes[2], label=f'MFCC {i}')
+        axes[2].set_title('Histograms of Individual MFCCs')
+        axes[2].set_xlabel('Coefficient Value')
+        axes[2].set_ylabel('Frequency')
+        # axes[2].legend(loc='right')
+
+        # Box Plots for Statistical Overview
+        axes[3].boxplot(mfccs_all_channels[:num_individual_mfccs].T, notch=True, patch_artist=True)
+        axes[3].set_title('Box Plots of Individual MFCCs')
+        axes[3].set_xlabel('MFCC Coefficient')
+        axes[3].set_ylabel('Coefficient Value')
+        axes[3].set_xticklabels([(i) for i in range(num_individual_mfccs)])
+
+        # Show the plots
+        plt.suptitle(audio_object.name)
+        plt.tight_layout(pad=1)
+
+        save = kwargs.get('save', False)
+        if save:
+            plt.savefig(audio_object.name)
+            plt.close()
+        else:
+            plt.show()
+
+        '''
+        Heatmap: Shows all the MFCCs across time.
+        Line Plots: Focuses on the first few MFCCs, plotting their values over time.
+        Histograms: Displays the distribution of values for the first few MFCCs.
+        Box Plots: Provides a statistical summary (like median, quartiles, and outliers) for the first few MFCCs
+        '''
 
     return mfccs_all_channels
 
@@ -731,29 +796,36 @@ if __name__ == '__main__':
 
     # spectra_subtraction_hex(audio)
 
-    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Isolated Samples/Hex/hex_hover_8_thin.wav'
-    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Experiments/Static Tests/Static Test 2/Samples/0/hover_10m_M.wav'
-    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Experiments/Static Tests/Static Test 2/Samples/1/40m_deidle_M.wav'
-    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Experiments/Static Tests/Static Test 1/Samples/Tones/Signal/1000.wav'
-    filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Experiments/Static Tests/Static Test 1/Samples/Tones/Noisy Signal/10_D_1000_M.wav'
-    audio = Audio_Abstract(filepath=filepath)
+    filepath = af.hex_hover_combo_thin
+    # filepath = af.hex_hover_combo_thick
+    # filepath = af.hex_hover_10m_1k_static1
+    # filepath = af.hex_hover_10m_static2
+    # filepath = af.angel_ff_1
+    # filepath = af.amb_orlando_1
+    # filepath = af.diesel_bulldozer_1_1
+    audio = Audio_Abstract(filepath=filepath, num_channels=1)
 
-    # audio.av_spec = average_spectrum(audio, display=True)
+    # audio.mfccs = mfcc(audio, feature_params={'n_coeffs':12}, display=True)
+    audio.mfccs = mfcc(audio, feature_params={'n_coeffs': 12}, display=True)
+
+
+    # audio.av_spec, audio.av_spec_fb = average_spectrum(audio, display=False)
+
 
     # audio.spectrogram = spectrogram(audio, stats=False, feature_params={'bandwidth': (0, 20000)}, display=True)
-    audio.spectrogram, audio.spec_freqs, audio.spec_times = spectrogram(audio, stats=False, feature_params={'bandwidth':(0, 24000)}, display=False, details=True, norm=True)
-    print(f'Max: {np.max(audio.spectrogram)}\nMin: {np.min(audio.spectrogram)}\nMean: {np.mean(audio.spectrogram)}')
-    
-    fig, ax = plt.subplots()
-    for i in range(0, len(audio.spec_times)):
-        if i%20 == 0:
-            ax.plot(audio.spec_freqs, audio.spectrogram[:, i])
-            ax.set_xlabel('Frequency (Hz)', fontweight='bold')
-            ax.set_ylabel('Magnitude', fontweight='bold')
-            ax.set_title(f'Spectral Plot: {audio.name}')
-            ax.grid(True)
-            fig.tight_layout(pad=1)
-    plt.show()
+    # audio.spectrogram, audio.spec_freqs, audio.spec_times = spectrogram(audio, stats=False, feature_params={'bandwidth':(0, 24000)}, display=False, details=True, norm=True)
+    # print(f'Max: {np.max(audio.spectrogram)}\nMin: {np.min(audio.spectrogram)}\nMean: {np.mean(audio.spectrogram)}')
+    #
+    # fig, ax = plt.subplots()
+    # for i in range(0, len(audio.spec_times)):
+    #     if i%20 == 0:
+    #         ax.plot(audio.spec_freqs, audio.spectrogram[:, i])
+    #         ax.set_xlabel('Frequency (Hz)', fontweight='bold')
+    #         ax.set_ylabel('Magnitude', fontweight='bold')
+    #         ax.set_title(f'Spectral Plot: {audio.name}')
+    #         ax.grid(True)
+    #         fig.tight_layout(pad=1)
+    # plt.show()
 
     # audio_list, _ = generate_windowed_chunks(audio, window_size=0.1)
     #
