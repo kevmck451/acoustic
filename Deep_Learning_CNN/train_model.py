@@ -8,21 +8,6 @@ import numpy as np
 import gc
 
 
-# def train_model(features, labels, test_size, random_state, model, optimizer, loss, metric, patience, epochs, batch_size):
-#     print('Training Model')
-#
-#     X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=test_size,
-#                                                         random_state=random_state)
-#
-#     gc.collect()
-#
-#     model.compile(optimizer=optimizer, loss=loss, metrics=[metric])
-#     early_stopping = EarlyStopping(monitor='val_loss', patience=patience)
-#     model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, validation_data=(X_test, y_test),
-#               callbacks=[early_stopping])
-#
-#
-#     return model
 
 def train_model(features, labels, test_size, random_state, model, optimizer, loss, metric, patience, epochs,
                 batch_size):
