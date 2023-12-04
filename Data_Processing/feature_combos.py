@@ -5,7 +5,7 @@ import process
 
 
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 
 
@@ -18,26 +18,35 @@ import matplotlib.pyplot as plt
 # filepath = af.amb_orlando_1
 # filepath = af.diesel_bulldozer_1_1
 
-filepath = af.hex_diesel_99
-# filepath = af.hex_diesel_59
-# filepath = af.hex_diesel_1
+filepath = af.hex_diesel_100
+# filepath = af.hex_diesel_40
+# filepath = af.hex_diesel_0
 
 audio = Audio_Abstract(filepath=filepath, num_channels=1)
 
 # audio.mfccs = mfcc(audio, feature_params={'n_coeffs':12}, display=True)
-audio.mfccs = process.mfcc(audio, feature_params={'n_coeffs': 12}, display=False)
-print(audio.mfccs.shape)
-plt.imshow(audio.mfccs)
-plt.tight_layout(pad=1)
-plt.show()
-
-audio.av_spec, audio.av_spec_fb = process.average_spectrum(audio, display=True)
-print(audio.av_spec.shape)
-
-# audio.spectrogram = spectrogram(audio, stats=False, feature_params={'bandwidth': (0, 20000)}, display=True)
-# audio.spectrogram, audio.spec_freqs, audio.spec_times = spectrogram(audio, stats=False, feature_params={'bandwidth':(0, 24000)}, display=False, details=True, norm=True)
-# print(f'Max: {np.max(audio.spectrogram)}\nMin: {np.min(audio.spectrogram)}\nMean: {np.mean(audio.spectrogram)}')
+# audio.mfccs = process.mfcc(audio, feature_params={'n_coeffs': 12}, display=False)
+# print(audio.mfccs.shape)
 #
+# audio.av_spec, audio.av_spec_fb = process.average_spectrum(audio, display=True)
+# print(audio.av_spec.shape)
+# print(audio.av_spec_fb.shape)
+#
+# # check for duplicates
+# if len(audio.av_spec_fb) == len(set(audio.av_spec_fb)):
+#     print("All elements are unique.")
+# else:
+#     print("There are duplicates in the list.")
+
+audio.spectrogram, audio.spec_freqs, audio.spec_times = process.spectrogram_2(audio, bandwidth=(0, 3000))
+print(f'Spec Shape: {audio.spectrogram.shape}')
+print(f'Freq Shape: {audio.spec_freqs.shape}')
+print(f'Time Shape: {audio.spec_times.shape}')
+
+
+
+
+
 # fig, ax = plt.subplots()
 # for i in range(0, len(audio.spec_times)):
 #     if i%20 == 0:

@@ -98,10 +98,10 @@ diesel_truck_1_1 = f'{basepath}/Isolated Samples/Diesel/diesel_truck_1_1.wav'
 
 
 # Combinations
-hex_diesel_99 = f'{basepath}/Synthetic/diesel_hex_mix_1/construction_7_3_hex_hover_8_thin_mix_99.wav'
-hex_diesel_79 = f'{basepath}/Synthetic/diesel_hex_mix_1/construction_7_3_hex_hover_8_thin_mix_79.wav'
-hex_diesel_59 = f'{basepath}/Synthetic/diesel_hex_mix_1/construction_7_3_hex_hover_8_thin_mix_59.wav'
-hex_diesel_39 = f'{basepath}/Synthetic/diesel_hex_mix_1/construction_7_3_hex_hover_8_thin_mix_39.wav'
-hex_diesel_19 = f'{basepath}/Synthetic/diesel_hex_mix_1/construction_7_3_hex_hover_8_thin_mix_19.wav'
-hex_diesel_1 = f'{basepath}/Synthetic/diesel_hex_mix_1/construction_7_3_hex_hover_8_thin_mix_1.wav'
+hex_diesel_100 = f'{basepath}/Synthetic/diesel_hex_mix_3/construction_7_3_hex_hover_8_thin_mix_100.wav'
+hex_diesel_80 = f'{basepath}/Synthetic/diesel_hex_mix_3/construction_7_3_hex_hover_8_thin_mix_80.wav'
+hex_diesel_60 = f'{basepath}/Synthetic/diesel_hex_mix_3/construction_7_3_hex_hover_8_thin_mix_60.wav'
+hex_diesel_40 = f'{basepath}/Synthetic/diesel_hex_mix_3/construction_7_3_hex_hover_8_thin_mix_40.wav'
+hex_diesel_20 = f'{basepath}/Synthetic/diesel_hex_mix_3/construction_7_3_hex_hover_8_thin_mix_20.wav'
+hex_diesel_0 = f'{basepath}/Synthetic/diesel_hex_mix_3/construction_7_3_hex_hover_8_thin_mix_0.wav'
 

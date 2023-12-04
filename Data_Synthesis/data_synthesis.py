@@ -34,7 +34,8 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
             normalization_values = list(np.arange(range_of_target_sound[0], range_of_target_sound[1], range_of_target_sound[2]))
 
             for value in normalization_values:
-                target = process.normalize(target_chunk_list[random.randint(0, len(target_chunk_list) - 1)], percentage=100)
+                # target = process.normalize(target_chunk_list[random.randint(0, len(target_chunk_list) - 1)], percentage=100)
+                target = process.normalize(target_chunk_list[0], percentage=100)
                 target = process.normalize(target, percentage=value)
                 noise_floor_sample = noise_floor_chunk_list[random.randint(0, len(noise_floor_chunk_list) - 1)]
                 noise_floor_edit = process.normalize(noise_floor_sample, percentage=100)
@@ -47,13 +48,13 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
 if __name__ == '__main__':
 
     synthetic_directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Synthetic'
-    range_of_target_sound = (1, 100, 2)
-    noise_floor_level = 75
+    range_of_target_sound = (0, 101, 2)
+    noise_floor_level = 90
     sample_rate = 24_000
-    sample_length = 9
+    sample_length = 16
 
     # Diesel Samples
-    mix_num = 1
+    mix_num = 3
     noise_floor_path = af.hex_hover_combo_thin
     target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/amb dies 2'
     new_path = synthetic_directory + f'/diesel_hex_mix_{mix_num}'
@@ -61,7 +62,7 @@ if __name__ == '__main__':
 
 
     # Gas Samples
-    mix_num = 1
+    mix_num = 3
     noise_floor_path = af.amb_orlando_1
     target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/amb dies 2'
     new_path = synthetic_directory + f'/diesel_amb_mix_{mix_num}'
