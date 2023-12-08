@@ -189,7 +189,7 @@ def spectrogram(audio_object, **kwargs):
     if details: return spectrograms, frequencies, times
     else: return spectrograms
 
-
+# Function to calculate spectrogram of audio (Features are 2D)
 def spectrogram_2(audio_object, **kwargs):
     bandwidth = kwargs.get('bandwidth', (0, 24000))
 
@@ -200,7 +200,7 @@ def spectrogram_2(audio_object, **kwargs):
     epsilon = 1e-10
 
     # Compute the spectrogram
-    f, t, Sxx = signal.spectrogram(data, fs=audio_object.sample_rate, nperseg=4096)
+    f, t, Sxx = signal.spectrogram(data, fs=audio_object.sample_rate, nperseg=32768)
     spec = 10 * np.log10(Sxx + epsilon)
 
     # Normalize spec between 0 and 1
@@ -234,7 +234,6 @@ def spectrogram_2(audio_object, **kwargs):
             plt.show()
 
     return spec, f_subset, t
-
 
 # Function to calculate MFCC of audio (Features are 2D)
 def mfcc(audio_object, **kwargs):
@@ -310,7 +309,7 @@ def mfcc(audio_object, **kwargs):
         axes[2].set_xlabel('Coefficient Value')
         axes[2].set_ylabel('Frequency')
         axes[2].set_xlim(-3.5, 3.5)  # Set x-axis limits
-        # axes[2].set_ylim(0, 1200)  # Set x-axis limits
+        axes[2].set_ylim(0, 150)  # Set x-axis limits
         # axes[2].legend(loc='right')
 
         # Box Plots for Statistical Overview
@@ -335,117 +334,145 @@ def mfcc(audio_object, **kwargs):
 
     return mfccs_all_channels
 
-# Function to calculate spectrogram of audio (Features are 2D)
-def custom_filter_1(audio_object, **kwargs):
-    stats = kwargs.get('stats', False)
-    window_size = 32768
-    hop_length = 512
-    # freq_range_low = (100, 170) #if hovering only
-    freq_range_mid = (130, 200)
-    # freq_range_high = (2600, 5000)
-    freq_range_high = (800, 1300)
-
-    data = audio_object.data
-    # Audio_Object = normalize(audio_object)
-    # data = Audio_Object.data
-
-    # Initialize an empty list to store the spectrograms for each channel
-    spectrograms = []
-
-    # Check if audio_object is multi-channel
-    if len(data.shape) == 1:
-        # Mono audio data, convert to a list with a single item for consistency
-        data = [data]
-
-    for channel_data in data:
-        # Calculate the spectrogram using Short-Time Fourier Transform (STFT)
-        spectrogram = np.abs(librosa.stft(channel_data, n_fft=window_size, hop_length=hop_length)) ** 2
-
-        # Convert to decibels (log scale) for better visualization
-        spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
-
-        # Apply Min-Max normalization to the spectrogram_db
-        spectrogram_db_min, spectrogram_db_max = spectrogram_db.min(), spectrogram_db.max()
-        spectrogram_db = (spectrogram_db - spectrogram_db_min) / (spectrogram_db_max - spectrogram_db_min)
-
-        # Calculate frequency range and resolution
-        nyquist_frequency = audio_object.sample_rate / 2
-        frequency_resolution = nyquist_frequency / (window_size / 2)
-        frequency_range = np.arange(0, window_size // 2 + 1) * frequency_resolution
-
-        bottom_index_mid = int(np.round(freq_range_mid[0] / frequency_resolution))
-        top_index_mid = int(np.round(freq_range_mid[1] / frequency_resolution))
-        bottom_index_high = int(np.round(freq_range_high[0] / frequency_resolution))
-        top_index_high = int(np.round(freq_range_high[1] / frequency_resolution))
-
-        spectrogram_mid = spectrogram_db[bottom_index_mid:top_index_mid]
-        spectrogram_high = spectrogram_db[bottom_index_high:top_index_high]
-
-        # Combine the 'mid' and 'high' spectrograms and append to the list
-        spectrograms.append(np.concatenate((spectrogram_mid, spectrogram_high)))
-
-        if stats:
-            print(f'Spectro_dB: {spectrogram_db}')
-            print(f'Freq Range Mid: ({freq_range_mid[0]},{freq_range_mid[1]}) Hz')
-            print(f'Freq Range High: ({freq_range_high[0]},{freq_range_high[1]}) Hz')
-            print(f'Freq Resolution: {frequency_resolution} Hz')
-
-    # Convert the list of spectrograms to a numpy array and return
-    return np.array(spectrograms)
-
 # Function to calculate Zero Crossing Rate of audio (Features are 1D)
 def zcr(audio_object, **kwargs):
-    def sliding_window_reshape(data, window_size, step_size=1):
-        """Reshape data using a sliding window."""
-        num_windows = (len(data) - window_size) // step_size + 1
-        output = np.zeros((num_windows, window_size))
-
-        for i in range(num_windows):
-            start = i * step_size
-            end = start + window_size
-            output[i] = data[start:end]
-
-        return output
-
-    stats = kwargs.get('stats', False)
-
+    # Extract audio data
     data = audio_object.data
-    # Normalize audio data
-    # Audio_Object = normalize(audio_object)
-    # data = Audio_Object.data
 
-    # Initialize an empty list to store the ZCRs for each channel
-    zcr_all_channels = []
-
-    # Check if audio_object is multi-channel
+    # Check for mono or stereo and handle accordingly
     if len(data.shape) == 1:
-        # Mono audio data, convert to a list with a single item for consistency
+        # Mono audio
         data = [data]
+    else:
+        # Stereo or multi-channel audio, transpose to iterate over channels
+        data = data.T
 
+    zcr_values = []
     for channel_data in data:
-        # Calculate ZCR for this channel
-        window_size = 4096 # 8192
-        hop_length = 1024 # 2048
-        zcr_values = librosa.feature.zero_crossing_rate(y=channel_data,
-                                                        frame_length=window_size,
-                                                        hop_length=hop_length)
+        # Calculate ZCR for each channel
+        zcr_channel = librosa.feature.zero_crossing_rate(y=channel_data)
+        zcr_values.append(zcr_channel)
 
-        # Normalize the ZCR values
-        zcr_values = StandardScaler().fit_transform(zcr_values.reshape(-1, 1)).flatten()
+    # Visualization
+    display = kwargs.get('display', False)
+    if display:
+        fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(14, 6))
 
-        if stats:
-            print(f'ZCR: {zcr_values}')
+        # Line Plot
+        for idx, zcr_channel in enumerate(zcr_values):
+            axes[0].plot(zcr_channel.flatten(), label=f'Channel {idx}')
+        axes[0].set_title(f'ZCR: {audio_object.name}')
+        axes[0].set_xlabel('Frame')
+        axes[0].set_ylabel('ZCR')
+        axes[0].set_ylim(0, 0.1)  # Set y-axis limits
+        # axes[0].set_xlim(-3.5, 3.5)  # Set y-axis limits
+        axes[0].legend()
 
-        # Reshape the ZCR using sliding window
-        window_size = 3
-        step_size = 1
-        zcr_2d = sliding_window_reshape(zcr_values, window_size, step_size)
+        # Histogram
+        for zcr_channel in zcr_values:
+            sns.histplot(zcr_channel.flatten(), kde=True, ax=axes[1])
+        axes[1].set_title('Histogram of ZCR Values')
+        axes[1].set_xlabel('ZCR')
+        axes[1].set_ylabel('Frequency')
+        axes[1].set_ylim(0, 250)  # Set y-axis limits
+        axes[1].set_xlim(0, 0.1)  # Set y-axis limits
 
-        # Now the shape of zcr_2d is [number_of_windows, window_size], add the channel dimension
-        zcr_all_channels.append(zcr_2d[:, :, np.newaxis])
+        plt.tight_layout()
 
-    # Convert the list of ZCRs to a numpy array and return
-    return np.array(zcr_all_channels)
+        # Saving the plot if required
+        save = kwargs.get('save', False)
+        save_path = kwargs.get('save_path', '')
+
+        if save:
+            plt.savefig(f'{save_path}/{audio_object.name}.png')
+            plt.close()
+        else:
+            plt.show()
+
+    # Statistical information
+    stats = kwargs.get('stats', False)
+    if stats:
+        for idx, zcr_channel in enumerate(zcr_values):
+            print(f'Channel {idx} ZCR Stats:')
+            print(f'Mean: {np.mean(zcr_channel)}')
+            print(f'Standard Deviation: {np.std(zcr_channel)}')
+            print('---')
+
+    zcr_values = np.array(zcr_values)
+    zcr_values = np.squeeze(zcr_values)
+
+    return zcr_values
+
+# Function to calculate Energy of signal
+def energy(audio_object, frame_length=1024, hop_length=512, **kwargs):
+    # Extract audio data
+    data = audio_object.data
+
+    # Check for mono or stereo and handle accordingly
+    if len(data.shape) == 1:
+        # Mono audio
+        data = [data]
+    else:
+        # Stereo or multi-channel audio, transpose to iterate over channels
+        data = data.T
+
+    energy_values = []
+    for channel_data in data:
+        # Calculate the energy for each frame for this channel
+        energy = np.array([
+            sum(abs(channel_data[i:i+frame_length]**2))
+            for i in range(0, len(channel_data), hop_length)
+        ])
+        energy_values.append(energy)
+
+    # Visualization
+    display = kwargs.get('display', False)
+    if display:
+        fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(14, 6))
+
+        # Line Plot for Energy
+        for idx, energy in enumerate(energy_values):
+            axes[0].plot(energy, label=f'Channel {idx}')
+        axes[0].set_title(f'Energy: {audio_object.name}')
+        axes[0].set_xlabel('Frame')
+        axes[0].set_ylabel('Energy')
+        axes[0].legend()
+        axes[0].set_ylim(0, 150)  # Set y-axis limits
+
+        # Histogram for Energy Distribution
+        for energy in energy_values:
+            sns.histplot(energy, kde=True, ax=axes[1])
+        axes[1].set_title('Histogram of Energy Values')
+        axes[1].set_xlabel('Energy')
+        axes[1].set_ylabel('Frequency')
+        axes[1].set_ylim(0, 250)  # Set y-axis limits
+        axes[1].set_xlim(0, 150)  # Set y-axis limits
+
+        plt.tight_layout()
+
+        # Saving the plot if required
+        save = kwargs.get('save', False)
+        save_path = kwargs.get('save_path', '')
+        if save:
+            plt.savefig(f'{save_path}/{audio_object.name}_Energy.png')
+            plt.close()
+        else:
+            plt.show()
+
+    # Statistical information
+    stats = kwargs.get('stats', False)
+    if stats:
+        for idx, energy in enumerate(energy_values):
+            print(f'Channel {idx} Energy Stats:')
+            print(f'Mean: {np.mean(energy)}')
+            print(f'Standard Deviation: {np.std(energy)}')
+            print('---')
+
+    energy_values = np.array(energy_values)
+    energy_values = np.squeeze(energy_values)
+
+    return energy_values
+
 
 #-----------------------------------
 # OTHER ----------------------------
