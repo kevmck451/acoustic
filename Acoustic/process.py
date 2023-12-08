@@ -473,6 +473,76 @@ def energy(audio_object, frame_length=1024, hop_length=512, **kwargs):
 
     return energy_values
 
+# Function to calculate Spectral Centroid of signal
+
+def spectral_centroid(audio_object, sr=22050, frame_length=1024, hop_length=512, **kwargs):
+    # Extract audio data
+    data = audio_object.data
+
+    # Check for mono or stereo and handle accordingly
+    if len(data.shape) == 1:
+        # Mono audio
+        data = [data]
+    else:
+        # Stereo or multi-channel audio, transpose to iterate over channels
+        data = data.T
+
+    spectral_centroid_values = []
+    for channel_data in data:
+        # Calculate the spectral centroid for each channel
+        centroid = \
+        librosa.feature.spectral_centroid(y=channel_data, sr=sr, n_fft=frame_length, hop_length=hop_length)[0]
+        spectral_centroid_values.append(centroid)
+
+    # Visualization
+    display = kwargs.get('display', False)
+    if display:
+        fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(14, 6))
+
+        # Line Plot for Spectral Centroid
+        for idx, centroid in enumerate(spectral_centroid_values):
+            axes[0].plot(centroid, label=f'Channel {idx}')
+        axes[0].set_title(f'Spectral Centroid: {audio_object.name}')
+        axes[0].set_xlabel('Frame')
+        axes[0].set_ylabel('Frequency (Hz)')
+        axes[0].legend()
+        axes[0].set_ylim(0, 2000)  # Set y-axis limits
+
+        # Histogram for Spectral Centroid Distribution
+        for centroid in spectral_centroid_values:
+            sns.histplot(centroid, kde=True, ax=axes[1])
+        axes[1].set_title('Histogram of Spectral Centroid Values')
+        axes[1].set_xlabel('Frequency (Hz)')
+        axes[1].set_ylabel('Frequency')
+        axes[1].set_ylim(0, 160)  # Set y-axis limits
+        axes[1].set_xlim(0, 2000)  # Set y-axis limits
+
+        plt.tight_layout()
+
+        # Saving the plot if required
+        save = kwargs.get('save', False)
+        save_path = kwargs.get('save_path', '')
+        if save:
+            plt.savefig(f'{save_path}/{audio_object.name}_SpectralCentroid.png')
+            plt.close()
+        else:
+            plt.show()
+
+    # Statistical information
+    stats = kwargs.get('stats', False)
+    if stats:
+        for idx, centroid in enumerate(spectral_centroid_values):
+            print(f'Channel {idx} Spectral Centroid Stats:')
+            print(f'Mean: {np.mean(centroid)}')
+            print(f'Standard Deviation: {np.std(centroid)}')
+            print('---')
+
+    spectral_centroid_values = np.array(spectral_centroid_values)
+    spectral_centroid_values = np.squeeze(spectral_centroid_values)
+
+    return spectral_centroid_values
+
+
 
 #-----------------------------------
 # OTHER ----------------------------
