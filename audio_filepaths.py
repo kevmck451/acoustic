@@ -42,6 +42,7 @@ amb_ag_2 = f'{basepath}/Isolated Samples/Ambient/ag_amb_2-1.wav'
 amb_campus_1 = f'{basepath}/Isolated Samples/Ambient/campus_amb_1_a.wav'
 amb_home_1 = f'{basepath}/Isolated Samples/Ambient/home_amb_1_a.wav'
 amb_orlando_1 = f'{basepath}/Isolated Samples/Ambient/orlando_amb_1.wav'
+amb_orlando_1_short = f'{basepath}/Isolated Samples/Ambient/orlando_amb_1_short.wav'
 
 
 

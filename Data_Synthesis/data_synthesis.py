@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
     # Gas Samples
     mix_num = 3
-    noise_floor_path = af.amb_orlando_1
+    noise_floor_path = af.amb_orlando_1_short
     target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/amb dies 2'
     new_path = synthetic_directory + f'/diesel_amb_mix_{mix_num}'
     generate_synthetic_data(noise_floor_path, target_path, new_path, sample_length, sample_rate, noise_floor_level, range_of_target_sound)
