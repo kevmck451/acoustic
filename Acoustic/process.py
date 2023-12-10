@@ -16,7 +16,7 @@ from math import ceil
 from pydub import AudioSegment
 import seaborn as sns
 import matplotlib.colors as colors
-
+from scipy.interpolate import interp1d
 
 
 
@@ -474,7 +474,6 @@ def energy(audio_object, frame_length=1024, hop_length=512, **kwargs):
     return energy_values
 
 # Function to calculate Spectral Centroid of signal
-
 def spectral_centroid(audio_object, sr=22050, frame_length=1024, hop_length=512, **kwargs):
     # Extract audio data
     data = audio_object.data
@@ -542,11 +541,81 @@ def spectral_centroid(audio_object, sr=22050, frame_length=1024, hop_length=512,
 
     return spectral_centroid_values
 
+# Function to create custom array of features
+def feature_combo_1(audio_object, **kwargs):
+    audio_object.mfccs = mfcc(audio_object, feature_params={'n_coeffs': 15}, display=False)
+    audio_object.av_spec, audio_object.av_spec_fb = average_spectrum(audio_object, frequency_range=(120, 2000), display=False)
+    audio_object.zcr = zcr(audio_object, display=False)
+    audio_object.spec_centroid = spectral_centroid(audio_object, display=False)
+    audio_object.energy = energy(audio_object, display=False)
+
+    size = audio_object.mfccs.shape[1]
+    num_features = audio_object.mfccs.shape[0] + 4
+    feature_array = np.zeros((num_features, size))
+
+    features = [audio_object.mfccs, audio_object.av_spec, audio_object.zcr, audio_object.spec_centroid, audio_object.energy]
+    i = 0
+    for feature in features:
+
+        if feature.ndim > 1:
+            for f in feature:
+                if feature.shape[1] != size:
+                    feat = interpolate_values(f, size)
+                    feature_array[i, :] = feat
+                    i += 1
+                else:
+                    feature_array[i, :] = f
+                    i += 1
+        else:
+            if feature.shape[0] != size:
+                feat = interpolate_values(feature, size)
+                feature_array[i, :] = feat
+                i += 1
+            else:
+                feature_array[i, :] = feature
+                i += 1
+
+    stats = kwargs.get('stats', False)
+    if stats:
+        for feature in feature_array:
+            print(f'Mean: {np.mean(feature)}')
+
+    for i, feature in enumerate(feature_array):
+        feat = np.interp(feature, (feature.min(), feature.max()), (0, 1))
+        feature_array[i, :] = feat
+
+
+    # Visualization
+    display = kwargs.get('display', False)
+    if display:
+        plt.figure(figsize = (14, 6))
+        plt.title(f'Feature Combo: {audio_object.name}\nMFCC(0-{num_features-5}), Av Spec({num_features-4}), '
+                  f'ZCR({num_features-3}), Spec Cen({num_features-2}), Energy{num_features-1})')
+        plt.imshow(feature_array, aspect='auto', origin='lower')
+        plt.xlabel('Time Sample')
+        plt.ylabel('Features')
+        plt.yticks(range(num_features))
+        plt.tight_layout(pad=1)
+
+        # Saving the plot if required
+        save = kwargs.get('save', False)
+        save_path = kwargs.get('save_path', '')
+        if save:
+            plt.savefig(f'{save_path}/{audio_object.name}.png')
+            plt.close()
+        else:
+            plt.show()
 
 
 #-----------------------------------
 # OTHER ----------------------------
 #-----------------------------------
+# Function to interpolate values of an array
+def interpolate_values(array, num_values):
+    interpolator = interp1d(np.arange(len(array)), array)
+    new_indices = np.linspace(0, len(array) - 1, num_values)
+    return interpolator(new_indices)
+
 # Function to Normalize Data
 def takeoff_trim(audio_object, takeoff_time):
     audio_copy = deepcopy(audio_object)
