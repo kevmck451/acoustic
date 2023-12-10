@@ -617,6 +617,9 @@ def feature_combo_1(audio_object, **kwargs):
         else:
             plt.show()
 
+    # feature_array = np.array(feature_array)
+    # feature_array = np.squeeze(feature_array)
+
     return feature_array
 
 #-----------------------------------
