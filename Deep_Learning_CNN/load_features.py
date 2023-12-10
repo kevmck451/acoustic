@@ -126,8 +126,8 @@ def extract_feature(audio, feature_type, feature_params):
         return process.spectrogram(audio, feature_params=feature_params)
     elif feature_type == 'mfcc':
         return process.mfcc(audio, feature_params=feature_params)
-    elif feature_type == 'filter1':
-        return process.custom_filter_1(audio)
+    elif feature_type == 'feature_combo_1':
+        return process.feature_combo_1(audio)
     elif feature_type == 'zcr':
         return process.zcr(audio)
     else: raise Exception('Error with feature type')
@@ -173,6 +173,8 @@ def feature_labels_file_names(filepath, length, feature_type, feature_params):
         feat = f'{bandwidth[0]}-{bandwidth[1]}-{window}'
     if feature_type == 'mfcc':
         feat = feature_params.get('n_coeffs')
+    if feature_type == 'feature_combo_1':
+        feat = 'None'
 
     # Make features_label folder if doesnt exist
     feature_label_dir_path = Path(f'{Path.cwd()}/features_labels')
@@ -189,7 +191,7 @@ def feature_labels_file_names(filepath, length, feature_type, feature_params):
 # Function to see if data request already exists or needs to be created
 def check_if_data_exists(filepath, length, feature_type, feature_params):
 
-    feature_path, label_path, audio_names_path = feature_labels_file_names(length, feature_type, feature_params)
+    feature_path, label_path, audio_names_path = feature_labels_file_names(filepath, length, feature_type, feature_params)
 
     # If files wanted already exist, return them instead of loading data again
     if Path(feature_path).exists() and Path(label_path).exists():
