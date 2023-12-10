@@ -58,22 +58,23 @@ def load_features(filepath, length, sample_rate, multi_channel, chunk_type, proc
 
 # Function to generator audio files and keep memory usage low
 def load_audio_generator(filepath, sample_rate, length, multi_channel, chunking_type):
-    audio = Audio_Abstract(filepath=filepath, sample_rate=sample_rate)
+
     audio_list_master = []
     label_list_master = []
 
     multi_channel_options = ['ch_1', 'ch_n', 'split_ch', 'mix_mono', 'original']
     if multi_channel == multi_channel_options[0]:
-        pass
+        audio = Audio_Abstract(filepath=filepath, sample_rate=sample_rate, num_channels=1)
     elif multi_channel == multi_channel_options[1]:
         pass
     elif multi_channel == multi_channel_options[2]:
         pass
     elif multi_channel == multi_channel_options[3]:
+        audio = Audio_Abstract(filepath=filepath, sample_rate=sample_rate)
         channel_list = process.channel_to_objects(audio)
         audio = process.mix_to_mono(audio for audio in channel_list)
     else:
-        pass
+        audio = Audio_Abstract(filepath=filepath, sample_rate=sample_rate)
 
     if chunking_type == 'window':
         if audio.num_channels == 1:
