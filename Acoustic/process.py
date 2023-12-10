@@ -13,7 +13,6 @@ from scipy import signal
 import numpy as np
 import librosa
 from math import ceil
-from pydub import AudioSegment
 import seaborn as sns
 import matplotlib.colors as colors
 from scipy.interpolate import interp1d
@@ -543,37 +542,50 @@ def spectral_centroid(audio_object, sr=22050, frame_length=1024, hop_length=512,
 
 # Function to create custom array of features
 def feature_combo_1(audio_object, **kwargs):
-    audio_object.mfccs = mfcc(audio_object, feature_params={'n_coeffs': 15}, display=False)
-    audio_object.av_spec, audio_object.av_spec_fb = average_spectrum(audio_object, frequency_range=(120, 2000), display=False)
-    audio_object.zcr = zcr(audio_object, display=False)
-    audio_object.spec_centroid = spectral_centroid(audio_object, display=False)
-    audio_object.energy = energy(audio_object, display=False)
+    num_mfccs = 15
 
-    size = audio_object.mfccs.shape[1]
-    num_features = audio_object.mfccs.shape[0] + 4
+    mfccs = mfcc(audio_object, feature_params={'n_coeffs': num_mfccs})
+
+    size = mfccs.shape[1]
+    num_features = mfccs.shape[0] + 4
     feature_array = np.zeros((num_features, size))
 
-    features = [audio_object.mfccs, audio_object.av_spec, audio_object.zcr, audio_object.spec_centroid, audio_object.energy]
-    i = 0
-    for feature in features:
+    for i, f in enumerate(mfccs):
+        feature_array[i, :] = f
+    del mfccs
 
-        if feature.ndim > 1:
-            for f in feature:
-                if feature.shape[1] != size:
-                    feat = interpolate_values(f, size)
-                    feature_array[i, :] = feat
-                    i += 1
-                else:
-                    feature_array[i, :] = f
-                    i += 1
-        else:
-            if feature.shape[0] != size:
-                feat = interpolate_values(feature, size)
-                feature_array[i, :] = feat
-                i += 1
-            else:
-                feature_array[i, :] = feature
-                i += 1
+    av_spec, _ = average_spectrum(audio_object, frequency_range=(120, 2000))
+    if av_spec.shape[0] != size:
+        feat = interpolate_values(av_spec, size)
+        feature_array[(num_features-4), :] = feat
+    else:
+        feature_array[(num_features-4), :] = av_spec
+    del av_spec
+
+    zcr_values = zcr(audio_object)
+
+    if zcr_values.shape[0] != size:
+        feat = interpolate_values(zcr_values, size)
+        feature_array[(num_features-3), :] = feat
+    else:
+        feature_array[(num_features-3), :] = zcr_values
+    del zcr_values
+
+    spec_centroid = spectral_centroid(audio_object)
+    if spec_centroid.shape[0] != size:
+        feat = interpolate_values(spec_centroid, size)
+        feature_array[(num_features-2), :] = feat
+    else:
+        feature_array[(num_features-2), :] = spec_centroid
+    del spec_centroid
+
+    energy_values = energy(audio_object)
+    if energy_values.shape[0] != size:
+        feat = interpolate_values(energy_values, size)
+        feature_array[(num_features-1), :] = feat
+    else:
+        feature_array[(num_features-1), :] = energy_values
+    del energy_values
 
     stats = kwargs.get('stats', False)
     if stats:
