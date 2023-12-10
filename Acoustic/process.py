@@ -596,7 +596,6 @@ def feature_combo_1(audio_object, **kwargs):
         feat = np.interp(feature, (feature.min(), feature.max()), (0, 1))
         feature_array[i, :] = feat
 
-
     # Visualization
     display = kwargs.get('display', False)
     if display:
@@ -618,6 +617,7 @@ def feature_combo_1(audio_object, **kwargs):
         else:
             plt.show()
 
+    return feature_array
 
 #-----------------------------------
 # OTHER ----------------------------
