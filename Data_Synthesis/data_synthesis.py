@@ -48,25 +48,25 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
 if __name__ == '__main__':
 
     synthetic_directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Synthetic'
-    range_of_target_sound = (0, 101, 2)
-    noise_floor_level = 90
+    range_of_target_sound = (10, 91, 2)
+    noise_floor_level = 100
     sample_rate = 24_000
     sample_length = 16
 
     # Diesel Samples
-    mix_num = 3
+    mix_num = 4
     noise_floor_path = af.hex_hover_combo_thin
-    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/amb dies 2'
+    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/diesel select'
     new_path = synthetic_directory + f'/diesel_hex_mix_{mix_num}'
     generate_synthetic_data(noise_floor_path, target_path, new_path, sample_length, sample_rate, noise_floor_level, range_of_target_sound)
 
 
     # Gas Samples
-    mix_num = 3
-    noise_floor_path = af.amb_orlando_1_short
-    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/amb dies 2'
-    new_path = synthetic_directory + f'/diesel_amb_mix_{mix_num}'
-    generate_synthetic_data(noise_floor_path, target_path, new_path, sample_length, sample_rate, noise_floor_level, range_of_target_sound)
+    # mix_num = 3
+    # noise_floor_path = af.amb_orlando_1_short
+    # target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/amb dies 2'
+    # new_path = synthetic_directory + f'/diesel_amb_mix_{mix_num}'
+    # generate_synthetic_data(noise_floor_path, target_path, new_path, sample_length, sample_rate, noise_floor_level, range_of_target_sound)
 
 
     # List of ambient background already used

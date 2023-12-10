@@ -49,7 +49,7 @@ if __name__ == '__main__':
     multi_channel = ['original', 'ch_1', 'ch_n', 'split_ch', 'mix_mono']
     chunk_type = ['regular', 'window']
     process_list = ['normalize']  # add labels to list in order to create new processing chain
-    feature_type = ['spectral', 'mfcc']
+    feature_type = ['spectral', 'mfcc', 'feature_combo_1']
     window_sizes = [256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536]
     hop_sizes = [128, 256, 512, 1024]
     feature_params = {'bandwidth':(70, 6000), 'window_size':window_sizes[4], 'hop_size':hop_sizes[2]}  # Spectrum
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     optimizer = 'adam'
     loss = 'binary_crossentropy'
     metric = 'accuracy'
-    patience = 3
+    patience = 10
     epochs = 50
     batch_size = 24
 
