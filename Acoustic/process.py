@@ -191,6 +191,7 @@ def spectrogram(audio_object, **kwargs):
 # Function to calculate spectrogram of audio (Features are 2D)
 def spectrogram_2(audio_object, **kwargs):
     bandwidth = kwargs.get('bandwidth', (0, 24000))
+    nperseg = kwargs.get('nperseg', 32768)
 
     if audio_object.num_channels > 1: data = audio_object.data[0]
     else: data = audio_object.data
@@ -199,7 +200,7 @@ def spectrogram_2(audio_object, **kwargs):
     epsilon = 1e-10
 
     # Compute the spectrogram
-    f, t, Sxx = signal.spectrogram(data, fs=audio_object.sample_rate, nperseg=32768)
+    f, t, Sxx = signal.spectrogram(data, fs=audio_object.sample_rate, nperseg=nperseg)
     spec = 10 * np.log10(Sxx + epsilon)
 
     # Normalize spec between 0 and 1
@@ -232,7 +233,19 @@ def spectrogram_2(audio_object, **kwargs):
         else:
             plt.show()
 
-    return spec, f_subset, t
+    spectrograms = np.array(spec)
+    frequencies = np.array(f_subset)
+    times = np.array(t)
+
+    spectrograms = np.squeeze(spectrograms)  # removes all singular axis
+    frequencies = np.squeeze(frequencies)  # removes all singular axis
+    times = np.squeeze(times)  # removes all singular axis
+
+    details = kwargs.get('details', False)
+    if details:
+        return spectrograms, frequencies, times
+    else:
+        return spectrograms
 
 # Function to calculate MFCC of audio (Features are 2D)
 def mfcc(audio_object, **kwargs):
