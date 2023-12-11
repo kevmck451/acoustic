@@ -54,12 +54,13 @@ audio = Audio_Abstract(filepath=filepath, num_channels=1)
 #     audio.av_spec = average_spectrum(audio, display=False)
 # plt.show()
 
-# audio.spectrogram, audio.spec_freqs, audio.spec_times = process.spectrogram_2(audio, bandwidth=(120, 2000), display=True)
-# print(f'Spec Shape: {audio.spectrogram.shape}')
+# audio.spectrogram, audio.spec_freqs, audio.spec_times = process.spectrogram_2(audio, bandwidth=(150, 2200), details=True, display=True)
+audio.spectrogram = process.spectrogram_2(audio, bandwidth=(150, 2200), display=False)
+print(f'Spec Shape: {audio.spectrogram.shape}')
 # print(f'Freq Shape: {audio.spec_freqs.shape}')
 # print(f'Time Shape: {audio.spec_times.shape}')
 
 
-audio.feature_combo = process.feature_combo_1(audio, display=True)
+# audio.feature_combo = process.feature_combo_1(audio, display=True)
 
 
