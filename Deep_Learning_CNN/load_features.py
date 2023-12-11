@@ -124,7 +124,7 @@ def preprocess_files(audio_object, processes):
 # Function for Extracting Features from audio object
 def extract_feature(audio, feature_type, feature_params):
     if feature_type == 'spectral':
-        return process.spectrogram(audio, feature_params=feature_params)
+        return process.spectrogram_2(audio, feature_params=feature_params)
     elif feature_type == 'mfcc':
         return process.mfcc(audio, feature_params=feature_params)
     elif feature_type == 'feature_combo_1':
@@ -158,8 +158,8 @@ def check_inputs(filepath, length, sample_rate, feature_type, feature_params):
             raise Exception('Bandwidth must be integers')
         if feature_params.get('bandwidth')[0] < 50 or feature_params.get('bandwidth')[1] > int(sample_rate/2):
             raise Exception('Bandwidth is out of range')
-        if feature_params.get('window_size') % 2 != 0:
-            raise Exception('Window Size needs to be a power of 2')
+        # if feature_params.get('window_size') % 2 != 0:
+        #     raise Exception('Window Size needs to be a power of 2')
     if feature_type == 'mfcc':
         if type(feature_params.get('n_coeffs')) is not int:
             raise Exception('Number of Coefficients must be integer')
