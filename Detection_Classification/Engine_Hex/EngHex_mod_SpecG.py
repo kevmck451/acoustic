@@ -33,7 +33,15 @@ if __name__ == '__main__':
     epochs = 100
     batch_size = 48
 
-    build_model(filepath, length[4], sample_rate[2], multi_channel[1], chunk_type, process_list, feature_type, feature_params,
-                    conv_layers, dense_layers, l2_value, dropout_rate, activation,
-                    test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size)
+    # build_model(filepath, length[4], sample_rate[2], multi_channel[1], chunk_type, process_list, feature_type, feature_params,
+    #                 conv_layers, dense_layers, l2_value, dropout_rate, activation,
+    #                 test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size)
 
+    filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/' \
+               '1 Acoustic/Data/ML Model Data/Engine vs Hex/dataset '
+    for len_val in length:
+        for i in range(1, 4, 1):
+            build_model(f'{filepath}{i}', len_val, sample_rate[2], multi_channel[1], chunk_type, process_list, feature_type,
+                feature_params,
+                conv_layers, dense_layers, l2_value, dropout_rate, activation,
+                test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size)
