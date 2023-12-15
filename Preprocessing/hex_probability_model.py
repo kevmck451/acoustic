@@ -119,7 +119,6 @@ def real_distribution():
     plt.tight_layout()
     plt.show()
 
-
 def hex_hover_overlay():
     directory = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Sample Library/Samples/Originals/Hover')
 
@@ -185,6 +184,53 @@ def hex_hover_overlay():
     fig.tight_layout(pad=1)
     plt.show()
 
+# Function to see average spectrum for hex hovering
+def hex_hover_average_spectrum():
+    directory = Path('/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Sample Library/Samples/Originals/Hover')
+
+    x_range = [80, 1000]
+    min_y, max_y = float('inf'), float('-inf')
+    fig, ax = plt.subplots(figsize=(8, 4))
+
+    for filepath in directory.rglob('*.wav'):
+        audio = Audio_Abstract(filepath=filepath)
+        audio = process.normalize(audio)
+        spectrum, f_bins = process.average_spectrum(audio, norm=True)
+
+        ax.plot(f_bins, spectrum, alpha=0.25)
+
+        # Calculate Stats for Viewing
+        within_range = (f_bins >= x_range[0]) & (f_bins <= x_range[1])
+        min_y = min(min_y, np.min(spectrum[within_range]))
+        max_y = max(max_y, np.max(spectrum[within_range]))
+
+    ax.set_xscale('symlog')
+    # ax.set_xscale('log')
+    ax.set_xlim([x_range[0], x_range[1]])
+    ax.set_ylim([min_y, max_y])  # Set Y-axis limits based on the visible range
+
+    ax.set_xlabel('Frequency (Hz)', fontweight='bold')
+    ax.set_ylabel('Magnitude', fontweight='bold')
+    ax.set_title(f'Hex Hovering Spectral Plot')
+
+    ax.xaxis.set_major_formatter(ticker.ScalarFormatter())
+    ax.xaxis.set_minor_formatter(ticker.ScalarFormatter())
+    ax.xaxis.set_minor_locator(ticker.LogLocator(base=10.0, subs='auto'))
+    ax.xaxis.set_major_locator(ticker.LogLocator(base=10.0, numticks=12))
+
+    fund_freq = 104
+    ax.axvline(x=106, color='blue', linestyle='-', linewidth=1, alpha=0.4, label=f'Fundamental: {106}')
+    ax.axvline(x=209, color='blue', linestyle='-', linewidth=1, alpha=0.4, label=f'1st Harmonic: {209}')
+    ax.axvline(x=317, color='blue', linestyle='-', linewidth=1, alpha=0.4, label=f'2nd Harmonic: {317}')
+    ax.axvline(x=421, color='blue', linestyle='-', linewidth=1, alpha=0.4, label=f'3rd Harmonic: {421}')
+    ax.axvline(x=518, color='blue', linestyle='-', linewidth=1, alpha=0.4, label=f'4th Harmonic: {518}')
+
+    ax.grid(True, which='both')
+    ax.legend(loc='upper right')
+
+    fig.tight_layout(pad=1)
+    plt.show()
+
 
 if __name__ == '__main__':
 
@@ -198,5 +244,5 @@ if __name__ == '__main__':
     # print("Mags :", mag_means)
 
     # real_distribution()
-
+    hex_hover_average_spectrum()
     hex_hover_overlay()
