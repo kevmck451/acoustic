@@ -20,8 +20,7 @@ from tkinter import filedialog
 
 # Function to make prediction and display it
 def make_prediction(model_path, audio_path, chunk_type, **kwargs):
-    audio_base = Audio_Abstract(filepath=audio_path)
-
+    model_path = str(model_path)
     model_info = load_model_text_file(model_path)
     path_model = Path(model_path)
     model_name = path_model.stem
@@ -55,7 +54,7 @@ def make_prediction(model_path, audio_path, chunk_type, **kwargs):
         predictions.append(percent)
 
     time = list(range(0, len(predictions), 1))
-
+    audio_base = Audio_Abstract(filepath=audio_path)
     fig, axs = plt.subplots(1, 1, figsize=(12, 4))
     plt.suptitle(f'Ambient vs Engine Model: {model_name}')
     bar_colors = ['r' if value >= 50 else 'g' for value in predictions]
