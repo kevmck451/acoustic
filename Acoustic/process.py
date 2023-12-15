@@ -16,6 +16,7 @@ from math import ceil
 import seaborn as sns
 import matplotlib.colors as colors
 from scipy.interpolate import interp1d
+import matplotlib.ticker as ticker
 
 
 
@@ -49,13 +50,22 @@ def average_spectrum(audio_object, **kwargs):
     display = kwargs.get('display', False)
     if display:
         # plt.plot(frequency_bins, average_spectrum)
-        plt.plot(frequency_bins[:40000], average_spectrum[:40000])
-        plt.xlabel('Frequency (Hz)', fontweight='bold')
-        plt.ylabel('Magnitude', fontweight='bold')
-        plt.title(f'Spectral Plot: {audio_object.name}')
-        plt.grid(True)
-        plt.ylim(0, 1)
-        plt.tight_layout(pad=1)
+        fig, ax = plt.subplots(figsize=(8, 4))
+        ax.set_title(f'Spectral Plot: {audio_object.name}')
+        # fig.tight_layout(pad=1)
+        ax.plot(frequency_bins, average_spectrum)
+        ax.set_xscale('symlog')
+        ax.set_xlim([10, 10000])
+        ax.set_xlabel('Frequency (Hz)', fontweight='bold')
+        ax.set_ylabel('Magnitude', fontweight='bold')
+
+        ax.xaxis.set_major_formatter(ticker.ScalarFormatter())
+        ax.xaxis.set_minor_formatter(ticker.ScalarFormatter())
+        ax.xaxis.set_minor_locator(ticker.LogLocator(base=10.0, subs='auto'))
+        ax.xaxis.set_major_locator(ticker.LogLocator(base=10.0, numticks=12))
+        ax.grid(True, which='both')
+        if norm:
+            plt.ylim(0, 1)
 
         save = kwargs.get('save', False)
         save_path = kwargs.get('save_path', '')
@@ -1013,9 +1023,58 @@ def compression(audio_object, threshold=-20, ratio=3.0, gain=1, attack=5, releas
 def spectra_subtraction_hex(audio_object, **kwargs):
     pass
 
+# Function for a High Pass Filter
+def high_pass_shelf_filter(audio_object, threshold, **kwargs):
 
+    spectrum, f_bins = average_spectrum(audio_object, norm=False, display=False)
 
+    print(spectrum.shape)
+    print(f_bins.shape)
 
+    # check for duplicates
+    if len(f_bins) == len(set(f_bins)):
+        print("All elements are unique.")
+    else:
+        print("There are duplicates in the list.")
+
+    print(f_bins)
+
+    high_pass_array = np.ones(f_bins.shape)
+    print(high_pass_array.shape)
+
+    high_pass_array[f_bins <= threshold] = 0
+
+    spectrum = spectrum * high_pass_array
+
+    display = kwargs.get('display', False)
+    if display:
+        fig, ax = plt.subplots(figsize=(8, 4))
+        ax.set_title(f'Spectral Plot: {audio_object.name}')
+        # fig.tight_layout(pad=1)
+        ax.plot(f_bins, spectrum)
+        ax.set_xscale('symlog')
+        ax.set_xlim([10, 10000])
+        ax.set_xlabel('Frequency (Hz)', fontweight='bold')
+        ax.set_ylabel('Magnitude', fontweight='bold')
+
+        ax.xaxis.set_major_formatter(ticker.ScalarFormatter())
+        ax.xaxis.set_minor_formatter(ticker.ScalarFormatter())
+        ax.xaxis.set_minor_locator(ticker.LogLocator(base=10.0, subs='auto'))
+        ax.xaxis.set_major_locator(ticker.LogLocator(base=10.0, numticks=12))
+        ax.grid(True, which='both')
+        save = kwargs.get('save', False)
+        save_path = kwargs.get('save_path', '')
+        if save:
+            plt.savefig(f'{save_path}/{audio_object.name}')
+            plt.close()
+        else:
+            plt.show()
+
+    audio_filtered = deepcopy(audio_object)
+    audio_filtered.data = np.real(np.fft.ifft(spectrum))
+    cut_off = 0.01 * len(audio_filtered.data)
+    audio_filtered.data = audio_filtered.data[cut_off:(len(audio_filtered.data)-cut_off)]
+    audio_filtered.waveform(display=True)
 
 
 class Process:
@@ -1045,7 +1104,7 @@ if __name__ == '__main__':
 
     # spectra_subtraction_hex(audio)
 
-    # filepath = af.hex_hover_combo_thin
+    filepath = af.hex_hover_combo_thin
     # filepath = af.hex_hover_combo_thick
     # filepath = af.hex_hover_10m_1k_static1
     # filepath = af.hex_hover_10m_static2
@@ -1053,21 +1112,22 @@ if __name__ == '__main__':
     # filepath = af.amb_orlando_1
     # filepath = af.diesel_bulldozer_1_1
 
-    filepath = af.hex_diesel_99
+    # filepath = af.hex_diesel_99
     # filepath = af.hex_diesel_59
     # filepath = af.hex_diesel_1
 
     audio = Audio_Abstract(filepath=filepath, num_channels=1)
+    high_pass_shelf_filter(audio, threshold=90, display=True)
 
     # audio.mfccs = mfcc(audio, feature_params={'n_coeffs':12}, display=True)
-    audio.mfccs = mfcc(audio, feature_params={'n_coeffs': 12}, display=False)
-    print(audio.mfccs.shape)
-    plt.imshow(audio.mfccs)
-    plt.tight_layout(pad=1)
-    plt.show()
+    # audio.mfccs = mfcc(audio, feature_params={'n_coeffs': 12}, display=False)
+    # print(audio.mfccs.shape)
+    # plt.imshow(audio.mfccs)
+    # plt.tight_layout(pad=1)
+    # plt.show()
 
-    audio.av_spec, audio.av_spec_fb = average_spectrum(audio, display=True)
-    print(audio.av_spec.shape)
+    # audio.av_spec, audio.av_spec_fb = average_spectrum(audio, display=True)
+    # print(audio.av_spec.shape)
 
     # audio.spectrogram = spectrogram(audio, stats=False, feature_params={'bandwidth': (0, 20000)}, display=True)
     # audio.spectrogram, audio.spec_freqs, audio.spec_times = spectrogram(audio, stats=False, feature_params={'bandwidth':(0, 24000)}, display=False, details=True, norm=True)
