@@ -32,6 +32,7 @@ class Audio_Abstract:
 
             if self.num_channels != info.channels:
                 self.data = self.data[:self.num_channels]
+                self.data = np.squeeze(self.data)
 
         # Assuming your audio data is in a variable called 'audio_data'
         if not np.isfinite(self.data).all():
@@ -61,7 +62,9 @@ class Audio_Abstract:
             self.data, samplerate = sf.read(str(filepath), dtype='float32')
             if samplerate != self.sample_rate:
                 # self.data = librosa.resample(y=self.data, orig_sr=samplerate, target_sr=self.sample_rate)
-                self.data = resample(self.data, self.sample_rate)
+                num_samples = int((self.sample_rate / samplerate) * len(self.data))
+                self.data = resample(self.data, num_samples)
+
             # try:
             #     self.data = self.data.reshape(-1, self.num_channels)  # Reshape to match the number of channels
             # except ValueError:
@@ -73,6 +76,7 @@ class Audio_Abstract:
 
             # Convert the interleaved data to deinterleaved format
             self.data = np.transpose(self.data.copy())  # Rows are channels / columns are data
+            # print(f'Data Shape: {self.data.shape} / Sample Rate: {self.sample_rate}')
             self.sample_length = round((self.data.shape[1] / self.sample_rate), 2)
             self.num_samples = len(self.data[1])
 
@@ -84,6 +88,7 @@ class Audio_Abstract:
                 self.data = librosa.resample(y=self.data, orig_sr=samplerate, target_sr=self.sample_rate)
             self.sample_length = round((len(self.data) / self.sample_rate), 2)
             self.num_samples = len(self.data)
+
 
     # Function that returns stats from the audio file
     def stats(self):
