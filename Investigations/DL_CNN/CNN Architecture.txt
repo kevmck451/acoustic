@@ -1,0 +1,20 @@
+CNN Architecture
+
+Training
+
+	- Dataset Folder
+
+	- Load Features / Labels
+
+		- Extract Features
+			- Create custom combination feature
+
+	- Create Model
+
+	- Train Model
+
+	- Save Model
+
+
+
+

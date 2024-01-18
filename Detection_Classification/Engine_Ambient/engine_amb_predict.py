@@ -1,5 +1,5 @@
 
-from Investigations.Convo_Neural_Network.predict import make_prediction
+from Investigations.DL_CNN.predict import make_prediction
 
 from pathlib import Path
 

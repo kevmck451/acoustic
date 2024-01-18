@@ -1,8 +1,8 @@
 
-from Investigations.Convo_Neural_Network.load_features import load_features
-from Investigations.Convo_Neural_Network.create_models import create_model
-from Investigations.Convo_Neural_Network.train_model import train_model
-from Investigations.Convo_Neural_Network.save_model import save_model
+from Investigations.DL_CNN.load_features import load_features
+from Investigations.DL_CNN.create_models import create_model
+from Investigations.DL_CNN.train_model import train_model
+from Investigations.DL_CNN.save_model import save_model
 from Acoustic.utils import time_class
 
 

@@ -2,10 +2,10 @@
 # Can only load mono files currently
 
 from Acoustic.audio_abstract import Audio_Abstract
-from Investigations.Convo_Neural_Network.load_features import load_audio_generator
-from Investigations.Convo_Neural_Network.load_features import preprocess_files
-from Investigations.Convo_Neural_Network.load_features import extract_feature
-from Investigations.Convo_Neural_Network.load_features import format_features
+from Investigations.DL_CNN.load_features import load_audio_generator
+from Investigations.DL_CNN.load_features import preprocess_files
+from Investigations.DL_CNN.load_features import extract_feature
+from Investigations.DL_CNN.load_features import format_features
 
 
 from keras.models import load_model
@@ -130,7 +130,7 @@ if __name__ == '__main__':
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_100_6_basic_1_85_0.h5'
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/mfcc_100_6_deep_3_83_0.h5'
     # model_path = f'{base_path}/Engine_Ambient/Prediction/model_library/spectral_70-2600_6_basic_1_24_0.h5'
-    # model_path = f'{base_path}/Convo_Neural_Network/model_library/spectral_70-10000_10s_4-layers_0.h5'
+    # model_path = f'{base_path}/DL_CNN/model_library/spectral_70-10000_10s_4-layers_0.h5'
     model_path = f'{base_path}/Deep_Learning_CNN/model_library/spectral_70-6000_10s_4-layers_0.h5'
 # Experiment 1 -------------------------------------------------------------
     save_base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Analysis'
