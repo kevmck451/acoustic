@@ -3,14 +3,11 @@
 # Analysis of of mission without targets the same but
 #   no target_object will be passed to Flight_Paht()
 
-from Flight_Analysis.detection_full_flight import full_flight_detection
 from Flight_Analysis.detection_takeoff_audio import takeoff_detection_audio
 from Acoustic.audio_abstract import Audio_Abstract
-from Acoustic.environment import Environment
-from Acoustic.flight_path import Flight_Path
-from Acoustic.mic_mount import Mount
-from Acoustic.target import Target
-
+from Flight_Analysis.Environment.environment import Environment
+from Flight_Analysis.flight_path import Flight_Path
+from Flight_Analysis.Mounts.mic_mount import Mount
 
 mission = 'Campus_1'
 # mission = 'Campus_2'

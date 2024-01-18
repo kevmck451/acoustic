@@ -1,7 +1,5 @@
 
-from Deep_Learning_CNN.predict import make_prediction
-
-from pathlib import Path
+from Investigations.Convo_Neural_Network.predict import make_prediction
 
 if __name__ == '__main__':
     save_base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Analysis'

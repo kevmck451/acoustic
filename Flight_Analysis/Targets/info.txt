@@ -1,0 +1,22 @@
+Minimal Representation of Targets
+
+- target name
+- date of collection
+- temperature
+- humidity
+- pressure
+
+
+- SPL at a particular distance at particular orientation
+- Recording at a particular distance (min: 1minute)
+- State of target during recording
+
+
+
+
+- visualize targets sound propagation
+
+
+- compare target spectrums
+
+

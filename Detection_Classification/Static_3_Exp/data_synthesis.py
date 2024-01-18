@@ -54,9 +54,9 @@ if __name__ == '__main__':
     sample_length = 16
 
     # Diesel Samples
-    mix_num = 6
+    mix_num = 7
     noise_floor_path = af.hex_hover_combo_thick
-    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/diesel select'
+    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/static 3'
     new_path = synthetic_directory + f'/diesel_hex_mix_{mix_num}'
     generate_synthetic_data(noise_floor_path, target_path, new_path, sample_length, sample_rate, noise_floor_level, range_of_target_sound)
 

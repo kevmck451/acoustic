@@ -1,5 +1,5 @@
 
-from Deep_Learning_CNN.build_model import build_model
+from Investigations.Convo_Neural_Network.build_model import build_model
 
 from pathlib import Path
 

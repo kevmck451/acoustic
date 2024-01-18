@@ -1,5 +1,5 @@
 
-from Deep_Learning_CNN.predict import make_prediction
+from Investigations.Convo_Neural_Network.predict import make_prediction
 
 from pathlib import Path
 
@@ -12,8 +12,8 @@ def run_analysis_set_1(model_path):
 
     base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data'
     # directory_list = [
-    #     f'{base_path_1}/Experiments/Static Tests/Static Test 1/Samples/Engines/Noisy Signal',
-    #     f'{base_path_1}/Experiments/Static Tests/Static Test 2/Samples/1',
+    #     f'{base_path_1}/Investigations/Static Tests/Static Test 1/Samples/Engines/Noisy Signal',
+    #     f'{base_path_1}/Investigations/Static Tests/Static Test 2/Samples/1',
     # ]
 
     directory_list = [

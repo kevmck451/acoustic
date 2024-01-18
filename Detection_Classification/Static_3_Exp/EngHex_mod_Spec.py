@@ -1,11 +1,11 @@
 
-from Deep_Learning_CNN.build_model import build_model
+from Investigations.Convo_Neural_Network.build_model import build_model
 
 
 if __name__ == '__main__':
 
-    filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/' \
-               '1 Acoustic/Data/ML Model Data/Engine vs Hex/dataset 1'
+    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/' \
+    #            '1 Acoustic/Data/ML Model Data/Engine vs Hex/dataset 1'
 
     # Loading Features
     length = [2, 4, 6, 8, 10]
@@ -14,7 +14,7 @@ if __name__ == '__main__':
     chunk_type = ['regular', 'window']
     process_list = ['normalize']  # add labels to list in order to create new processing chain
     feature_type = 'spectral'
-    feature_params = {'bandwidth':(150, 2200)}
+    feature_params = {'bandwidth':(300, 3000)}
 
     # Create Model
     conv_layers = [(32, (3, 3)), (64, (3, 3))]

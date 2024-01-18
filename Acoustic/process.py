@@ -1087,7 +1087,7 @@ class Process:
 
 if __name__ == '__main__':
 
-    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Experiments/Static Tests/Static Test 1/Samples/Engine_1/3_10m-D-DEIdle.wav'
+    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Investigations/Static Tests/Static Test 1/Samples/Engine_1/3_10m-D-DEIdle.wav'
     # audio = Audio_Abstract(filepath=filepath)
     # audio.data = audio.data[2]
     # audio = normalize(audio)
