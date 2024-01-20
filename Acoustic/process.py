@@ -577,7 +577,7 @@ def feature_combo_1(audio_object, **kwargs):
         feature_array[i, :] = f
     del mfccs
 
-    av_spec, _ = average_spectrum(audio_object, frequency_range=(120, 2000))
+    av_spec, _ = average_spectrum(audio_object, frequency_range=(350, 2800))
     if av_spec.shape[0] != size:
         feat = interpolate_values(av_spec, size)
         feature_array[(num_features-4), :] = feat
