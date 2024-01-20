@@ -17,6 +17,7 @@ import seaborn as sns
 import matplotlib.colors as colors
 from scipy.interpolate import interp1d
 import matplotlib.ticker as ticker
+import threading
 
 
 
@@ -567,17 +568,54 @@ def spectral_centroid(audio_object, sr=22050, frame_length=1024, hop_length=512,
 def feature_combo_1(audio_object, **kwargs):
     num_mfccs = 15
 
-    mfccs = mfcc(audio_object, feature_params={'n_coeffs': num_mfccs})
+    # # Shared dictionary to store results
+    # results = {}
+    #
+    # def thread_function(func, name, *args, **kwargs):
+    #     # Call the function and store the result in the shared dictionary
+    #     results[name] = func(*args, **kwargs)
+    #
+    # # Create and start the threads
+    # threads = []
+    # for func, name, args, kwargs in [(mfcc, 'mfcc', (audio_object,), {'feature_params': {'n_coeffs': num_mfccs}}),
+    #                                  (average_spectrum, 'average_spectrum', (audio_object,),
+    #                                   {'frequency_range': (350, 2800)}),
+    #                                  (zcr, 'zcr', (audio_object,), {}),
+    #                                  (spectral_centroid, 'spectral_centroid', (audio_object,), {}),
+    #                                  (energy, 'energy', (audio_object,), {})]:
+    #     thread = threading.Thread(target=thread_function, args=(func, name) + args, kwargs=kwargs)
+    #     threads.append(thread)
+    #     thread.start()
+    #
+    # # Wait for all threads to complete
+    # for thread in threads:
+    #     thread.join()
+    #
+    # # Now, results dictionary will have the output of each function
+    # mfccs = results['mfcc']
+    # av_spec, _ = results['average_spectrum']
+    # zcr_values = results['zcr']
+    # spec_centroid = results['spectral_centroid']
+    # energy_values = results['energy']
 
+
+    mfccs = mfcc(audio_object, feature_params={'n_coeffs': num_mfccs})
+    av_spec, _ = average_spectrum(audio_object, frequency_range=(350, 2800))
+    zcr_values = zcr(audio_object)
+    spec_centroid = spectral_centroid(audio_object)
+    energy_values = energy(audio_object)
+
+    # Create Feature Combo Size
     size = mfccs.shape[1]
     num_features = mfccs.shape[0] + 4
     feature_array = np.zeros((num_features, size))
 
+    # MFCCs
     for i, f in enumerate(mfccs):
         feature_array[i, :] = f
     del mfccs
 
-    av_spec, _ = average_spectrum(audio_object, frequency_range=(350, 2800))
+    # Average Spectrum
     if av_spec.shape[0] != size:
         feat = interpolate_values(av_spec, size)
         feature_array[(num_features-4), :] = feat
@@ -585,8 +623,7 @@ def feature_combo_1(audio_object, **kwargs):
         feature_array[(num_features-4), :] = av_spec
     del av_spec
 
-    zcr_values = zcr(audio_object)
-
+    # Zero Crossing Rate
     if zcr_values.shape[0] != size:
         feat = interpolate_values(zcr_values, size)
         feature_array[(num_features-3), :] = feat
@@ -594,7 +631,7 @@ def feature_combo_1(audio_object, **kwargs):
         feature_array[(num_features-3), :] = zcr_values
     del zcr_values
 
-    spec_centroid = spectral_centroid(audio_object)
+    # Spectral Centroid
     if spec_centroid.shape[0] != size:
         feat = interpolate_values(spec_centroid, size)
         feature_array[(num_features-2), :] = feat
@@ -602,7 +639,7 @@ def feature_combo_1(audio_object, **kwargs):
         feature_array[(num_features-2), :] = spec_centroid
     del spec_centroid
 
-    energy_values = energy(audio_object)
+    # Energy
     if energy_values.shape[0] != size:
         feat = interpolate_values(energy_values, size)
         feature_array[(num_features-1), :] = feat
