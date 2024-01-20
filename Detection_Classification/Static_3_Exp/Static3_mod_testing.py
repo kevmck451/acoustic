@@ -12,10 +12,6 @@ def run_analysis_set_1(model_path):
     Path(save_directory_1).mkdir(exist_ok=True, parents=True)
 
     base_path_1 = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data'
-    # directory_list = [
-    #     f'{base_path_1}/Investigations/Static Tests/Static Test 1/Samples/Engines/Noisy Signal',
-    #     f'{base_path_1}/Investigations/Static Tests/Static Test 2/Samples/1',
-    # ]
 
     directory_list = [
         f'{base_path_1}/ML Model Data/Static Test 3/testing',

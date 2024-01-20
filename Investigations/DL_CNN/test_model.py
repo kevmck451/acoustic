@@ -1,11 +1,6 @@
 # File to test the accuracy of a model against some known samples that were excluded from test data
 
-from Acoustic.audio_abstract import Audio_Abstract
 from Investigations.DL_CNN.load_features import load_features
-from Investigations.DL_CNN.load_features import preprocess_files
-from Investigations.DL_CNN.load_features import extract_feature
-from Investigations.DL_CNN.load_features import format_features
-
 
 from sklearn.metrics import accuracy_score
 from keras.models import load_model
@@ -134,8 +129,6 @@ def test_model_accuracy(model_path, audio_path, chunk_type, **kwargs):
     return accuracy, y_pred_scores
 
 
-
-
 # Function to use model text file to get parameter info
 def load_model_text_file(model_path):
     text_path_base = model_path.split('.')[0]
@@ -168,8 +161,6 @@ def load_model_text_file(model_path):
                 model_info[key] = value
 
     return model_info
-
-
 
 
 
