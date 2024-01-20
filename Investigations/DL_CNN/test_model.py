@@ -126,7 +126,7 @@ def test_model_accuracy(model_path, audio_path, chunk_type, **kwargs):
     else:
         plt.show()
 
-    return accuracy, y_pred_scores
+    # return accuracy, y_pred_scores
 
 
 # Function to use model text file to get parameter info
