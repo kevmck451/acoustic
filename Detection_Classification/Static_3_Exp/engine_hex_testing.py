@@ -30,8 +30,6 @@ if __name__ == '__main__':
     base_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py'
     model_path = Path(f'{base_path}/Detection_Classification/Static_3_Exp/model_library')
 
-
-
     # run_analysis_set_1(model_path)
 
     for model in model_path.iterdir():
