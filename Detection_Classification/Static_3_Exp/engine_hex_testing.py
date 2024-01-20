@@ -1,5 +1,6 @@
 
 from Investigations.DL_CNN.predict import make_prediction
+from Investigations.DL_CNN.test_model import test_model_accuracy
 
 from pathlib import Path
 
@@ -17,21 +18,18 @@ def run_analysis_set_1(model_path):
     # ]
 
     directory_list = [
-        f'{base_path_1}/Experiments/Static Tests/Static Test 3/Audio/targets',
+        f'{base_path_1}/ML Model Data/Static Test 3/testing',
     ]
 
     chunk_type = ['regular', 'window']
     for path in directory_list:
-        for audio_path in Path(path).iterdir():
-            # print(audio_path)
-            if 'wav' in audio_path.suffix:
-                make_prediction(model_path, audio_path, chunk_type[1], save=True, save_path=save_directory_1,
-                                positive_label='Vehicle Detected', negative_label='No Vehicle')
+        test_model_accuracy(model_path, path, chunk_type[1], save=True, save_path=save_directory_1)
 
 
 if __name__ == '__main__':
     base_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py'
-    model_path = Path(f'{base_path}/Detection_Classification/Engine_Hex/model_library')
+    model_path = Path(f'{base_path}/Detection_Classification/Static_3_Exp/model_library')
+
 
 
     # run_analysis_set_1(model_path)

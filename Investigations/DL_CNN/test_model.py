@@ -1,5 +1,11 @@
 # File to test the accuracy of a model against some known samples that were excluded from test data
 
+from Acoustic.audio_abstract import Audio_Abstract
+from Investigations.DL_CNN.load_features import load_features
+from Investigations.DL_CNN.load_features import preprocess_files
+from Investigations.DL_CNN.load_features import extract_feature
+from Investigations.DL_CNN.load_features import format_features
+
 
 from sklearn.metrics import accuracy_score
 from keras.models import load_model
@@ -12,17 +18,7 @@ import matplotlib.patches as mpatches
 
 
 # Function to test ML Models's Accuracy
-def test_model_accuracy(model, directory, sample_length, feature_type, display=False, stats=False, **kwargs):
-    feature_params = kwargs.get('feature_params', 'None')
-    if stats:
-        # Get the model's architecture
-        model.summary()
-
-        # Get the optimizer configuration
-        optimizer_config = model.optimizer.get_config()
-        print("Optimizer Configuration:", optimizer_config)
-
-    Test_Directory = Path(str(directory))
+def test_model_accuracy(model_path, audio_path, chunk_type, **kwargs):
 
     # Test accuracy of Models
     y_true = []
@@ -30,30 +26,34 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
     y_pred_scores = []
     y_names = []
 
-    save_path = f'{Path.cwd()}/Prediction/features_labels'
+    model_path = str(model_path)
+    model_info = load_model_text_file(model_path)
+    path_model = Path(model_path)
+    model_name = path_model.stem
 
-    feature_params = kwargs.get('feature_params', 'None')
-    if feature_type == 'spectral' and feature_params != 'None':
-        feature_save_name = f'{feature_params[0]}-{feature_params[1]}'
-    elif feature_type == 'mfcc' and feature_params != 'None':
-        feature_save_name = f'{feature_params}'
-    else:
-        feature_save_name = 'None'
+    # LOAD DATA ----------------------------------------------------------------------
+    print('Loading Features')
+    features, labels = load_features(audio_path, model_info.get('Sample Length'), model_info.get('Sample Rate'),
+                                     model_info.get('Multi Channel'), chunk_type, model_info.get('Process Applied'),
+                                     model_info.get('Feature Type').lower(), model_info.get('Feature Parameters'))
 
-    try:
-        features = np.load(f'{save_path}/TEST_features_{feature_type}_{feature_save_name}_{sample_length}s.npy')
-        labels = np.load(f'{save_path}/TEST_labels_{feature_type}_{feature_save_name}_{sample_length}s.npy')
-    except:
-        features, labels = load_audio_data(Test_Directory, sample_length, feature_type, feature_params=feature_params)
-        np.save(f'{save_path}/TEST_features_{feature_type}_{feature_save_name}_{sample_length}s.npy', features)
-        np.save(f'{save_path}/TEST_labels_{feature_type}_{feature_save_name}_{sample_length}s.npy', labels)
+    # PREDICT ------------------------------------------------------------------------
+    print('Testing Model')
+    model = load_model(model_path)
 
-    for i, (feature, label) in enumerate(zip(features, labels)):
+    text_file_name = model_name.split('_')[:-2]
+    text_file_name = '_'.join(text_file_name)
+    text_file_name = f'{text_file_name}/testing_features_files.txt'
+    names_path = f'{Path(model_path).parent}/{text_file_name}'
+
+    with open(names_path, 'r') as file:
+        names = file.readlines()
+
+    for i, (feature, label, name) in enumerate(zip(features, labels, names)):
         feature = np.expand_dims(feature, axis=0)
         y_new_pred = model.predict(feature)
         y_pred_class = int(y_new_pred[0][0] > 0.5)  # Convert to binary class prediction
-        y_names.append(f'Sample {i}')
-
+        y_names.append(name)
 
         # Retrieve true label
         y_true_class = label
@@ -76,55 +76,102 @@ def test_model_accuracy(model, directory, sample_length, feature_type, display=F
     # print(f'Accuracy: {accuracy}%')
     # print(f'Scores: {y_pred_scores}')
 
-    if display:
-        # Create DataFrame
-        data = pd.DataFrame({
-            'FileName': y_names,
-            'Label': y_true,
-            'Predicted': y_pred,
-            'Score': y_pred_scores
-        })
+    # Create DataFrame
+    data = pd.DataFrame({
+        'FileName': y_names,
+        'Label': y_true,
+        'Predicted': y_pred,
+        'Score': y_pred_scores
+    })
 
-        # Separate negatives and positives
-        negatives = data[data['Label'] == 0].sort_values('Score')
-        positives = data[data['Label'] == 1].sort_values('Score')
+    # Separate negatives and positives
+    negatives = data[data['Label'] == 0].sort_values('Score')
+    positives = data[data['Label'] == 1].sort_values('Score')
 
-        # Calculate accuracies
-        accuracy_negatives = len(negatives[negatives['Predicted'] == 0]) / len(negatives) * 100
-        accuracy_positives = len(positives[positives['Predicted'] == 1]) / len(positives) * 100
+    # Calculate accuracies
+    accuracy_negatives = len(negatives[negatives['Predicted'] == 0]) / len(negatives) * 100
+    accuracy_positives = len(positives[positives['Predicted'] == 1]) / len(positives) * 100
 
-        # Create subplots
-        fig, axes = plt.subplots(2, 1, figsize=(12, 8))
-        fig.suptitle(f'Spectral_Model Accuracy-{Test_Directory.stem}: {accuracy}%', size=14)
+    # Create subplots
+    fig, axes = plt.subplots(2, 1, figsize=(16, 8))
+    fig.suptitle(f'Accuracy-{model_name}: {accuracy}%', size=14)
 
-        # Plot negatives
-        axes[0].bar(negatives['FileName'], negatives['Score'], color=negatives['Predicted'].apply(lambda x: 'g' if x == 0 else 'r'))
-        axes[0].set_ylim([0, 100])  # Set y-axis limits for percentage
-        axes[0].axhline(50, c='black', linestyle='dotted', label='CNN_Models Threshold')
-        axes[0].set_title(f'Negatives: {int(np.round(accuracy_negatives))}%')
-        axes[0].set_ylabel('CNN_Models %')
-        axes[0].tick_params(axis='x', rotation=90)
+    # Plot negatives
+    axes[0].bar(negatives['FileName'], negatives['Score'], color=negatives['Predicted'].apply(lambda x: 'g' if x == 0 else 'r'))
+    axes[0].set_ylim([0, 100])  # Set y-axis limits for percentage
+    axes[0].axhline(50, c='black', linestyle='dotted', label='CNN_Models Threshold')
+    axes[0].set_title(f'Negatives: {int(np.round(accuracy_negatives))}%')
+    axes[0].set_ylabel('CNN_Models %')
+    axes[0].tick_params(axis='x', rotation=90)
 
-        # Create custom legend handles and labels
-        legend_handles = [
-            mpatches.Patch(color='g', label='Predicted Correctly'),
-            mpatches.Patch(color='r', label='Predicted Incorrect'),
-            mpatches.Patch(color='black', label='CNN_Models Threshold', linestyle='dotted')]
+    # Create custom legend handles and labels
+    legend_handles = [
+        mpatches.Patch(color='g', label='Predicted Correctly'),
+        mpatches.Patch(color='r', label='Predicted Incorrect'),
+        mpatches.Patch(color='black', label='CNN_Models Threshold', linestyle='dotted')]
 
-        axes[0].legend(loc='upper left', handles=legend_handles)
+    axes[0].legend(loc='upper left', handles=legend_handles)
 
-        # Plot positives
-        axes[1].bar(positives['FileName'], positives['Score'], color=positives['Predicted'].apply(lambda x: 'g' if x == 1 else 'r'))
-        axes[1].set_ylim([0, 100])  # Set y-axis limits for percentage
-        axes[1].axhline(50, c='black', linestyle='dotted')
-        axes[1].set_ylabel('CNN_Models %')
-        axes[1].set_title(f'Positives: {int(np.round(accuracy_positives))}%')
-        axes[1].tick_params(axis='x', rotation=90)
+    # Plot positives
+    axes[1].bar(positives['FileName'], positives['Score'], color=positives['Predicted'].apply(lambda x: 'g' if x == 1 else 'r'))
+    axes[1].set_ylim([0, 100])  # Set y-axis limits for percentage
+    axes[1].axhline(50, c='black', linestyle='dotted')
+    axes[1].set_ylabel('CNN_Models %')
+    axes[1].set_title(f'Positives: {int(np.round(accuracy_positives))}%')
+    axes[1].tick_params(axis='x', rotation=90)
 
-        plt.tight_layout(pad=1)  # Adjust subplot parameters to give specified padding
+    plt.tight_layout(pad=1)  # Adjust subplot parameters to give specified padding
+
+    # audio_base = Audio_Abstract(filepath=audio_path)
+    save = kwargs.get('save', False)
+    save_path = kwargs.get('save_path', '')
+    if save:
+        plt.savefig(f'{save_path}/{model_name}.png')
+        plt.close(fig)
+    else:
         plt.show()
 
     return accuracy, y_pred_scores
+
+
+
+
+# Function to use model text file to get parameter info
+def load_model_text_file(model_path):
+    text_path_base = model_path.split('.')[0]
+    text_path = f'{text_path_base}.txt'
+
+    model_info = {}
+
+    with open(text_path, 'r') as f:
+        for line in f:
+            key, value = line.strip().split(': ', 1)
+
+            # Remove any additional spaces
+            key = key.strip()
+            value = value.strip()
+
+            # Convert the value into suitable format
+            if key in ['Convolutional Layers', 'Dense Layers']:
+                model_info[key] = eval(value)
+            elif key in ['Feature Parameters', 'Model Config File']:
+                model_info[key] = eval(value.replace(' /', ','))
+            elif key == 'Shape':
+                model_info[key] = tuple(map(int, value.strip('()').split(', ')))
+            elif key in ['Sample Rate', 'Sample Length', 'Shape', 'Kernal Reg-l2 Value',
+                         'Dropout Rate', 'Test Data Size', 'Random State', 'Epochs', 'Batch Size', 'Build Time']:
+                try:
+                    model_info[key] = int(value.split()[0])
+                except ValueError:
+                    model_info[key] = float(value.split()[0])
+            else:
+                model_info[key] = value
+
+    return model_info
+
+
+
+
 
 if __name__ == '__main__':
 
