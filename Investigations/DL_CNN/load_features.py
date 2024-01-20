@@ -153,29 +153,32 @@ def check_inputs(filepath, length, sample_rate, feature_type, feature_params):
         raise Exception('Sample Rate needs to be an integer')
     if sample_rate < 10_000 or sample_rate > 48_0001:
         raise Exception('Sample Rate Out of Range')
-    if feature_type == 'spectral':
-        if type(feature_params.get('bandwidth')[0]) is not int or type(feature_params.get('bandwidth')[1]) is not int:
-            raise Exception('Bandwidth must be integers')
-        if feature_params.get('bandwidth')[0] < 50 or feature_params.get('bandwidth')[1] > int(sample_rate/2):
-            raise Exception('Bandwidth is out of range')
-        # if feature_params.get('window_size') % 2 != 0:
-        #     raise Exception('Window Size needs to be a power of 2')
-    if feature_type == 'mfcc':
-        if type(feature_params.get('n_coeffs')) is not int:
-            raise Exception('Number of Coefficients must be integer')
+    if feature_params != 'None':
+        if feature_type == 'spectral':
+            if type(feature_params.get('bandwidth')[0]) is not int or type(feature_params.get('bandwidth')[1]) is not int:
+                raise Exception('Bandwidth must be integers')
+            if feature_params.get('bandwidth')[0] < 50 or feature_params.get('bandwidth')[1] > int(sample_rate/2):
+                raise Exception('Bandwidth is out of range')
+            # if feature_params.get('window_size') % 2 != 0:
+            #     raise Exception('Window Size needs to be a power of 2')
+        if feature_type == 'mfcc':
+            if type(feature_params.get('n_coeffs')) is not int:
+                raise Exception('Number of Coefficients must be integer')
 
 # Function to create the features / labels / audio names file names for storage
 def feature_labels_file_names(filepath, length, feature_type, feature_params):
     # Parsing Feature Parameters for Saving Data after Processing
     feat = 'None'
-    if feature_type == 'spectral':
-        bandwidth = feature_params.get('bandwidth')
-        window = feature_params.get('window_size')
-        feat = f'{bandwidth[0]}-{bandwidth[1]}-{window}'
-    if feature_type == 'mfcc':
-        feat = feature_params.get('n_coeffs')
-    if feature_type == 'feature_combo_1':
-        feat = 'None'
+    if feature_params != 'None':
+        if feature_type == 'spectral':
+            bandwidth = feature_params.get('bandwidth')
+            window = feature_params.get('window_size')
+            feat = f'{bandwidth[0]}-{bandwidth[1]}-{window}'
+        if feature_type == 'mfcc':
+            feat = feature_params.get('n_coeffs')
+        if feature_type == 'feature_combo_1':
+            feat = 'None'
+
 
     # Make features_label folder if doesnt exist
     feature_label_dir_path = Path(f'{Path.cwd()}/features_labels')
@@ -211,7 +214,7 @@ def check_if_data_exists(filepath, length, feature_type, feature_params):
     else: return False
 
 # Function to write a list to a text file
-def write_filenames_to_file(filenames, output_file, sort=True):
+def write_filenames_to_file(filenames, output_file, sort=False):
     """
     Write each filename from a list to a new line in an output file.
 
