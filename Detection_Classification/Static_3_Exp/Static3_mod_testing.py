@@ -27,4 +27,6 @@ if __name__ == '__main__':
         if 'h5' in str(model):
             mod_str = int(str(model).split('_')[-3].split('s')[0])
             if mod_str < 10:
-                run_test_set(model.resolve(), test_directory_path, save_directory)
+                mod_n = str(model).split('_')[0]
+                if mod_n == 'feature_combo':
+                    run_test_set(model.resolve(), test_directory_path, save_directory)

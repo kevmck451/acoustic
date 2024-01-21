@@ -4,7 +4,7 @@ filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/' \
 
 # Loading Features
 # length = [10, 20, 30, 40, 50]
-length = [4, 6, 8]
+length = [2, 4, 6, 8]
 
 # [12_000, 18_000, 24_000, 36_000, 48_000]
 sample_rate = 24_000
