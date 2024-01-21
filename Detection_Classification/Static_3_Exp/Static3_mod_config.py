@@ -3,8 +3,8 @@ filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/' \
            '1 Acoustic/Data/ML Model Data/Static Test 3/dataset 1'
 
 # Loading Features
-# length = [10, 20, 30, 40, 50]
-length = [2, 4, 6, 8]
+# length = [2, 4, 6, 8, 10, 20, 30, 40, 50]
+length = [3, 5, 7, 9, 15]
 
 # [12_000, 18_000, 24_000, 36_000, 48_000]
 sample_rate = 24_000
