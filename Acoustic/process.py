@@ -201,8 +201,9 @@ def spectrogram(audio_object, **kwargs):
 
 # Function to calculate spectrogram of audio (Features are 2D)
 def spectrogram_2(audio_object, **kwargs):
-    bandwidth = kwargs.get('bandwidth', (0, 24000))
-    nperseg = kwargs.get('nperseg', 32768)
+    feature_params = kwargs.get('feature_params', None)
+    bandwidth = feature_params.get('bandwidth', (0, 24000))
+    nperseg = feature_params.get('nperseg', 32768) #32768 16384
 
     if audio_object.num_channels > 1: data = audio_object.data[0]
     else: data = audio_object.data

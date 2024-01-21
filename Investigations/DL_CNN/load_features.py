@@ -26,19 +26,16 @@ def load_features(filepath, length, sample_rate, multi_channel, chunk_type, proc
         audio_name_master = []
 
         for file in progress_bar(Path(filepath).rglob('*.wav')):
-            audio_name_master.append(file.stem)
             for audio_list, label_list in load_audio_generator(file, sample_rate, length, multi_channel, chunk_type):
                 for audio, label in zip(audio_list, label_list):
                     label_list_master.append(label)
-
                     audio = preprocess_files(audio, process_list)
-
                     features = extract_feature(audio, feature_type, feature_params)
                     feature_list_master.append(features)
+                    audio_name_master.append(file.stem)
 
         # return features_array, labels, metadata
         feature_list_master = format_features(feature_list_master)
-
         feature_stats = stats_file_create(feature_list_master, length, feature_type, feature_params, sample_rate, multi_channel, filepath, process_list)
 
         feature_path, label_path, audio_names_path = feature_labels_file_names(filepath, length, feature_type, feature_params)
@@ -157,8 +154,8 @@ def check_inputs(filepath, length, sample_rate, feature_type, feature_params):
         if feature_type == 'spectral':
             if type(feature_params.get('bandwidth')[0]) is not int or type(feature_params.get('bandwidth')[1]) is not int:
                 raise Exception('Bandwidth must be integers')
-            if feature_params.get('bandwidth')[0] < 50 or feature_params.get('bandwidth')[1] > int(sample_rate/2):
-                raise Exception('Bandwidth is out of range')
+            # if feature_params.get('bandwidth')[0] < 50 or feature_params.get('bandwidth')[1] > int(sample_rate/2):
+            #     raise Exception('Bandwidth is out of range')
             # if feature_params.get('window_size') % 2 != 0:
             #     raise Exception('Window Size needs to be a power of 2')
         if feature_type == 'mfcc':
@@ -270,7 +267,7 @@ if __name__ == '__main__':
     feature_type = ['spectral', 'mfcc']
     window_sizes = [256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536]
     hop_sizes = [128, 256, 512, 1024]
-    feature_params = {'bandwidth':(70, 20000), 'window_size':window_sizes[0], 'hop_size':hop_sizes[2]}  # Spectrum
+    feature_params = {'bandwidth':(70, 20000), 'nperseg':window_sizes[0], 'hop_size':hop_sizes[2]}  # Spectrum
     # feature_params = {'n_coeffs': 100}  # MFCC
 
 
