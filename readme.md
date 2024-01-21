@@ -19,13 +19,6 @@ This repository contains the Acoustic module, a comprehensive toolkit designed t
 
 ## Getting Started
 
-1. **Clone the repository**:
-
-   git clone https://github.com/your_username/Acoustic.git
-
-2. Navigate to the Acoustic directory:
-
-   cd Acoustic
 
 
 
