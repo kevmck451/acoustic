@@ -13,11 +13,15 @@ def build_model(filepath, length, sample_rate, multi_channel, chunk_type, proces
                 conv_layers, dense_layers, l2_value, dropout_rate, activation,
                 test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size):
 
+    # todo: change process list to preprocess list so that there can be a process list for the process functions
+
     timing_stats = time_class(name='Build Model')
 
     filepath = Path(filepath)
 
     features, labels = load_features(filepath, length, sample_rate, multi_channel, chunk_type, process_list, feature_type, feature_params)
+
+    # todo: Processing Functions here ----------------------
 
     # Create a flexible model
     input_shape = features.shape[1:]
