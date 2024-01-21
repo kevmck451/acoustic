@@ -599,7 +599,6 @@ def feature_combo_1(audio_object, **kwargs):
     # spec_centroid = results['spectral_centroid']
     # energy_values = results['energy']
 
-
     mfccs = mfcc(audio_object, feature_params={'n_coeffs': num_mfccs})
     av_spec, _ = average_spectrum(audio_object, frequency_range=(350, 2800))
     zcr_values = zcr(audio_object)
@@ -614,7 +613,7 @@ def feature_combo_1(audio_object, **kwargs):
     # MFCCs
     for i, f in enumerate(mfccs):
         feature_array[i, :] = f
-    del mfccs
+    # del mfccs
 
     # Average Spectrum
     if av_spec.shape[0] != size:
@@ -622,7 +621,7 @@ def feature_combo_1(audio_object, **kwargs):
         feature_array[(num_features-4), :] = feat
     else:
         feature_array[(num_features-4), :] = av_spec
-    del av_spec
+    # del av_spec
 
     # Zero Crossing Rate
     if zcr_values.shape[0] != size:
@@ -630,7 +629,7 @@ def feature_combo_1(audio_object, **kwargs):
         feature_array[(num_features-3), :] = feat
     else:
         feature_array[(num_features-3), :] = zcr_values
-    del zcr_values
+    # del zcr_values
 
     # Spectral Centroid
     if spec_centroid.shape[0] != size:
@@ -638,7 +637,7 @@ def feature_combo_1(audio_object, **kwargs):
         feature_array[(num_features-2), :] = feat
     else:
         feature_array[(num_features-2), :] = spec_centroid
-    del spec_centroid
+    # del spec_centroid
 
     # Energy
     if energy_values.shape[0] != size:
@@ -646,7 +645,7 @@ def feature_combo_1(audio_object, **kwargs):
         feature_array[(num_features-1), :] = feat
     else:
         feature_array[(num_features-1), :] = energy_values
-    del energy_values
+    # del energy_values
 
     stats = kwargs.get('stats', False)
     if stats:
