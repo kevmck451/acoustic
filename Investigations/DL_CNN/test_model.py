@@ -170,25 +170,8 @@ def load_audio_name_file(model_path, model_info):
 
 if __name__ == '__main__':
 
-    # testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Models Data/Static Flight_Analysis/Test 1'
-    # testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/ML Models Data/Static Detection/dataset'
-    testing_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations'
-    sample_lengths = [10, 8, 6, 4, 2]
+    pass
 
-    feature_types = ['spectral', 'filter1', 'mfcc']
-
-    # model = load_model('CNN_Models/model_library/basic_1_mfcc_10_79_0.h5')
-    # test_model_accuracy(model, testing_path, sample_lengths[0], feature_types[2], display=True)
-
-    # model = load_model('CNN_Models/model_library/deep_1_mfcc_6_73_0.h5')
-    # test_model_accuracy(model, testing_path, sample_lengths[2], feature_types[2], display=True)
-
-    model = 'spectral_10_basic_1_100_1'
-    sample_length = int(model.split('_')[1])
-    feature_type = model.split('_')[0]
-
-    model = load_model(f'Prediction/model_library/{model}.h5')
-    test_model_accuracy(model, testing_path, sample_length, feature_type, display=True)
 
 
 
