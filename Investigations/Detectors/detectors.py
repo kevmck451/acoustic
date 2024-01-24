@@ -31,7 +31,6 @@ def detector_sample_average(model_path, test_path, **kwargs):
     y_names = []
 
     for name, score, label in zip(names_list, predict_scores, labels_list):
-        print(name, label)
 
         # Aggregate predictions
         if name not in predictions_sum:
@@ -67,15 +66,9 @@ def detector_sample_average(model_path, test_path, **kwargs):
     negatives = data[data['Label'] == 0].sort_values('FileName')
     positives = data[data['Label'] == 1].sort_values('FileName')
 
-    print(negatives)
-    print(positives)
-
     # Calculate accuracies for negatives and positives
     accuracy_negatives = len(negatives[negatives['Predicted'] == 0]) / len(negatives) * 100
     accuracy_positives = len(positives[positives['Predicted'] == 1]) / len(positives) * 100
-
-    print(accuracy_negatives)
-    print(accuracy_positives)
 
     # Create subplots for visualization
     fig, axes = plt.subplots(2, 1, figsize=(16, 8))
