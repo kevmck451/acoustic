@@ -44,7 +44,7 @@ def load_features(filepath, length, sample_rate, multi_channel, chunk_type, proc
         np.save(feature_path, feature_list_master)
         np.save(label_path, label_list_master)
         write_filenames_to_file(audio_name_master, audio_names_path)
-        write_filenames_to_file(feature_stats, feature_stat_path, sort=False)
+        write_filenames_to_file(feature_stats, feature_stat_path)
 
     feature_list_master = np.load(feature_path, mmap_mode='r')
     label_list_master = np.load(label_path, mmap_mode='r')
@@ -211,14 +211,13 @@ def check_if_data_exists(filepath, length, feature_type, feature_params):
     else: return False
 
 # Function to write a list to a text file
-def write_filenames_to_file(filenames, output_file, sort=False):
+def write_filenames_to_file(filenames, output_file):
     """
     Write each filename from a list to a new line in an output file.
 
     :param filenames: List of filenames.
     :param output_file: The name of the output file.
     """
-    if sort:filenames.sort()
 
     with open(output_file, 'w') as f:
         for filename in filenames:
