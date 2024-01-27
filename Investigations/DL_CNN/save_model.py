@@ -37,9 +37,8 @@ def save_model(filepath, length, sample_rate, multi_channel, chunk_type, process
     feat = 'None'
     if feature_type == 'spectral':
         bandwidth = feature_params.get('bandwidth')
-        window = feature_params.get('window_size')
-        hop_size = feature_params.get('hop_size')
-        feat = f'Bandwidth: ({bandwidth[0]}-{bandwidth[1]}) / Window Size: {window} / Hop Size: {hop_size}'
+        nperseg = feature_params.get('nperseg')
+        feat = f'Bandwidth: ({bandwidth[0]}-{bandwidth[1]}) / nperseg: {nperseg}'
     if feature_type == 'mfcc':
         feat = feature_params.get('n_coeffs')
         feat = f'Num Coeffs: {feat}'

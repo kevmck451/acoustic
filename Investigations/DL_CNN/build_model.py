@@ -20,6 +20,7 @@ def build_model(filepath, length, sample_rate, multi_channel, chunk_type, proces
     filepath = Path(filepath)
 
     features, labels = load_features(filepath, length, sample_rate, multi_channel, chunk_type, process_list, feature_type, feature_params)
+    # print(features.shape)
 
     # todo: Processing Functions here ----------------------
 

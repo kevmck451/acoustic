@@ -18,7 +18,7 @@ def test_model_accuracy(model_path, audio_path, chunk_type):
                                      model_info.get('Feature Type').lower(), model_info.get('Feature Parameters'))
 
     model = load_model(model_path)
-    names = load_audio_name_file(model_path, model_info)
+    names = load_audio_name_file(model_path, model_info, audio_path)
 
     predictions = []
 
@@ -67,7 +67,7 @@ def load_model_text_file(model_path):
     return model_info
 
 # Function to get audio names from file
-def load_audio_name_file(model_path, model_info):
+def load_audio_name_file(model_path, model_info, audio_path):
     model_name = Path(model_path).stem
     text_file_name = model_name.split('_')[:-2]
     if model_info.get('Feature Type').lower() == 'mfcc':
@@ -77,7 +77,8 @@ def load_audio_name_file(model_path, model_info):
         text_file_name = '_'.join(text_file_name)
     else: text_file_name = '_'.join(text_file_name)
 
-    text_file_name = f'features_labels/{text_file_name}_testing_features_files.txt'
+    dataset = Path(audio_path).stem
+    text_file_name = f'features_labels/{text_file_name}_{dataset}_features_files.txt'
     names_path = f'{Path(model_path).parent.parent}/{text_file_name}'
 
     with open(names_path, 'r') as file:

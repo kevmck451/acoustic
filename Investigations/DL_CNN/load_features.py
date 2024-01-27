@@ -41,6 +41,7 @@ def load_features(filepath, length, sample_rate, multi_channel, chunk_type, proc
         feature_path, label_path, audio_names_path = feature_labels_file_names(filepath, length, feature_type, feature_params)
         feature_stat_path = (audio_names_path.split('.')[0].split('_')[:-1])
         feature_stat_path = f"{'_'.join(feature_stat_path)}_{Path(filepath).stem}_stats.txt"
+
         np.save(feature_path, feature_list_master)
         np.save(label_path, label_list_master)
         write_filenames_to_file(audio_name_master, audio_names_path)
@@ -229,9 +230,8 @@ def stats_file_create(feature_list, length, feature_type, feature_params, sample
     feat = 'None'
     if feature_type == 'spectral':
         bandwidth = feature_params.get('bandwidth')
-        window = feature_params.get('window_size')
-        hop_size = feature_params.get('hop_size')
-        feat = f'Bandwidth: ({bandwidth[0]}-{bandwidth[1]}) / Window Size: {window} / Hop Size: {hop_size}'
+        nperseg = feature_params.get('nperseg')
+        feat = f'Bandwidth: ({bandwidth[0]}-{bandwidth[1]}) / nperseg: {nperseg}'
     if feature_type == 'mfcc':
         feat = feature_params.get('n_coeffs')
         feat = f'Num Coeffs: {feat}'

@@ -265,7 +265,7 @@ def mfcc(audio_object, **kwargs):
     feature_params = kwargs.get('feature_params', 'None')
 
     if feature_params == 'None':
-        n_mfcc = 50
+        n_mfcc = 15
     else:
         n_mfcc = feature_params.get('n_coeffs')
 
@@ -285,7 +285,7 @@ def mfcc(audio_object, **kwargs):
     for channel_data in data:
         # Calculate MFCCs for this channel
         if n_mfcc == 'None':
-            n_mfcc = 40
+            n_mfcc = 15
         mfccs = librosa.feature.mfcc(y=channel_data, sr=audio_object.sample_rate, n_mfcc=n_mfcc, n_fft=2048, n_mels=128)
 
         # Normalize the MFCCs
