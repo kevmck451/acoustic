@@ -34,15 +34,6 @@ def save_model(filepath, length, sample_rate, multi_channel, chunk_type, process
     # Save text file with all info about model
     text_saveto = f'{lib_dir}/{feature_type}_{feature_save_name}_{str(length)}s_{model_type}_{str(index)}{text_extension}'
 
-    feat = 'None'
-    if feature_type == 'spectral':
-        bandwidth = feature_params.get('bandwidth')
-        nperseg = feature_params.get('nperseg')
-        feat = f'Bandwidth: ({bandwidth[0]}-{bandwidth[1]}) / nperseg: {nperseg}'
-    if feature_type == 'mfcc':
-        feat = feature_params.get('n_coeffs')
-        feat = f'Num Coeffs: {feat}'
-
     # model.summary()
     optimizer_config = model.optimizer.get_config()
 
