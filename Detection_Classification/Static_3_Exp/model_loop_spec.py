@@ -13,7 +13,7 @@ if __name__ == '__main__':
     length = 6
     model_list = []
 
-    for i in range(21):
+    for i in range(2):
         build_model(model_config.filepath,
                     length,
                     model_config.sample_rate,

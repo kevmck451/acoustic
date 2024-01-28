@@ -31,6 +31,6 @@ random_state = 42
 optimizer = 'adam'
 loss = 'binary_crossentropy'
 metric = 'accuracy'
-patience = 1 #8
+patience = 2
 epochs = 40
 batch_size = 48
