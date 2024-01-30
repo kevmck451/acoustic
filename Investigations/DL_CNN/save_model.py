@@ -38,7 +38,7 @@ def save_model(filepath, length, sample_rate, multi_channel, chunk_type, process
     # Capturing the summary in a variable
     stream = io.StringIO()
     model.summary(print_fn=lambda x: stream.write(x + '\n'))
-    model_build_summary = stream.getvalue()
+    model_create_summary = stream.getvalue()
     stream.close()
 
 
@@ -70,11 +70,11 @@ def save_model(filepath, length, sample_rate, multi_channel, chunk_type, process
     bs = f'Batch Size: {batch_size}'
     bt = f'Build Time: {runtime}'
     opt_con = f'Model Config File: {optimizer_config}'
-    build_sum = f'Build Summary: {model_build_summary}'
+    mod_c_sum = f'Build Summary: {model_create_summary}'
 
 
     filenames = [path, multch, sr, leng, chunk, pro_list, feat_type, params, shape, conv_lay, den_lay, l2_val, drop_rate, act_funct, test_siz,
-                 rand_st, opt, los, met, pat, ep, bs, bt, opt_con, build_sum]
+                 rand_st, opt, los, met, pat, ep, bs, bt, opt_con, mod_c_sum]
 
     with open(text_saveto, 'w') as f:
         for filename in filenames:
