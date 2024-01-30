@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+import io
 
 def save_model(filepath, length, sample_rate, multi_channel, chunk_type, process_list, feature_type, feature_params,
                input_shape, conv_layers, dense_layers, l2_value, dropout_rate, activation,
@@ -34,6 +35,13 @@ def save_model(filepath, length, sample_rate, multi_channel, chunk_type, process
     # Save text file with all info about model
     text_saveto = f'{lib_dir}/{feature_type}_{feature_save_name}_{str(length)}s_{model_type}_{str(index)}{text_extension}'
 
+    # Capturing the summary in a variable
+    stream = io.StringIO()
+    model.summary(print_fn=lambda x: stream.write(x + '\n'))
+    model_build_summary = stream.getvalue()
+    stream.close()
+
+
     # model.summary()
     optimizer_config = model.optimizer.get_config()
 
@@ -62,10 +70,11 @@ def save_model(filepath, length, sample_rate, multi_channel, chunk_type, process
     bs = f'Batch Size: {batch_size}'
     bt = f'Build Time: {runtime}'
     opt_con = f'Model Config File: {optimizer_config}'
+    build_sum = f'Build Summary: {model_build_summary}'
 
 
     filenames = [path, multch, sr, leng, chunk, pro_list, feat_type, params, shape, conv_lay, den_lay, l2_val, drop_rate, act_funct, test_siz,
-                 rand_st, opt, los, met, pat, ep, bs, bt, opt_con]
+                 rand_st, opt, los, met, pat, ep, bs, bt, opt_con, build_sum]
 
     with open(text_saveto, 'w') as f:
         for filename in filenames:
