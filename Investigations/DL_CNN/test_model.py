@@ -42,27 +42,28 @@ def load_model_text_file(model_path):
 
     with open(text_path, 'r') as f:
         for line in f:
-            key, value = line.strip().split(': ', 1)
+            if ': ' in line:
+                key, value = line.strip().split(': ', 1)
 
-            # Remove any additional spaces
-            key = key.strip()
-            value = value.strip()
+                # Remove any additional spaces
+                key = key.strip()
+                value = value.strip()
 
-            # Convert the value into suitable format
-            if key in ['Convolutional Layers', 'Dense Layers']:
-                model_info[key] = eval(value)
-            elif key in ['Feature Parameters', 'Model Config File']:
-                model_info[key] = eval(value.replace(' /', ','))
-            elif key == 'Shape':
-                model_info[key] = tuple(map(int, value.strip('()').split(', ')))
-            elif key in ['Sample Rate', 'Sample Length', 'Shape', 'Kernal Reg-l2 Value',
-                         'Dropout Rate', 'Test Data Size', 'Random State', 'Epochs', 'Batch Size', 'Build Time']:
-                try:
-                    model_info[key] = int(value.split()[0])
-                except ValueError:
-                    model_info[key] = float(value.split()[0])
-            else:
-                model_info[key] = value
+                # Convert the value into suitable format
+                if key in ['Convolutional Layers', 'Dense Layers']:
+                    model_info[key] = eval(value)
+                elif key in ['Feature Parameters', 'Model Config File']:
+                    model_info[key] = eval(value.replace(' /', ','))
+                elif key == 'Shape':
+                    model_info[key] = tuple(map(int, value.strip('()').split(', ')))
+                elif key in ['Sample Rate', 'Sample Length', 'Shape', 'Kernal Reg-l2 Value',
+                             'Dropout Rate', 'Test Data Size', 'Random State', 'Epochs', 'Batch Size', 'Build Time']:
+                    try:
+                        model_info[key] = int(value.split()[0])
+                    except ValueError:
+                        model_info[key] = float(value.split()[0])
+                else:
+                    model_info[key] = value
 
     return model_info
 
