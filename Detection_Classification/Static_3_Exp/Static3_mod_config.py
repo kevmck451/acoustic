@@ -4,7 +4,7 @@ filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/' \
 
 # Loading Features
 # length = [2, 4, 6, 8, 10, 20, 30, 40, 50]
-length = 6
+length = [2, 3, 4, 5, 6]
 
 # [12_000, 18_000, 24_000, 36_000, 48_000]
 sample_rate = 24_000
@@ -31,6 +31,6 @@ random_state = 42
 optimizer = 'adam'
 loss = 'binary_crossentropy'
 metric = 'accuracy'
-patience = 2
+patience = 4
 epochs = 40
 batch_size = 48

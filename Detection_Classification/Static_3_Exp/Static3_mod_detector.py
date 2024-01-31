@@ -369,8 +369,8 @@ if __name__ == '__main__':
             # if mod_str < 10:
             #     mod_n = str(Path(model).stem).split('_')[0]
             #     if mod_n == 'feature':
-            custom_detector_t1_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
-            # custom_detector_t2_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
+            # custom_detector_t1_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
+            custom_detector_t2_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
             # detectors.detector_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
             # detectors.detector_sample_average(model.resolve(), test_directory_path, save=True, save_path=save_directory)
             # detectors.detector_sample_average_windowed(model.resolve(), test_directory_path, save=True, save_path=save_directory)

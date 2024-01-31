@@ -4,9 +4,8 @@ import Static3_mod_config as model_config
 
 if __name__ == '__main__':
 
-
     feature_type = 'mfcc'
-    feature_params = {'n_coeffs':13}
+    feature_params = {'n_coeffs':40}
 
     for len_val in model_config.length:
         build_model(model_config.filepath,
