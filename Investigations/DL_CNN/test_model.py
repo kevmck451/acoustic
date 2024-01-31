@@ -74,7 +74,7 @@ def load_audio_name_file(model_path, model_info, audio_path):
     if model_info.get('Feature Type').lower() == 'mfcc':
         text_file_name = '_'.join(text_file_name)
     elif model_info.get('Feature Type').lower() == 'spectral':
-        text_file_name[1] = text_file_name[1] + '-None'
+        text_file_name[1] = text_file_name[1]
         text_file_name = '_'.join(text_file_name)
     else: text_file_name = '_'.join(text_file_name)
 

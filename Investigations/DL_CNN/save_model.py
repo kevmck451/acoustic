@@ -17,7 +17,8 @@ def save_model(filepath, length, sample_rate, multi_channel, chunk_type, process
 
     if feature_type == 'spectral':
         bandwidth = feature_params.get('bandwidth')
-        feature_save_name = f'{bandwidth[0]}-{bandwidth[1]}'
+        nperseg = feature_params.get('nperseg')
+        feature_save_name = f'{bandwidth[0]}-{bandwidth[1]}-{nperseg}'
     elif feature_type == 'mfcc': feature_save_name = f"{feature_params.get('n_coeffs')}"
     else: feature_save_name = 'None'
 
