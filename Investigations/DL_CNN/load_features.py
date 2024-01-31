@@ -170,8 +170,8 @@ def feature_labels_file_names(filepath, length, feature_type, feature_params):
     if feature_params != 'None':
         if feature_type == 'spectral':
             bandwidth = feature_params.get('bandwidth')
-            window = feature_params.get('window_size')
-            feat = f'{bandwidth[0]}-{bandwidth[1]}-{window}'
+            nperseg = feature_params.get('nperseg')
+            feat = f'{bandwidth[0]}-{bandwidth[1]}-{nperseg}'
         if feature_type == 'mfcc':
             feat = feature_params.get('n_coeffs')
         if feature_type == 'feature_combo_1':
