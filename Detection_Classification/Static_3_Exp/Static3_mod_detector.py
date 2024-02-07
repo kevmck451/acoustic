@@ -350,6 +350,69 @@ def custom_detector_t2_every_sample(model_path, test_path, **kwargs):
     else:
         plt.show()
 
+# function to generate accuracy data for each vehicle sample
+def vehicle_accuracy_data(model_path, test_path):
+    path_model = Path(model_path)
+    # model_name = path_model.stem
+
+    chunk_type = ['regular', 'window']
+
+    names_list, predict_scores, labels_list = test_model_accuracy(model_path, test_path, chunk_type[0])
+
+    height = [name.split('_')[0] for name in names_list]
+    sample_type = [name.split('_')[1] for name in names_list]
+    test_conducted = [name.split('_')[2] for name in names_list]
+    microphone = [name.split('_')[3].strip() for name in names_list]
+    samp_mic = [f"{name.split('_')[1]}_{name.split('_')[3].strip()}" for name in names_list]
+    data = pd.DataFrame({
+        'FileName': names_list,
+        'Prediction': predict_scores,
+        'Label': labels_list,
+        'Height': height,
+        'SampleType': sample_type,
+        'TestConducted': test_conducted,
+        'Mic': microphone,
+        'SampMic': samp_mic, })
+
+    data['Predicted'] = data['Prediction'].apply(lambda x: int(x > 0.5))
+    data['Score'] = data['Prediction'] * 100
+
+    # Compute overall accuracy
+    # accuracy = accuracy_score(data['Label'], data['Predicted'])
+    # accuracy = int(np.round((accuracy * 100)))
+
+    # Separate negatives and positives
+    # negatives = data[data['Label'] == 0].sort_values('FileName')
+    positives = data[data['Label'] == 1].sort_values('FileName')
+    m10_predictions = data[(data['Height'] == '10m') & data['Label'] == 1].sort_values('SampleType')
+    m20_predictions = data[(data['Height'] == '20m') & data['Label'] == 1].sort_values('SampleType')
+    m30_predictions = data[(data['Height'] == '30m') & data['Label'] == 1].sort_values('SampleType')
+    m40_predictions = data[(data['Height'] == '40m') & data['Label'] == 1].sort_values('SampleType')
+
+    # Reset the index for each subset DataFrame and create the 'UniSampMic' column
+    m10_predictions = m10_predictions.reset_index(drop=True)
+    m10_predictions['UniSampMic'] = m10_predictions['SampMic'] + '_' + (m10_predictions.index + 1).astype(str)
+
+    m20_predictions = m20_predictions.reset_index(drop=True)
+    m20_predictions['UniSampMic'] = m20_predictions['SampMic'] + '_' + (m20_predictions.index + 1).astype(str)
+
+    m30_predictions = m30_predictions.reset_index(drop=True)
+    m30_predictions['UniSampMic'] = m30_predictions['SampMic'] + '_' + (m30_predictions.index + 1).astype(str)
+
+    m40_predictions = m40_predictions.reset_index(drop=True)
+    m40_predictions['UniSampMic'] = m40_predictions['SampMic'] + '_' + (m40_predictions.index + 1).astype(str)
+
+    # Calculate accuracies for negatives and positives
+    # accuracy_negatives = int(len(negatives[negatives['Predicted'] == 0]) / len(negatives) * 100)
+    # accuracy_positives = int(len(positives[positives['Predicted'] == 1]) / len(positives) * 100)
+    accuracy_10m = int(len(m10_predictions[m10_predictions['Predicted'] == 1]) / len(m10_predictions) * 100)
+    accuracy_20m = int(len(m20_predictions[m20_predictions['Predicted'] == 1]) / len(m20_predictions) * 100)
+    accuracy_30m = int(len(m30_predictions[m30_predictions['Predicted'] == 1]) / len(m30_predictions) * 100)
+    accuracy_40m = int(len(m40_predictions[m40_predictions['Predicted'] == 1]) / len(m40_predictions) * 100)
+
+
+
+
 
 
 
@@ -359,18 +422,23 @@ if __name__ == '__main__':
     save_base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Analysis'
 
     model_path = Path(f'{base_path}/Detection_Classification/Static_3_Exp/model_library')
-    test_directory_path = f'{test_base_path}/ML Model Data/Static Test 3/test 2'
+    test_directory_path = f'{test_base_path}/ML Model Data/Static Test 3/test 1'
     save_directory = f'{save_base_dir}/Engine Hex Static 3'
 
-    for model in model_path.iterdir():
-        if 'h5' in str(model):
+    # for model in model_path.iterdir():
+    #     if 'h5' in str(model):
             # mod_str = int(str(model).split('_')[-3].split('s')[0])
             # if mod_str == 3 or mod_str == 5 or mod_str == 7 or mod_str == 9:
             # if mod_str < 10:
             #     mod_n = str(Path(model).stem).split('_')[0]
             #     if mod_n == 'feature':
             # custom_detector_t1_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
-            custom_detector_t2_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
+            # custom_detector_t2_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
             # detectors.detector_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
             # detectors.detector_sample_average(model.resolve(), test_directory_path, save=True, save_path=save_directory)
             # detectors.detector_sample_average_windowed(model.resolve(), test_directory_path, save=True, save_path=save_directory)
+
+
+
+    for model in model_path.rglob('*.wav'):
+        vehicle_accuracy_data(model.resolve(), test_directory_path)
