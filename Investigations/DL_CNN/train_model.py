@@ -18,7 +18,12 @@ def train_model(features, labels, test_size, random_state, model, optimizer, los
     train_gen = data_generator(X_train, y_train, batch_size)
     val_gen = data_generator(X_test, y_test, batch_size)
 
-    model.compile(optimizer=optimizer, loss=loss, metrics=[metric])
+    ''' Custom Metrics
+    https://keras.io/api/metrics/
+
+    '''
+
+    model.compile(optimizer=optimizer, loss=loss, metrics=metric)
 
     early_stopping = EarlyStopping(monitor='val_loss', patience=patience)
 
@@ -31,6 +36,10 @@ def train_model(features, labels, test_size, random_state, model, optimizer, los
                 validation_data=val_gen,
                 validation_steps=validation_steps,
                 callbacks=[early_stopping])
+
+    ''' Visualizing Results:
+    https://machinelearningmastery.com/display-deep-learning-model-training-history-in-keras/
+    '''
 
     return model
 

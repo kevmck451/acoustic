@@ -41,11 +41,21 @@ def build_model(filepath, length, sample_rate, multi_channel, chunk_type, proces
     # if accuracy[0] >= 90:
     #     save_model(model, 'detect', 'spec', sample_length, accuracy[0])
 
+    '''
+    
+    
+    
+    
+    
+    
+    
+    '''
+
 
 
 if __name__ == '__main__':
     filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/' \
-                    '1 Acoustic/Data/ML Model Data/Engine vs Ambience/dataset 2'
+                    '1 Acoustic/Data/ML Model Data/Static Test 3/dataset 1'
 
     # Loading Features
     length = [2, 4, 6, 8, 10]
@@ -56,8 +66,8 @@ if __name__ == '__main__':
     feature_type = ['spectral', 'mfcc', 'feature_combo_1']
     window_sizes = [256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536]
     hop_sizes = [128, 256, 512, 1024]
-    feature_params = {'bandwidth':(70, 6000), 'window_size':window_sizes[4], 'hop_size':hop_sizes[2]}  # Spectrum
-    # feature_params = {'n_coeffs': 13}  # MFCC
+    # feature_params = {'bandwidth':(70, 6000), 'window_size':window_sizes[4], 'hop_size':hop_sizes[2]}  # Spectrum
+    feature_params = {'n_coeffs': 13}  # MFCC
 
     # Create Model
     conv_layers = [(32, (3, 3)), (64, (3, 3))]
@@ -71,12 +81,12 @@ if __name__ == '__main__':
     random_state = 42
     optimizer = 'adam'
     loss = 'binary_crossentropy'
-    metric = 'accuracy'
+    metric = ['accuracy', 'loss', 'val_accuracy', 'val_loss']
     patience = 10
     epochs = 50
     batch_size = 24
 
-    build_model(filepath, length[4], sample_rate[2], multi_channel[0], chunk_type, process_list, feature_type[0],
+    build_model(filepath, length[2], sample_rate[2], multi_channel[0], chunk_type, process_list, feature_type[1],
                 feature_params, conv_layers, dense_layers, l2_value, dropout_rate, activation,
                 test_size, random_state, optimizer, loss, metric, patience, epochs, batch_size)
 
