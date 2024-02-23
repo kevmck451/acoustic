@@ -45,6 +45,7 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
 
                 mix.export(filepath=new_path, name=f'{mix.name}_{value}')
 
+
 if __name__ == '__main__':
 
     synthetic_directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Synthetic'

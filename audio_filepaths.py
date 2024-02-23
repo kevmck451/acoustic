@@ -32,6 +32,7 @@ hex_ff_static_2 = f'{basepath}/Full Flights/Static_2.wav'
 # Angel Files
 angel_ff_1 = f'{basepath}/Full Flights/Angel_1.wav'
 angel_ff_2 = f'{basepath}/Full Flights/Angel_2.wav'
+angel_wind_b = f'{basepath}/Isolated Samples/Angel Wind/angel_wind_b.wav'
 
 
 
