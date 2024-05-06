@@ -5,7 +5,7 @@
 
 
 
-from Flight_Analysis.flight_audio_sync import flight_audio
+from Flight_Analysis.old.flight_audio_sync import flight_audio
 from Acoustic.audio_abstract import Audio_Abstract
 from Flight_Analysis.Environment.environment import Environment
 from Flight_Analysis.flight_path import Flight_Path

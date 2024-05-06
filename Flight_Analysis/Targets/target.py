@@ -21,7 +21,7 @@ class Target:
             self.location = ast.literal_eval(self.target_file.get_value(self.flight, 'Location'))
 
 
-        type_dict = {'tank': 88, 'decoy': 78, 'speaker': 88}
+        type_dict = {'tank': 88, 'decoy': 78, 'speaker': 91}
         self.SPL_at_10m_dB = None
         self.intensity_at_10m_Wm2 = None
         if 'Untitled' not in self.name and self.name in type_dict.keys():

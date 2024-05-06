@@ -3,7 +3,7 @@
 # Analysis of of mission without targets the same but
 #   no target_object will be passed to Flight_Paht()
 
-from Flight_Analysis.detection_takeoff_audio import takeoff_detection_audio
+from Flight_Analysis.old.detection_takeoff_audio import takeoff_detection_audio
 from Acoustic.audio_abstract import Audio_Abstract
 from Flight_Analysis.Environment.environment import Environment
 from Flight_Analysis.flight_path import Flight_Path

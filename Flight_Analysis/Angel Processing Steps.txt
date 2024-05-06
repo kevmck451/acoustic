@@ -1,0 +1,18 @@
+Angel Processing Steps
+
+
+- collect data
+- trim: remove audio before and after take off - center cut of audio
+- flight log: go to website / add bin file / go to GPS and select: lat, long, alt, and speed, export it
+- target file: type & gps location in int form (no decimal / 9 characters) & sound intensity metric (SPL / distance)
+
+
+
+
+
+audio file
+flight log file
+target file
+
+generates
+label file for audacity

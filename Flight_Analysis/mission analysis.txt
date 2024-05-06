@@ -1,0 +1,35 @@
+mission analysis
+
+
+
+things i want to know
+
+
+time of take off: what syncs the flight logs with audio
+closest times to target
+Threshold of detection: based on intensity of target
+window of detection: based on experiments to see roughly how far away target can be detected. How much time is the uav below the thrshold?
+
+generate json target data that can easily be imported into audacity
+	text file with start /tab stop /tab label
+	point sources have same start and stop
+
+
+
+
+start with directory of stuff
+    flight audio
+        slightly processed: start couple secs before take off and couple secs after
+    flight log
+        csv with lat, long, alt, speed: time will automatically be added when exported
+    target info
+        type, SPL at distance
+
+
+
+
+
+
+
+
+

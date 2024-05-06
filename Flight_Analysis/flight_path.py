@@ -11,15 +11,16 @@ from Flight_Analysis.Targets.target import Target
 class Flight_Path:
     def __init__(self, name, **kwargs):
         self.target_object = kwargs.get('target_object', None)
-        self.filepath = kwargs.get('directory', '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/_info')
+        self.filepath = kwargs.get('directory', '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights')
         target_threshold = kwargs.get('target_threshold', 58)
         if self.target_object is not None: self.contains_target=True
         self.FIG_SIZE_LARGE = (14, 8)
         self.FIG_SIZE_SMALL = (14, 4)
         self.file_name = name
+        self.save_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/_Graphs'
 
 
-        csv_file = f'{self.filepath}/{self.file_name}.csv'
+        csv_file = f'{self.filepath}/_info/{self.file_name}.csv'
         self.position_file = CSVFile(csv_file)
         if self.position_file.header[0] != 'Time':
             self.position_file.rename_headers(['Time', 'Lat', 'Long', 'Alt', 'Speed'])
@@ -50,7 +51,8 @@ class Flight_Path:
 
 
         if self.target_object is not None:
-            self.target_object.calculate_distance_threshold(target_threshold)
+            # self.target_object.calculate_distance_threshold(target_threshold)
+            self.target_object.threshold_distance = target_threshold
             self._calculate_distance()
 
     def __str__(self):
@@ -203,7 +205,7 @@ class Flight_Path:
             space[y1:y2, x1:x2, i] = c
 
         if save:
-            saveas = f'{self.filepath}/{self.file_name}_Flight.pdf'
+            saveas = f'{self.save_path}/{self.file_name}_Flight.pdf'
             if not utils.check_file_exists(saveas):
                 utils.create_directory_if_not_exists(FLIGHT_PATH_SAVE_DIRECTORY)
                 # space = np.rot90(space, 1)
@@ -295,7 +297,7 @@ class Flight_Path:
             plt.tight_layout(pad=1)
 
             if save:
-                saveas = TARGET_DISTANCE_DIRECTORY + '/' + self.file_name + ' TarDis.pdf'
+                saveas = self.save_path + '/' + self.file_name + ' TarDis.pdf'
                 if not utils.check_file_exists(saveas):
                     utils.create_directory_if_not_exists(TARGET_DISTANCE_DIRECTORY)
                     plt.savefig(saveas)
@@ -370,22 +372,67 @@ class Flight_Path:
         plt.axhline(6, c='black', linestyle='dotted')
         plt.show()
 
+    # Function to generate labels for audacity
+    def generate_audacity_labels(self, ignore_first=False):
+        if self.target_object is None:
+            print('No Target')
+            return None
+
+        else:
+            num_times_inside_window = 0
+            window_times = []
+
+            start_time = 0
+            for i, time in enumerate(self.target_threshold_times):
+                if i == 0:
+                    start_time = time
+                elif i == len(self.target_threshold_times)-1:
+                    end_time = self.target_threshold_times[i]
+                    window_times.append((start_time, end_time))
+                    num_times_inside_window += 1
+                else:
+                    difference = time - self.target_threshold_times[i-1]
+                    if difference > 0.15:
+                        end_time = self.target_threshold_times[i-1]
+                        window_times.append((start_time, end_time))
+                        start_time = time
+                        num_times_inside_window += 1
 
 
+            print(num_times_inside_window)
+            print(window_times)
+            print(self.times_closest_to_target)
 
+            filepath = f'{self.filepath}/_labels'
+            if not utils.check_file_exists(filepath):
+                utils.create_directory_if_not_exists(filepath)
+            filepath_full = f'{filepath}/{self.file_name}_audacity_labels.txt'
 
-
+            with open(filepath_full, 'w') as file:
+                for i, (center_time, window_time) in enumerate(zip(self.times_closest_to_target, window_times)):
+                    if ignore_first:
+                        if i == 0:
+                            pass
+                        else:
+                            line = f'{window_time[0]}\t{window_time[1]}\ttar_{i}\n{center_time}\t{center_time}\tc_{i}\n'
+                            file.write(line)
+                    else:
+                        line = f'{window_time[0]}\t{window_time[1]}\ttar_{i+1}\n{center_time}\t{center_time}\tc_{i+1}\n'
+                        file.write(line)
 
 
 
 
 if __name__ == '__main__':
 
-    target = Target(name='Semi', type='speaker', flight='Static_Test_2')
-    flight = Flight_Path('Static_Test_2', target_object=target) #
+    flight = 'Angel_3'
 
-    # flight.plot_flight_path()
-    flight.display_target_distance(display=True)
+    target = Target(name='Tone', type='speaker', flight=flight)
+    flight = Flight_Path(flight, target_object=target, target_threshold=107) #
+
+    # flight.plot_flight_path(display=False, save=True)
+    # flight.display_target_distance(display=False, save=True)
+    flight.generate_audacity_labels(ignore_first=True)
     # flight.get_takeoff_time(display=True)
     # flight.label_flight_sections()
 
