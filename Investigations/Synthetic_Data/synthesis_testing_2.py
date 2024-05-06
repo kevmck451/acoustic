@@ -15,27 +15,35 @@ def calculate_power(audio):
     """Calculate the power of an audio signal."""
     return np.sum(audio ** 2) / len(audio)
 
+def calculate_RMS(audio):
+    """Calculate the power of an audio signal."""
+    return np.sqrt(np.sum(audio ** 2) / len(audio))
+    # return np.sum(audio ** 2) / len(audio)
+
 def find_norm_value(value):
     ratio_found = False
     noise_norm_value = value
     target_norm_value = value
     precision_value = 6
+    epsilon = 1e-6
+    normalized_noise = process.normalize(noise, percentage=noise_norm_value)
 
     while not ratio_found:
-        normalized_noise = process.normalize(noise, percentage=noise_norm_value)
         normalized_target = process.normalize(target, percentage=target_norm_value)
 
         noise_power = np.round(calculate_power(normalized_noise.data), precision_value)
         target_power = np.round(calculate_power(normalized_target.data), precision_value)
 
-        if noise_power == target_power:
+        # noise_power = np.round(calculate_RMS(normalized_noise.data), precision_value)
+        # target_power = np.round(calculate_RMS(normalized_target.data), precision_value)
+
+        if abs(noise_power - target_power) < epsilon:
             ratio_found = True
         else:
             if noise_power > target_power:
                 target_norm_value += 0.1
             else:
                 noise_norm_value += 0.1
-
 
     norm_difference = target_norm_value - noise_norm_value
 
@@ -102,21 +110,48 @@ if __name__ == '__main__':
     # print(noise)
     # print(target)
 
+    # -----------------------------------------------------
     # noise_power = calculate_power(noise.data)
     # target_power = calculate_power(target.data)
     #
     # print(f'Noise Power: {noise_power}')
     # print(f'Target Power: {target_power}')
     #
+    # noise_RMS = calculate_RMS(noise.data)
+    # target_RMS = calculate_RMS(target.data)
+    #
+    # print(f'Noise RMS: {noise_RMS}')
+    # print(f'Target RMS: {target_RMS}')
+    #
+    # bars = ['npwr', 'tpwr', 'nrms', 'trms']
+    # bar_list = [noise_power, target_power, noise_RMS, target_RMS]
+    #
+    # plt.bar(bars, bar_list)
+    # plt.show()
+
+    # -----------------------------------------------------
     # normalized_noise = process.normalize(noise)
     # normalized_target = process.normalize(target)
     #
     # noise_power = calculate_power(normalized_noise.data)
     # target_power = calculate_power(normalized_target.data)
     #
-    # print(f'Noise Norm Power: {noise_power}')
-    # print(f'Target Norm Power: {target_power}')
+    # print(f'Noise Power: {noise_power}')
+    # print(f'Target Power: {target_power}')
+    #
+    # noise_RMS = calculate_RMS(normalized_noise.data)
+    # target_RMS = calculate_RMS(normalized_target.data)
+    #
+    # print(f'Noise RMS: {noise_RMS}')
+    # print(f'Target RMS: {target_RMS}')
+    #
+    # bars = ['npwr', 'tpwr', 'nrms', 'trms']
+    # bar_list = [noise_power, target_power, noise_RMS, target_RMS]
+    #
+    # plt.bar(bars, bar_list)
+    # plt.show()
 
+    # -----------------------------------------------------
     # Same Length must be same
     # Calculate Power
     # Compare
@@ -124,16 +159,19 @@ if __name__ == '__main__':
     # Adjust
 
     # ratio_found = False
-    # noise_norm_value = 20
-    # target_norm_value = 20
+    # noise_norm_value = 80
+    # target_norm_value = 80
     # precision_value = 4
     #
     # while not ratio_found:
     #     normalized_noise = process.normalize(noise, percentage=noise_norm_value)
     #     normalized_target = process.normalize(target, percentage=target_norm_value)
     #
-    #     noise_power = np.round(calculate_power(normalized_noise.data), precision_value)
-    #     target_power = np.round(calculate_power(normalized_target.data), precision_value)
+    #     # noise_power = np.round(calculate_power(normalized_noise.data), precision_value)
+    #     # target_power = np.round(calculate_power(normalized_target.data), precision_value)
+    #
+    #     noise_power = np.round(calculate_RMS(normalized_noise.data), precision_value)
+    #     target_power = np.round(calculate_RMS(normalized_target.data), precision_value)
     #
     #     if noise_power == target_power:
     #         ratio_found = True
@@ -141,15 +179,15 @@ if __name__ == '__main__':
     #         if noise_power > target_power:
     #             target_norm_value += 0.1
     #         else:
-    #             noise_norm_value += 0.1
+    #             noise_norm_value -= 0.1
     #
     #
     # print(f'Noise Value: {noise_norm_value}')
-    # print(f'Target Value: {np.round(target_norm_value, 1)}')
+    # print(f'Target Value: {target_norm_value}')
     #
-    # norm_difference = np.round(noise_norm_value - np.round(target_norm_value, 1), 1)
+    # norm_difference = target_norm_value - noise_norm_value
     # print(f'Diff: {norm_difference}')
-
+    #
     # norm_list = [x for x in range(1, 101)]
     # values_list = [find_norm_value(x) for x in norm_list]
     #
@@ -168,26 +206,59 @@ if __name__ == '__main__':
     # plt.plot(norm_list, y_model)
     # plt.show()
 
-    # give target norm value based on noise value
-    # noise_val = 50
-    # tar_val = find_noise_target_norm_relationship()(noise_val)
-    # print(tar_val)
-
+    # -----------------------------------------------------
     # Find norm value for 1:1 SNR
-    # noise_norm_val = 80
+    # noise_norm_val = 50
     # target_norm_val = get_target_value_based_on_noise_value_for_one_to_one(noise_norm_val)
     # print(f'Noise Norm Val: {noise_norm_val} / Tar Norm Val: {target_norm_val}')
     #
     # normalized_noise = process.normalize(noise, percentage=noise_norm_val)
     # normalized_target = process.normalize(target, percentage=target_norm_val)
-
+    #
     # normalized_noise.waveform(display=True)
     # normalized_target.waveform(display=True)
 
+    # -----------------------------------------------------
     # Now that found 1:1 SNR, how can this be adjusted to mimic an increasing distance from target?
     # The power of the noise can be known: if ambient, then SPL meter, if UAV, then experiments showed theirs
     # Angel: 105dB
     # Hex: 98 dB
+
+    # if SPL value for ego are known and norm value assigned, then find ref value that relates SPL to RMS
+    noise_norm_val = 50
+    hex_SPL_value = 98
+    normalized_noise = process.normalize(noise, percentage=noise_norm_val)
+    hex_rms_value_at_known_norm_value = calculate_RMS(normalized_noise.data)
+    p_ref = hex_rms_value_at_known_norm_value / np.power(10, hex_SPL_value / 20)
+
+    # Now that I know the reference pressure level, this can be applied to the target sample
+    # to relate the SPL level to a norm value
+
+    # target norm val is the norm val where targets RMS is same as noise which is 98dB
+    target_norm_val = get_target_value_based_on_noise_value_for_one_to_one(noise_norm_val)
+
+    # SPL values at each distance for target
+    distances = [x for x in range(10, 101, 1)]
+    target_distance_of_measured_SPL = 12  # m
+    target_measured_SPL = 93  # dB(C)
+    target_SPL_values = [square_law_equation(
+        target_measured_SPL,
+        target_distance_of_measured_SPL,
+        distance) for distance in distances]
+
+    # Using the reference value found, calculate RMS pressures for each SPL value
+    rms_pressure_list = [(p_ref * np.power(10, SPL_value / 20)) for SPL_value in target_SPL_values]
+    plt.plot(distances, target_SPL_values)
+    plt.show()
+    plt.plot(distances, rms_pressure_list)
+    plt.show()
+
+    # Find norm value that makes the sample at each pressure level which relates the norm value to a distance
+
+
+
+
+
 
     # Maybe find norm equation that mimics square law distance equation?
     # Final function would have range of distances from target as input and give dataset based on that
@@ -236,31 +307,31 @@ if __name__ == '__main__':
 
     # What distance are they equal?
 
-    distances = [x for x in np.arange(2, 101, 0.1)]
-    target_distance_of_measured_SPL = 12  # m
-    target_measured_SPL = 93  # dB(C)
-    target_SPL_values_L = [square_law_equation(
-        target_measured_SPL,
-        target_distance_of_measured_SPL,
-        distance) for distance in distances]
-
-    noise_floor_SPL = 98
-    distance_equals_index = min(enumerate(target_SPL_values_L), key=lambda x: abs(x[1] - noise_floor_SPL))[0]
-    # print(distance_equals_index)
-
-    distance_where_equal = np.round(distances[distance_equals_index], 3)
-    print(f'Distance where Equal: {distance_where_equal} meters')
-
-    # Find norm value for 1:1 SNR
-    noise_norm_val = 90 # arbitrary value
-    target_norm_val = get_target_value_based_on_noise_value_for_one_to_one(noise_norm_val)
-    print(f'Noise Norm Val: {noise_norm_val} / Tar Norm Val: {target_norm_val}')
-
-    normalized_noise = process.normalize(noise, percentage=noise_norm_val)
-    normalized_target = process.normalize(target, percentage=target_norm_val)
-
-    normalized_noise.waveform(display=True)
-    normalized_target.waveform(display=True)
+    # distances = [x for x in np.arange(2, 101, 0.1)]
+    # target_distance_of_measured_SPL = 12  # m
+    # target_measured_SPL = 93  # dB(C)
+    # target_SPL_values_L = [square_law_equation(
+    #     target_measured_SPL,
+    #     target_distance_of_measured_SPL,
+    #     distance) for distance in distances]
+    #
+    # noise_floor_SPL = 98
+    # distance_equals_index = min(enumerate(target_SPL_values_L), key=lambda x: abs(x[1] - noise_floor_SPL))[0]
+    # # print(distance_equals_index)
+    #
+    # distance_where_equal = np.round(distances[distance_equals_index], 3)
+    # print(f'Distance where Equal: {distance_where_equal} meters')
+    #
+    # # Find norm value for 1:1 SNR
+    # noise_norm_val = 90 # arbitrary value
+    # target_norm_val = get_target_value_based_on_noise_value_for_one_to_one(noise_norm_val)
+    # print(f'Noise Norm Val: {noise_norm_val} / Tar Norm Val: {target_norm_val}')
+    #
+    # normalized_noise = process.normalize(noise, percentage=noise_norm_val)
+    # normalized_target = process.normalize(target, percentage=target_norm_val)
+    #
+    # normalized_noise.waveform(display=True)
+    # normalized_target.waveform(display=True)
 
 
 

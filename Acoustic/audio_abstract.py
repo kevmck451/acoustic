@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import soundfile as sf
 import numpy as np
+import resampy
 import librosa
 
 import wave
@@ -86,6 +87,7 @@ class Audio_Abstract:
             # self.data = self.data - average
             if samplerate != self.sample_rate:
                 self.data = librosa.resample(y=self.data, orig_sr=samplerate, target_sr=self.sample_rate)
+                # self.data = resampy.resample(self.data, samplerate, self.sample_rate)
             self.sample_length = round((len(self.data) / self.sample_rate), 2)
             self.num_samples = len(self.data)
 
