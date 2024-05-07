@@ -26,6 +26,14 @@ def generate_spec_comp_predictions(std_mult, audio_object=None):
     # -------------------------------------------------
     # Check for audio data shape and make adjustments
     # -------------------------------------------------
+    time_data_s_temp = np.array(time_data_s_temp).reshape(1, -1)
+    time_data_n_temp = np.array(time_data_n_temp).reshape(1, -1)
+
+    print(time_data_ns_temp.shape)
+    print(time_data_s_temp.shape)
+    print(time_data_n_temp.shape)
+
+
     if time_data_ns_temp.shape[1] == time_data_s_temp.shape[1] and time_data_ns_temp.shape[1] == \
             time_data_n_temp.shape[1] and time_data_ns_temp.shape[1] % 2 == 1:
         time_data_ns = np.empty(shape=(time_data_ns_temp.shape[0], time_data_ns_temp.shape[1] - 1))

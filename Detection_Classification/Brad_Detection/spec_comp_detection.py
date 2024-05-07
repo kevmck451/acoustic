@@ -55,7 +55,7 @@ if __name__ == '__main__':
     length = 10
     filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Field Tests/Agricenter/Angel_2/Angel_2_flight.wav'
     flight_name = Path(filepath).stem
-    audio = Audio_Abstract(filepath=filepath)
+    audio = Audio_Abstract(filepath=filepath, num_channels=4)
 
     load = False
 
