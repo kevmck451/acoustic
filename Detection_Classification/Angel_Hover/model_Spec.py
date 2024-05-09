@@ -5,7 +5,7 @@ import model_config
 if __name__ == '__main__':
 
     feature_type = 'spectral'
-    feature_params = {'bandwidth':(300, 3000)}
+    feature_params = {'bandwidth':(70, 3000), 'nperseg':8192}
 
     build_model(model_config.filepath,
                 model_config.length,

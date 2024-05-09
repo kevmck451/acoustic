@@ -142,6 +142,7 @@ def format_features(feature_list):
 def check_inputs(filepath, length, sample_rate, feature_type, feature_params):
 
     if not Path(filepath).exists():
+        print(filepath)
         raise Exception('Directory does not exists')
     if type(length) is not int:
         raise Exception('Length needs to be an integer')

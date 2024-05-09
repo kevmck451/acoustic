@@ -3,9 +3,8 @@ from Investigations.DL_CNN.build_model import build_model
 import model_config
 
 if __name__ == '__main__':
-
     feature_type = 'mfcc'
-    feature_params = 'None'
+    feature_params = {'n_coeffs': 40}
 
     build_model(model_config.filepath,
                 model_config.length,
