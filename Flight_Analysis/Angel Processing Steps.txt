@@ -1,5 +1,5 @@
 Angel Processing Steps
-
+Adding Audio Files into Flight Analysis Database
 
 - collect data
 - trim: remove audio before and after take off - center cut of audio

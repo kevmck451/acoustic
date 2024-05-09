@@ -42,6 +42,7 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
                     noise_floor_edit = process.normalize(noise_floor_sample, percentage=100)
                     noise_floor_edit = process.normalize(noise_floor_edit, percentage=noise_floor_level)
                     mix = process.mix_to_mono([target, noise_floor_edit])
+                    mix = process.normalize(mix, percentage=100)
                     mix.name = f'{target.name}_{noise_floor.name}_mix'
 
                     mix.export(filepath=new_path, name=f'{mix.name}_{value}')
@@ -49,16 +50,16 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
 if __name__ == '__main__':
 
     synthetic_directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Synthetic'
-    range_of_target_sound = (4, 61, 2)
+    range_of_target_sound = (4, 60, 1)
     noise_floor_level = 100
     sample_rate = 24_000
-    sample_length = 16
+    sample_length = 5
 
     # Diesel Samples
-    mix_num = 7
-    noise_floor_path = af.hex_hover_combo_thick
-    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/static 3'
-    new_path = synthetic_directory + f'/diesel_hex_mix_{mix_num}'
+    mix_num = 1
+    noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/angel_hover/backgrounds'
+    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/angel_hover/target'
+    new_path = synthetic_directory + f'/tank_angel_mix_{mix_num}'
     generate_synthetic_data(noise_floor_path, target_path, new_path, sample_length, sample_rate, noise_floor_level, range_of_target_sound)
 
 
