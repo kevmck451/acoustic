@@ -1,4 +1,5 @@
 
+
 from Investigations.DL_CNN.build_model import build_model
 import model_config
 
@@ -28,3 +29,9 @@ if __name__ == '__main__':
                 model_config.patience,
                 model_config.epochs,
                 model_config.batch_size)
+
+    import subprocess
+    import time
+    subprocess.run(['say', "I'M DONE TRAINING"])
+    time.sleep(2)
+    subprocess.run(['say', "I'M DONE TRAINING"])

@@ -26,6 +26,8 @@ def build_model(filepath, length, sample_rate, multi_channel, chunk_type, proces
 
     # Create a flexible model
     input_shape = features.shape[1:]
+
+    # if given model, use it. else use default
     model = create_model(input_shape, conv_layers, dense_layers, l2_value, dropout_rate, activation)
 
     # Train Model

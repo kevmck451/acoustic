@@ -1,7 +1,7 @@
 
 
 import keras
-from keras.layers import Dense, Dropout, Conv2D, Flatten, MaxPooling2D
+from keras.layers import Dense, Dropout, Conv2D, Flatten, MaxPooling2D, AveragePooling2D
 from keras.models import Sequential
 from keras.regularizers import l2
 import os
@@ -31,16 +31,29 @@ def create_model(input_shape, conv_layers, dense_layers, l2_value=0.01, dropout_
 
     model = Sequential()
 
+    i = 0
+
     # First convolutional layer with input shape
     filters, kernel_size = conv_layers[0]
     model.add(Conv2D(filters=filters, kernel_size=kernel_size, activation=activation, input_shape=input_shape, kernel_regularizer=l2(l2_value)))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    # model.add(MaxPooling2D(pool_size=(1, 1)))
+    model.add(AveragePooling2D(pool_size=(1, 1)))
     model.add(Dropout(dropout_rate))
+    i += 1
 
     # Adding subsequent convolutional layers
     for filters, kernel_size in conv_layers[1:]:
         model.add(Conv2D(filters=filters, kernel_size=kernel_size, activation=activation))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
+
+        if i%2 == 0:
+            # model.add(MaxPooling2D(pool_size=(1, 1)))
+            model.add(AveragePooling2D(pool_size=(1, 1)))
+            i += 1
+        else:
+            # model.add(MaxPooling2D(pool_size=(2, 1)))
+            model.add(AveragePooling2D(pool_size=(2, 1)))
+            i += 1
+
         model.add(Dropout(dropout_rate))
 
     # Flatten the features for dense layers

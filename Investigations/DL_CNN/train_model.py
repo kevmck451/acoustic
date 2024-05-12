@@ -25,7 +25,10 @@ def train_model(features, labels, test_size, random_state, model, optimizer, los
 
     model.compile(optimizer=optimizer, loss=loss, metrics=metric)
 
-    early_stopping = EarlyStopping(monitor='val_loss', patience=patience)
+    # early_stopping = EarlyStopping(monitor='val_loss', patience=patience, verbose=1)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=patience, verbose=1, restore_best_weights=True)
+
+    print(f'Number Samples Train: {len(X_train)} | Number Samples Test: {len(X_test)}')
 
     steps_per_epoch = len(X_train) // batch_size
     validation_steps = len(X_test) // batch_size
@@ -36,6 +39,7 @@ def train_model(features, labels, test_size, random_state, model, optimizer, los
                 validation_data=val_gen,
                 validation_steps=validation_steps,
                 callbacks=[early_stopping])
+
 
     ''' Visualizing Results:
     https://machinelearningmastery.com/display-deep-learning-model-training-history-in-keras/
