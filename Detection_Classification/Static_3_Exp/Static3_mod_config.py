@@ -4,7 +4,7 @@ filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/' \
 
 # Loading Features
 # length = [2, 4, 6, 8, 10, 20, 30, 40, 50]
-length = [2, 3, 4, 5, 6]
+length = 4
 
 # [12_000, 18_000, 24_000, 36_000, 48_000]
 sample_rate = 24_000
@@ -19,18 +19,18 @@ chunk_type = 'window'
 process_list = ['normalize']
 
 # Create Model
-conv_layers = [(32, (3, 3)), (64, (3, 3))]
-dense_layers = [256, 128]
+conv_layers = [(16, (3, 3), (1, 1))] # 3_1:
+dense_layers = [1024, 256]
 l2_value = 0.01
 dropout_rate = 0.5
 activation = 'relu'
 
 # Train Model
+batch_size = 400
+patience = 5
+epochs = 100
 test_size = 0.2
 random_state = 42
 optimizer = 'adam'
 loss = 'binary_crossentropy'
 metric = 'accuracy'
-patience = 4
-epochs = 40
-batch_size = 48

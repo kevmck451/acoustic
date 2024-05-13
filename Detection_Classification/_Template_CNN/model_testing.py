@@ -13,7 +13,7 @@ def run_test_set(model_path, test_path, **kwargs):
 
     chunk_type = ['regular', 'window']
     save_path = f'{save_directory}/{Path(model_path).stem}'
-    Path(save_path).mkdir(exist_ok=True, parents=True)
+    # Path(save_path).mkdir(exist_ok=True, parents=True)
 
     path_model = Path(model_path)
     model_name = path_model.stem
@@ -22,8 +22,8 @@ def run_test_set(model_path, test_path, **kwargs):
 
     # print(names_list)
 
-    height = [name.split('_')[0] for name in names_list]  # height above target
-    sample_type = [name.split('_')[1] for name in names_list]  # target character
+    height = [name.split('_')[0] for name in names_list] # height above target
+    sample_type = [name.split('_')[1] for name in names_list] # target character
     microphone = [name.split('_')[2].strip() for name in names_list]
     samp_mic = [f"{name.split('_')[1]}_{name.split('_')[2].strip()}" for name in names_list]
     data = pd.DataFrame({
@@ -117,6 +117,7 @@ def run_test_set(model_path, test_path, **kwargs):
         if sample_type == 't':
             label.set_color('black')
 
+
     # 30m ------------------------------------
     axes[2].bar(m30_predictions['UniSampMic'], m30_predictions['Score'],
                 color=m30_predictions['Predicted'].apply(lambda x: 'g' if x == 1 else 'r'))
@@ -133,6 +134,7 @@ def run_test_set(model_path, test_path, **kwargs):
         if sample_type == 't':
             label.set_color('black')
 
+
     # 40m ------------------------------------
     axes[3].bar(m40_predictions['UniSampMic'], m40_predictions['Score'],
                 color=m40_predictions['Predicted'].apply(lambda x: 'g' if x == 1 else 'r'))
@@ -148,6 +150,7 @@ def run_test_set(model_path, test_path, **kwargs):
     for label, sample_type in zip(axes[3].get_xticklabels(), m40_predictions['SampleType']):
         if sample_type == 't':
             label.set_color('black')
+
 
     # ----------------------------------
     plt.tight_layout(pad=2)
@@ -176,21 +179,14 @@ if __name__ == '__main__':
     test_directory_path = f'{test_base_path}/ML Model Data/Angel_Hover/{test_directory_name}'
     save_directory = f'{save_base_dir}/{save_directory_name}'
 
+    index_num = 0
+    layer_num = 3
+    length = 4
 
-if __name__ == '__main__':
-    base_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py'
-    test_base_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data'
-    save_base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Analysis'
-
-    # Make sure to change TEMPLATE for your current project
-    experiment_directory_name = 'TEMPLATE'
-    test_directory_name = 'TEMPLATE'
-    save_directory_name = 'TEMPLATE'
-
-    model_path = Path(f'{base_path}/Detection_Classification/{experiment_directory_name}/model_library')
-    test_directory_path = f'{test_base_path}/ML Model Data/{test_directory_name}/testing'
-    save_directory = f'{save_base_dir}/{save_directory_name}'
 
     for model in model_path.iterdir():
         if 'h5' in str(model):
-            run_test_set(model.resolve(), test_directory_path, save=True, save_path=save_directory)
+            if int(str(model).split('_')[-3][0]) == length:
+                if int(str(model).split('_')[-1].split('.')[0]) == index_num:
+                    if int(str(model).split('_')[-2].split('-')[0]) == layer_num:
+                        run_test_set(model.resolve(), test_directory_path, save=True, save_path=save_directory)
