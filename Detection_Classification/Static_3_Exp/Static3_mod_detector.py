@@ -450,11 +450,15 @@ if __name__ == '__main__':
     test_directory_path = f'{test_base_path}/ML Model Data/Static Test 3/test 4'
     save_directory = f'{save_base_dir}/Engine Hex Static 3'
 
+    index_num = 0
+    layer_num = 4
+    length = 4
+
     for model in model_path.iterdir():
         if 'h5' in str(model):
-            if int(str(model).split('_')[-3][0]) == 4:  # time s
-                if int(str(model).split('_')[-1].split('.')[0]) == 2:  # index
-                    if int(str(model).split('_')[-2].split('-')[0]) == 3:  # layer num
+            if int(str(model).split('_')[-3][0]) == length:
+                if int(str(model).split('_')[-1].split('.')[0]) == index_num:
+                    if int(str(model).split('_')[-2].split('-')[0]) == layer_num:
                         custom_detector_t1_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
                         # custom_detector_t2_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
 

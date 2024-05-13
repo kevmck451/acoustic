@@ -2,7 +2,7 @@
 
 
 filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/' \
-           'ML Model Data/Angel_Hover/dataset 6'
+           'ML Model Data/Angel_Hover/dataset 1'
 
 # Loading Features
 length = 4
@@ -50,15 +50,21 @@ process_list = ['normalize']
 # conv_layers = [(1, (3, 3), (1, 1))] # 3_5
 # dense_layers = [256, 128]
 
-conv_layers = [(2, (3, 3), (1, 1))] # 3_5 dataset 6, not so much
-dense_layers = [512, 256]
+# conv_layers = [(2, (3, 3), (1, 1))] # 3_5 dataset 6, not so much
+# dense_layers = [512, 256]
+
+# conv_layers = [(4, (3, 3), (1, 1)), (4, (3, 3), (1, 1))] # 4_0 dataset 1
+# dense_layers = [1024, 256]
+
+conv_layers = [(1, (3, 3), (1, 1))] # 4_0 dataset 1
+dense_layers = [1024, 256]
 
 activation = 'relu'
 dropout_rate = 0.5
 l2_value = 0.01
 
 # Train Model
-patience = 6
+patience = 10
 epochs = 100
 batch_size = 400
 test_size = 0.2

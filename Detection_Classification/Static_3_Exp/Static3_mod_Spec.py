@@ -5,8 +5,8 @@ import Static3_mod_config as model_config
 if __name__ == '__main__':
 
     feature_type = 'spectral'
-    feature_params = {'bandwidth':(70, 3000), 'nperseg':8192}
-    # feature_params = {'bandwidth': (300, 3000), 'nperseg': 8192}
+    # feature_params = {'bandwidth':(70, 3000), 'nperseg':8192}
+    feature_params = {'bandwidth': (300, 3000), 'nperseg': 8192}
 
     # 2 sec: 4096
     # 4 sec: 8192
