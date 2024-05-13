@@ -236,6 +236,7 @@ def spectrogram_2(audio_object, **kwargs):
         plt.xlabel('Time [sec]')
         plt.title(f'{audio_object.name}')
         plt.colorbar(label='Intensity', extend='both')
+        plt.yscale('log')
 
         save = kwargs.get('save', False)
         save_path = kwargs.get('save_path', '')
