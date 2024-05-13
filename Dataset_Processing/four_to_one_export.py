@@ -27,7 +27,10 @@ def process_directory(input_path, output_path):
 if __name__ == '__main__':
     base_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data'
 
-    input_path = base_path + '/Investigations/Static Tests/Static Test 3/Data/Audio/4 channel'
-    output_path = base_path + '/Investigations/Static Tests/Static Test 3/Data/Audio'
+    # input_path = base_path + '/Investigations/Static Tests/Static Test 3/Data/Audio/4 channel'
+    # output_path = base_path + '/Investigations/Static Tests/Static Test 3/Data/Audio'
+    input_path = base_path + '/Combinations/angel_hover/'
+    output_path = base_path + '/Combinations/angel_hover/backgrounds/'
+
 
     process_directory(input_path, output_path)
