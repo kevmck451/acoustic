@@ -107,3 +107,11 @@ hex_diesel_40 = f'{basepath}/Synthetic/diesel_hex_mix_3/construction_7_3_hex_hov
 hex_diesel_20 = f'{basepath}/Synthetic/diesel_hex_mix_3/construction_7_3_hex_hover_8_thin_mix_20.wav'
 hex_diesel_0 = f'{basepath}/Synthetic/diesel_hex_mix_3/construction_7_3_hex_hover_8_thin_mix_0.wav'
 
+
+
+
+
+# Full Flights
+full_flight_dynamic_1b = f'{basepath}/Full Flights/Dynamic_1b.wav'
+full_flight_static_3_test_2 = f'{basepath}/Experiments/Static Tests/Static Test 3/Audio/raw/4.wav'
+

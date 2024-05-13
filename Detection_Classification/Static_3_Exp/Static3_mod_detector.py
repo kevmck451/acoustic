@@ -56,6 +56,7 @@ def custom_detector_t1_every_sample(model_path, test_path, **kwargs):
     m20_predictions = data[(data['Height'] == '20m') & data['Label'] == 1].sort_values('SampleType')
     m30_predictions = data[(data['Height'] == '30m') & data['Label'] == 1].sort_values('SampleType')
     m40_predictions = data[(data['Height'] == '40m') & data['Label'] == 1].sort_values('SampleType')
+    m50_predictions = data[(data['Height'] == '50m') & data['Label'] == 1].sort_values('SampleType')
 
     # Reset the index for each subset DataFrame and create the 'UniSampMic' column
     m10_predictions = m10_predictions.reset_index(drop=True)
@@ -70,6 +71,9 @@ def custom_detector_t1_every_sample(model_path, test_path, **kwargs):
     m40_predictions = m40_predictions.reset_index(drop=True)
     m40_predictions['UniSampMic'] = m40_predictions['SampMic'] + '_' + (m40_predictions.index+1).astype(str)
 
+    m50_predictions = m50_predictions.reset_index(drop=True)
+    m50_predictions['UniSampMic'] = m50_predictions['SampMic'] + '_' + (m50_predictions.index + 1).astype(str)
+
     # Calculate accuracies for negatives and positives
     accuracy_negatives = int(len(negatives[negatives['Predicted'] == 0]) / len(negatives) * 100)
     accuracy_positives = int(len(positives[positives['Predicted'] == 1]) / len(positives) * 100)
@@ -77,10 +81,11 @@ def custom_detector_t1_every_sample(model_path, test_path, **kwargs):
     accuracy_20m = int(len(m20_predictions[m20_predictions['Predicted'] == 1]) / len(m20_predictions) * 100)
     accuracy_30m = int(len(m30_predictions[m30_predictions['Predicted'] == 1]) / len(m30_predictions) * 100)
     accuracy_40m = int(len(m40_predictions[m40_predictions['Predicted'] == 1]) / len(m40_predictions) * 100)
+    accuracy_50m = int(len(m50_predictions[m50_predictions['Predicted'] == 1]) / len(m50_predictions) * 100)
 
 
     # Create subplots for visualization ---------------------------------------------------------
-    fig, axes = plt.subplots(4, 1, figsize=(22, 14))
+    fig, axes = plt.subplots(5, 1, figsize=(22, 14))
     fig.suptitle(f'Model: {model_name} | Test 1 Accuracy: {accuracy}%\nDetector: Every Sample | Negatives Accuracy: {accuracy_negatives}%', size=12)
 
     # Create custom legend
@@ -162,6 +167,26 @@ def custom_detector_t1_every_sample(model_path, test_path, **kwargs):
 
     # Set the color of each tick label based on SampleType
     for label, sample_type in zip(axes[3].get_xticklabels(), m40_predictions['SampleType']):
+        if sample_type == 'd1':
+            label.set_color('black')
+        elif sample_type == 'd2':
+            label.set_color('blue')
+        else:
+            label.set_color('purple')
+
+    # 50m ------------------------------------
+    axes[4].bar(m50_predictions['UniSampMic'], m50_predictions['Score'],
+                color=m50_predictions['Predicted'].apply(lambda x: 'g' if x == 1 else 'r'))
+    axes[4].set_ylim([0, 100])
+    axes[4].axhline(50, c='black', linestyle='dotted')
+    axes[4].set_ylabel('Confidence %')
+    axes[4].set_title(f'50m Samples: {int(np.round(accuracy_50m))}%')
+    axes[4].set_xticks(np.arange(len(m50_predictions['UniSampMic'])))
+    axes[4].set_xticklabels(m50_predictions['UniSampMic'])
+    axes[4].tick_params(axis='x', rotation=90, labelsize=label_size)
+
+    # Set the color of each tick label based on SampleType
+    for label, sample_type in zip(axes[3].get_xticklabels(), m50_predictions['SampleType']):
         if sample_type == 'd1':
             label.set_color('black')
         elif sample_type == 'd2':
@@ -422,15 +447,15 @@ if __name__ == '__main__':
     save_base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Analysis'
 
     model_path = Path(f'{base_path}/Detection_Classification/Static_3_Exp/model_library')
-    test_directory_path = f'{test_base_path}/ML Model Data/Static Test 3/test 2'
+    test_directory_path = f'{test_base_path}/ML Model Data/Static Test 3/test 4'
     save_directory = f'{save_base_dir}/Engine Hex Static 3'
 
     for model in model_path.iterdir():
         if 'h5' in str(model):
             if int(str(model).split('_')[-3][0]) == 4:  # time s
-                if int(str(model).split('_')[-1].split('.')[0]) == 0:  # index
+                if int(str(model).split('_')[-1].split('.')[0]) == 2:  # index
                     if int(str(model).split('_')[-2].split('-')[0]) == 3:  # layer num
-                        # custom_detector_t1_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
-                        custom_detector_t2_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
+                        custom_detector_t1_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
+                        # custom_detector_t2_every_sample(model.resolve(), test_directory_path, save=True, save_path=save_directory)
 
 

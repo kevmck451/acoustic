@@ -1,9 +1,9 @@
 
-filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/' \
-           '1 Acoustic/Data/ML Model Data/Static Test 3/dataset 2'
+
+filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/' \
+           ''
 
 # Loading Features
-# length = [2, 4, 6, 8, 10, 20, 30, 40, 50]
 length = 4
 
 # [12_000, 18_000, 24_000, 36_000, 48_000]
@@ -19,19 +19,16 @@ chunk_type = 'window'
 process_list = ['normalize']
 
 # Create Model
-conv_layers = [(16, (3, 3), (1, 1))] # 3_0: really good
-# conv_layers = [(32, (3, 3), (1, 1))] # 3_1: not as good
-# conv_layers = [(8, (3, 3), (1, 1))] # 3_2:
-
+conv_layers = [(32, (3, 3))]
 dense_layers = [1024, 256]
 l2_value = 0.01
 dropout_rate = 0.5
 activation = 'relu'
 
 # Train Model
-batch_size = 400
-patience = 8
+patience = 6
 epochs = 100
+batch_size = 400
 test_size = 0.2
 random_state = 42
 optimizer = 'adam'

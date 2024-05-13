@@ -425,10 +425,10 @@ class Flight_Path:
 
 if __name__ == '__main__':
 
-    flight = 'Angel_3'
+    flight_name = 'Angel_3'
 
-    target = Target(name='Tone', type='speaker', flight=flight)
-    flight = Flight_Path(flight, target_object=target, target_threshold=107) #
+    target = Target(name='Tone', type='speaker', flight=flight_name)
+    flight = Flight_Path(flight_name, target_object=target, target_threshold=107) #
 
     # flight.plot_flight_path(display=False, save=True)
     # flight.display_target_distance(display=False, save=True)

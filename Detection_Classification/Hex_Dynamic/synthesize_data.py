@@ -49,17 +49,16 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
 if __name__ == '__main__':
 
     synthetic_directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Synthetic'
-    range_of_target_sound = (5, 71, 1)
+    range_of_target_sound = (4, 61, 2)
     noise_floor_level = 100
     sample_rate = 24_000
-    sample_length = 55
+    sample_length = 16
 
     # Diesel Samples
-    mix_num = 3
-    noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/static 3/backgrounds'
-    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/static 3/target'
-    new_path = synthetic_directory + f'/static_3_mix_{mix_num}'
-
+    mix_num = 7
+    noise_floor_path = af.hex_hover_combo_thick
+    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/static 3'
+    new_path = synthetic_directory + f'/diesel_hex_mix_{mix_num}'
     generate_synthetic_data(noise_floor_path, target_path, new_path, sample_length, sample_rate, noise_floor_level, range_of_target_sound)
 
 

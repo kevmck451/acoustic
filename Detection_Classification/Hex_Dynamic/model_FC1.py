@@ -1,17 +1,12 @@
 
 from Investigations.DL_CNN.build_model import build_model
-import Static3_mod_config as model_config
+import model_config
+
 
 if __name__ == '__main__':
 
-    feature_type = 'spectral'
-    feature_params = {'bandwidth':(70, 3000), 'nperseg':8192}
-    # feature_params = {'bandwidth': (300, 3000), 'nperseg': 8192}
-
-    # 2 sec: 4096
-    # 4 sec: 8192
-    # 6 & 8 sec: 16384
-    # 10+ sec: 32768
+    feature_type = 'feature_combo_1'
+    feature_params = 'None'
 
     build_model(model_config.filepath,
                 model_config.length,
