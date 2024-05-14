@@ -2,7 +2,7 @@
 
 
 filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/' \
-           'ML Model Data/Angel_Hover/dataset 1'
+           'ML Model Data/Angel_Hover/dataset 7'
 
 # Loading Features
 length = 4
@@ -56,7 +56,7 @@ process_list = ['normalize']
 # conv_layers = [(4, (3, 3), (1, 1)), (4, (3, 3), (1, 1))] # 4_0 dataset 1
 # dense_layers = [1024, 256]
 
-conv_layers = [(1, (3, 3), (1, 1))] # 4_0 dataset 1
+conv_layers = [(2, (3, 3), (1, 1))] # 4_0 dataset 1
 dense_layers = [1024, 256]
 
 activation = 'relu'

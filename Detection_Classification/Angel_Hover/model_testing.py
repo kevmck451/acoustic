@@ -182,6 +182,6 @@ if __name__ == '__main__':
     for model in model_path.iterdir():
         if 'h5' in str(model):
             if int(str(model).split('_')[-3][0]) == 4:  # time s
-                if int(str(model).split('_')[-1].split('.')[0]) == 0: # index
+                if int(str(model).split('_')[-1].split('.')[0]) == 1: # index
                     if int(str(model).split('_')[-2].split('-')[0]) == 3: # layer num
                         run_test_set(model.resolve(), test_directory_path, save=True, save_path=save_directory)
