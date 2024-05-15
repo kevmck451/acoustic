@@ -60,7 +60,7 @@ def load_audio_generator(filepath, sample_rate, length, multi_channel, chunking_
     audio_list_master = []
     label_list_master = []
 
-    multi_channel_options = ['ch_1', 'ch_n', 'split_ch', 'mix_mono', 'original']
+    multi_channel_options = ['ch_1', 'ch_n', 'split_ch', 'mix_mono', 'original', '4ch']
     if multi_channel.lower() == multi_channel_options[0]:
         audio = Audio_Abstract(filepath=filepath, sample_rate=sample_rate, num_channels=1)
     elif multi_channel.lower() == multi_channel_options[1]:
@@ -71,8 +71,10 @@ def load_audio_generator(filepath, sample_rate, length, multi_channel, chunking_
         audio = Audio_Abstract(filepath=filepath, sample_rate=sample_rate)
         channel_list = process.channel_to_objects(audio)
         audio = process.mix_to_mono(audio for audio in channel_list)
-    else:
+    elif multi_channel.lower() == multi_channel_options[4]:
         audio = Audio_Abstract(filepath=filepath, sample_rate=sample_rate)
+    else:
+        audio = Audio_Abstract(filepath=filepath, sample_rate=sample_rate, num_channels=4)
 
     if chunking_type == 'window':
         if audio.num_channels == 1:
@@ -82,12 +84,15 @@ def load_audio_generator(filepath, sample_rate, length, multi_channel, chunking_
                 label_list_master.append(label)
 
         else:  # it's 4 channel
+            # group features as chunk1[a, b, c, d], chunk2[a, b, c, d], etc
+
             channel_list = process.channel_to_objects(audio)
             for channel in channel_list:
                 audio_list, label_list = process.generate_windowed_chunks(channel, window_size=length)
                 for audio, label in zip(audio_list, label_list):
                     audio_list_master.append(audio)
                     label_list_master.append(label)
+                    # print(f'Channel: {audio.which_channel}\t|\tChunk Index: {audio.chunk_index}\t|\tChunk Time: {audio.chunk_time}')
 
     else:
         if audio.num_channels == 1:

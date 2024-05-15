@@ -1,7 +1,7 @@
 # Comparing Mic Position RMS for Hex Flights from Orlando
 
 from Investigations.Loudness.comparisons import Mount_Compare
-from Flight_Analysis.Mounts.mic_mount import Mount
+from Flight_Analysis_Old.Mounts.mic_mount import Mount
 
 directories = ['../../../Data/Field Tests/Orlando 23/Samples/Full Flight']
 # directories = ['../../../Data/Field Tests/Orlando 23/Samples/Flight']

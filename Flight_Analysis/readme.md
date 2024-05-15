@@ -1,23 +1,12 @@
 # Flight Analysis
 
 
- - Type of UAV
- 	- Multi-Rotor:
- 		- landing wont be as easily identified
- 	- Fixed Wing:
- 		- 
-
-- Known Targets
 
 
 
-## Sequence of Events
-
-
-Data is collected
-That data is trimmed on each side
-	- anything below a certain threshold hold is preflight
-	- first significant boost in rms is takeoff
+```zsh
+# run Flight_Analysis.main
+```
 
 
 
@@ -28,83 +17,156 @@ That data is trimmed on each side
 
 
 
+# Sequence of Events
 
-## States
-	- preflight
-	- takeoff
-	- setup
-	- mission
-	- landing
+## Full Flight Analysis
+	- Flight_Analsys/full_flight_analysis.py
 
-
-### Descriptions
-	- preflight
-		- rms below certain threshold is preflight
-	- takeoff
-		- semi transient event signficiant flight has started
-		- when RMS reaches certain threshold for t time
-	- setup
-		- calibration period before experiment
-		- ignore the first time closest to target
-	- mission
-		- analyze
-			- break up into small chunks to be processed
-			- keep chunks in order
-	- landing
-		- rms goes above certain threshold
-		- rotors go in
-		- this could also be a generic time from end
-			- like once mission has been identified, just go back 30 seconds from next preflight state conditions and mark that as landing
+	- main()
+		- Audio_Abstract()
+		- Mount()
+		- Target()
+		- Flight_Path()
 
 
 
 
-### Analyze
-	- single & multi channel data
-		- multi channel data
-			- process individually
-			- let detector decide how to interpret
-	- global processing
-	- break up into chunks and keep in order
-		- windowed chunks
-	- predict
-		- extract features
-		- make prediction
-		- returns single predicitions (packaged for multi)
-	- detector
-		- if single mic output is prediction
-		- multi channel: 
-			- average prediction
-			- and gate
-			- or gate
-			- other logic
-	- display results
-		- if labels, display truths
-		- if not, display results
+
+## Sync Audio with Flight Log
 
 
 
 
 
 
-
-
-What do i want to see when looking at a new flight?
-
+## Label Parts of Flight
 
 
 
-When a flight is first run through the program there's an initial set of things that happen, then many things are the same
-	- need a way to load from previous analysis or re-load from scratch
-
-relate time of predictions to spatial info from log to generate image of 
+## Global Audio Processing
+	- If things are changed here
+		- reprocess
 
 
 
 
 
+## Make Predictions
+	- Load Audio
+	- Extract Features
+	- Make Prediction
 
-Load New Flight
+
+
+## Link Spatial Info to Detected Threat Times
+	- view predictions in space, not time
+	- make an additional likelihood of threat calcuation based on if the times threats were detected are also in the spatial area
+
+
+
+
+
+# Components
+
+## RAW Data Format
+	- mission_name.wav
+		- 4 channel wav file
+		- trimmed of extreme preflight portions
+		- 1 flight per mission
+	- mission_name_flight.csv
+		- time, lat, long, alt, speed
+		- this is exported from .bin flight log
+	- mission_name_target.csv
+		- name, type, spl, distance, lat, long
+	- mission_name_environment.csv
+		- temp, humid, pressure, date
+
+
+
+
+## Audio Viewer
+	- Audio Library
+	- Audio Info
+	- Types of Views:
+		- waveform (4ch)
+		- spectrogram (4ch)
+
+
+optional:
+# Environment
+	- start with default
+
+optional:
+# Mount
+	- start with default
+
+optional:
+# Target
+
+
+
+## Flight Path Viewer
+	- Flight Info
+		- Flight States
+		- Flight Labels
+	- If Target:
+		- target distance chart
+
+
+
+
+
+
+## Detector Viewer
+	- Detector Library
+		- CNN Models
+		- Statistical Models
+	- Selecting a Model
+	- Loading a new Model
+
+
+
+
+## Analyzer
+	- Time 
+		- Bar Chart
+	- Space View
+		- Threat Identified Points in space
+
+
+
+
+
+
+
+What the most basic functionality?
+- Time Series Bar Chart of Predictions 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

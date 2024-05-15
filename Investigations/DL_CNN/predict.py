@@ -18,6 +18,57 @@ from tkinter import filedialog
 
 
 # Function to make prediction and display it
+def predict(model_path, audio_path, **kwargs):
+    model_path = str(model_path)
+    model_info = load_model_text_file(model_path)
+
+    chunk_type = kwargs.get('chunk_type', 'window')
+    multi_channel = kwargs.get('multi_channel', '4ch')
+
+    # LOAD DATA ----------------------------------------------------------------------
+    print('Loading Features')
+    # feature_list_master = []
+    feature_list_master = [[] for _ in range(4)]
+    for audio_list, _ in load_audio_generator(audio_path,
+                                         model_info.get('Sample Rate'),
+                                         model_info.get('Sample Length'),
+                                         multi_channel,
+                                         chunk_type):
+
+        for audio in audio_list:
+            audio = preprocess_files(audio, model_info.get('Process Applied'))
+            features = extract_feature(audio,
+                                       model_info.get('Feature Type').lower(),
+                                       model_info.get('Feature Parameters'))
+
+            # group features as chunk1[a, b, c, d], chunk2[a, b, c, d], etc
+
+            feature_list_master[audio.which_channel - 1].append(features)
+
+    # print()
+    features_list = format_features(feature_list_master)
+
+    # PREDICT ------------------------------------------------------------------------
+    print('Making Predictions')
+    model = load_model(model_path)
+
+    # predictions = []
+    predictions = [[] for _ in range(4)]
+    for i, channel in enumerate(features_list):
+        for feature in channel:
+            feature = np.expand_dims(feature, axis=0)
+            y_new_pred = model.predict(feature)
+            percent = np.round((y_new_pred[0][0] * 100), 2)
+            predictions[i].append(percent)
+
+
+    predict_time = list(range(0, len(predictions[0]), 1))
+
+    return predictions, predict_time
+
+
+
+# Function to make prediction and display it
 def make_prediction(model_path, audio_path, chunk_type, **kwargs):
     model_path = str(model_path)
     model_info = load_model_text_file(model_path)
@@ -51,6 +102,11 @@ def make_prediction(model_path, audio_path, chunk_type, **kwargs):
         y_new_pred = model.predict(feature)
         percent = np.round((y_new_pred[0][0] * 100), 2)
         predictions.append(percent)
+
+    if kwargs.get('ret', False):
+        # print(predictions)
+        # print(type(predictions))
+        return predictions
 
     time = list(range(0, len(predictions), 1))
     audio_base = Audio_Abstract(filepath=audio_path)
@@ -90,27 +146,32 @@ def load_model_text_file(model_path):
 
     with open(text_path, 'r') as f:
         for line in f:
-            key, value = line.strip().split(': ', 1)
 
-            # Remove any additional spaces
-            key = key.strip()
-            value = value.strip()
+            try:
+                key, value = line.strip().split(': ', 1)
 
-            # Convert the value into suitable format
-            if key in ['Convolutional Layers', 'Dense Layers']:
-                model_info[key] = eval(value)
-            elif key in ['Feature Parameters', 'Model Config File']:
-                model_info[key] = eval(value.replace(' /', ','))
-            elif key == 'Shape':
-                model_info[key] = tuple(map(int, value.strip('()').split(', ')))
-            elif key in ['Sample Rate', 'Sample Length', 'Shape', 'Kernal Reg-l2 Value',
-                         'Dropout Rate', 'Test Data Size', 'Random State', 'Epochs', 'Batch Size', 'Build Time']:
-                try:
-                    model_info[key] = int(value.split()[0])
-                except ValueError:
-                    model_info[key] = float(value.split()[0])
-            else:
-                model_info[key] = value
+                # Remove any additional spaces
+                key = key.strip()
+                value = value.strip()
+
+                # Convert the value into suitable format
+                if key in ['Convolutional Layers', 'Dense Layers']:
+                    model_info[key] = eval(value)
+                elif key in ['Feature Parameters', 'Model Config File']:
+                    model_info[key] = eval(value.replace(' /', ','))
+                elif key == 'Shape':
+                    model_info[key] = tuple(map(int, value.strip('()').split(', ')))
+                elif key in ['Sample Rate', 'Sample Length', 'Shape', 'Kernal Reg-l2 Value',
+                             'Dropout Rate', 'Test Data Size', 'Random State', 'Epochs', 'Batch Size', 'Build Time']:
+                    try:
+                        model_info[key] = int(value.split()[0])
+                    except ValueError:
+                        model_info[key] = float(value.split()[0])
+                else:
+                    model_info[key] = value
+
+            except:
+                pass
 
     return model_info
 

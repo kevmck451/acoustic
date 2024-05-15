@@ -1,8 +1,10 @@
 # File for starting point to detect targets from dataset
 
-
+from Investigations.DL_CNN.predict import make_prediction
 from Acoustic.audio_abstract import Audio_Abstract
 from Acoustic import process
+from Investigations.DL_CNN.load_features import preprocess_files
+from Investigations.DL_CNN.load_features import extract_feature
 
 from keras.models import load_model
 import matplotlib.pyplot as plt
@@ -12,21 +14,20 @@ import statistics
 
 
 def full_flight_detection(audio_object, model_path, display=False):
+    audio = audio_object
+    path = Path(model_path)
+    name = path.stem
+    model_info = load_model_text_file(model_path)
 
     # LOAD DATA ------------------------------------------------------------------------
     print('Loading Mission Audio')
-    audio = audio_object
-    channel_list = process.channel_to_objects(audio)
 
-    # Determine sample length
-    path = Path(model_path)
-    name = path.stem
-    sample_length = int(name.split('_')[2])
+    channel_list = process.channel_to_objects(audio)
 
     audio_ob_list = []
     for channel in channel_list:
         # chunks_list = process.generate_chunks(channel, length=sample_length)
-        chunks_list = process.generate_windowed_chunks(channel, window_size=sample_length)
+        chunks_list = process.generate_windowed_chunks(channel, window_size=model_info.get('Sample Length'))
         audio_ob_list.append(chunks_list)
 
     # EXTRACT ------------------------------------------------------------------------
@@ -35,9 +36,13 @@ def full_flight_detection(audio_object, model_path, display=False):
     for channel in audio_ob_list:
         feature_split_list = []
         for audio in channel:
-            feature = process.spectrogram(audio)
+            audio = preprocess_files(audio, model_info.get('Process Applied'))
+            feature = extract_feature(audio,
+                                       model_info.get('Feature Type').lower(),
+                                       model_info.get('Feature Parameters'))
             feature_split_list.append(feature)  # Add Feature
         features_list.append(np.array(feature_split_list))
+
 
     # PREDICT ------------------------------------------------------------------------
     print('Making Predictions')
@@ -50,20 +55,28 @@ def full_flight_detection(audio_object, model_path, display=False):
         predictions = []
         for feature in channel:
             y_new_pred = model.predict(feature)
-            y_pred_class = int(y_new_pred[0][0] > 0.5)  # Convert to binary class prediction
+            # y_pred_class = int(y_new_pred[0][0] > 0.5)  # Convert to binary class prediction
             percent = np.round((y_new_pred[0][0] * 100), 2)
             predictions.append(percent)
 
         predictions_list.append(predictions)
 
+    # predictions_list = make_prediction(model_path, str(audio_object.path), 'windowed', ret=True)
+    # print(predictions_list)
+
     # time = list(range(0, (len(predictions_list[0]) * sample_length), sample_length))
-    time = list(range(0, len(predictions_list[0]), 1))
+    time = list(range(0, len(predictions_list), 1))
 
     # AVERAGE CHANNEL PREDICTIONS ------------------------------------------------------------------------
     # print(time)
-    # print(predictions_list)
+    print(predictions_list)
+    print(type(predictions_list))
 
     averaged_predictions = np.round([statistics.mean(values) for values in zip(*predictions_list)],2)
+
+    print(averaged_predictions)
+    print(type(averaged_predictions))
+    # averaged_predictions = np.round(np.mean(predictions_list, axis=0), 2)
 
     # print(averaged_predictions)
 
@@ -71,7 +84,7 @@ def full_flight_detection(audio_object, model_path, display=False):
 
         # display all four channel predicitions and average
         # fig, axs = plt.subplots(5, 1, figsize=(14, 8))
-        # plt.suptitle(f'Sound Source Flight_Analysis-Model: {Path(model_dir).stem}')
+        # plt.suptitle(f'Sound Source Flight_Analysis_Old-Model: {Path(model_dir).stem}')
         #
         # # Loop over your 4 lists
         # for i in range(4):
@@ -98,7 +111,7 @@ def full_flight_detection(audio_object, model_path, display=False):
         fig, axs = plt.subplots(1, 1, figsize=(12, 4))
         plt.suptitle(f'Sound Source Detection-Model: {Path(model_dir).stem}')
         bar_colors = ['g' if value >= 50 else 'r' for value in averaged_predictions]
-        axs.bar(time, averaged_predictions, width=sample_length, color=bar_colors)
+        axs.bar(time, averaged_predictions, width=model_info.get('Sample Length'), color=bar_colors)
         axs.set_title(f'Averaged Predictions: {audio.path.stem}')
         axs.set_xlabel('Time')
         axs.set_ylabel('Predictions')
@@ -108,6 +121,44 @@ def full_flight_detection(audio_object, model_path, display=False):
         plt.show()
 
     return averaged_predictions, time
+
+# Function to use model text file to get parameter info
+def load_model_text_file(model_path):
+    text_path_base = model_path.split('.')[0]
+    text_path = f'{text_path_base}.txt'
+
+    model_info = {}
+
+    with open(text_path, 'r') as f:
+        for line in f:
+
+            try:
+                key, value = line.strip().split(': ', 1)
+
+                # Remove any additional spaces
+                key = key.strip()
+                value = value.strip()
+
+                # Convert the value into suitable format
+                if key in ['Convolutional Layers', 'Dense Layers']:
+                    model_info[key] = eval(value)
+                elif key in ['Feature Parameters', 'Model Config File']:
+                    model_info[key] = eval(value.replace(' /', ','))
+                elif key == 'Shape':
+                    model_info[key] = tuple(map(int, value.strip('()').split(', ')))
+                elif key in ['Sample Rate', 'Sample Length', 'Shape', 'Kernal Reg-l2 Value',
+                             'Dropout Rate', 'Test Data Size', 'Random State', 'Epochs', 'Batch Size', 'Build Time']:
+                    try:
+                        model_info[key] = int(value.split()[0])
+                    except ValueError:
+                        model_info[key] = float(value.split()[0])
+                else:
+                    model_info[key] = value
+
+            except:
+                pass
+
+    return model_info
 
 if __name__ == '__main__':
 

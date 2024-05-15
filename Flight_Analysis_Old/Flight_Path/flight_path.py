@@ -6,7 +6,7 @@ from Dataset_Processing.sample_library import *
 import utils
 from utils import CSVFile
 import math
-from Flight_Analysis.Targets.target import Target
+from Flight_Analysis_Old.Targets.target import Target
 
 class Flight_Path:
     def __init__(self, name, **kwargs):

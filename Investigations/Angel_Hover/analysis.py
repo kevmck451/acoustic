@@ -1,7 +1,7 @@
 
 
-from Flight_Analysis.Targets.target import Target
-from Flight_Analysis.flight_path import Flight_Path
+from Flight_Analysis_Old.Targets.target import Target
+from Flight_Analysis_Old.Flight_Path.flight_path import Flight_Path
 
 
 

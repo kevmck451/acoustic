@@ -1,6 +1,6 @@
 # Script to Update the Flight Path's in Sample Library
 
-from Flight_Analysis.flight_path import Flight_Path
+from Flight_Analysis_Old.Flight_Path.flight_path import Flight_Path
 
 
 def process_directory():

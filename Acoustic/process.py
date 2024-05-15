@@ -205,6 +205,8 @@ def spectrogram_2(audio_object, **kwargs):
     bandwidth = feature_params.get('bandwidth', (0, 24000))
     nperseg = feature_params.get('nperseg', 32768) #32768 16384
 
+    # print(audio_object.data.shape)
+
     if audio_object.num_channels > 1: data = audio_object.data[0]
     else: data = audio_object.data
 
@@ -231,12 +233,14 @@ def spectrogram_2(audio_object, **kwargs):
     # Plot the normalized spectrogram for the specified frequency range
     display = kwargs.get('display', False)
     if display:
+        plt.figure(figsize=(16,4))
         plt.pcolormesh(t, f_subset, spec, shading='gouraud', vmin=0, vmax=1)
         plt.ylabel(f'Frequency {bandwidth[0]}-{bandwidth[1]}Hz')
         plt.xlabel('Time [sec]')
         plt.title(f'{audio_object.name}')
         plt.colorbar(label='Intensity', extend='both')
         plt.yscale('log')
+        plt.tight_layout(pad=1)
 
         save = kwargs.get('save', False)
         save_path = kwargs.get('save_path', '')
@@ -246,19 +250,20 @@ def spectrogram_2(audio_object, **kwargs):
         else:
             plt.show()
 
-    spectrograms = np.array(spec)
-    frequencies = np.array(f_subset)
-    times = np.array(t)
-
-    spectrograms = np.squeeze(spectrograms)  # removes all singular axis
-    frequencies = np.squeeze(frequencies)  # removes all singular axis
-    times = np.squeeze(times)  # removes all singular axis
-
-    details = kwargs.get('details', False)
-    if details:
-        return spectrograms, frequencies, times
     else:
-        return spectrograms
+        spectrograms = np.array(spec)
+        frequencies = np.array(f_subset)
+        times = np.array(t)
+
+        spectrograms = np.squeeze(spectrograms)  # removes all singular axis
+        frequencies = np.squeeze(frequencies)  # removes all singular axis
+        times = np.squeeze(times)  # removes all singular axis
+
+        details = kwargs.get('details', False)
+        if details:
+            return spectrograms, frequencies, times
+        else:
+            return spectrograms
 
 # Function to calculate MFCC of audio (Features are 2D)
 def mfcc(audio_object, **kwargs):
@@ -702,80 +707,34 @@ def takeoff_trim(audio_object, takeoff_time):
 
 # Function to window over a sample of a specific length
 def generate_windowed_chunks(audio_object, window_size):
-    # window_samples = audio_object.sample_rate * window_size
-    # half_window_samples = window_samples // 2
-    # total_samples = len(audio_object.data)
-    #
-    # audio_ob_list = []
-    # labels = []
-    #
-    # for window_start in range(0, total_samples, audio_object.sample_rate):
-    #     audio_copy = deepcopy(audio_object)
-    #     if window_start < half_window_samples:
-    #         start = 0
-    #         end = window_samples
-    #         try:
-    #             label = int(audio_object.path.parent.stem)
-    #         except:
-    #             label = audio_object.path.parent.stem
-    #         labels.append(label)  # Add Label (folder name)
-    #     elif window_start >= total_samples - half_window_samples:
-    #         start = total_samples - window_samples
-    #         end = total_samples
-    #         try:
-    #             label = int(audio_object.path.parent.stem)
-    #         except:
-    #             label = audio_object.path.parent.stem
-    #         labels.append(label)  # Add Label (folder name)
-    #     else:
-    #         start = window_start - half_window_samples
-    #         end = start + window_samples
-    #         try:
-    #             label = int(audio_object.path.parent.stem)
-    #         except:
-    #             label = audio_object.path.parent.stem
-    #         labels.append(label)  # Add Label (folder name)
-    #     audio_copy.data = audio_object.data[start:end]
-    #     audio_ob_list.append(audio_copy)
-    #
-    #
-    # if len(audio_ob_list) != len(labels):
-    #     print(f'Error: {audio_object.path.stem}')
-    #     raise Exception('Audio Object List and Label List Length dont Match')
-    # return audio_ob_list, labels
-
     # Ensure window_samples is an integer, round up to ensure the window is not smaller than intended
     window_samples = int(ceil(audio_object.sample_rate * window_size))
-    half_window_samples = window_samples // 2
+    increment_samples = audio_object.sample_rate  # Increment by 1 second worth of samples
     total_samples = len(audio_object.data)
 
     audio_ob_list = []
     labels = []
 
-    # Ensure we step through the audio in increments that are multiples of the window_samples
-    for window_start in range(0, total_samples, half_window_samples):
+    for i, window_start in enumerate(range(0, total_samples - window_samples + 1, increment_samples)):
         audio_copy = deepcopy(audio_object)
-        if window_start < half_window_samples:
-            start = 0
-            end = window_samples
-        elif window_start >= total_samples - half_window_samples:
-            start = total_samples - window_samples
-            end = total_samples
-        else:
-            start = window_start - half_window_samples
-            end = start + window_samples
+        audio_copy.sample_length = 4.0
+        audio_copy.num_samples = window_samples
+        start = window_start
+        end = start + window_samples
 
         # Ensure the window doesn't exceed the audio length
-        end = min(end, total_samples)
+        if end <= total_samples:
+            try:
+                label = int(audio_object.path.parent.stem)
+            except ValueError:
+                label = audio_object.path.parent.stem
+            labels.append(label)  # Add Label (folder name)
 
-        try:
-            label = int(audio_object.path.parent.stem)
-        except ValueError:
-            label = audio_object.path.parent.stem
-        labels.append(label)  # Add Label (folder name)
+            audio_copy.data = audio_object.data[start:end]
+            audio_copy.chunk_time = (start, end)
+            audio_copy.chunk_index = i
+            audio_ob_list.append(audio_copy)
 
-        audio_copy.data = audio_object.data[start:end]
-        audio_ob_list.append(audio_copy)
 
     if len(audio_ob_list) != len(labels):
         print(f'Error: {audio_object.path.stem}')
@@ -867,30 +826,48 @@ def channel_to_objects(audio_object):
     if audio_object.num_channels == 4:
         audio_a = deepcopy(audio_object)
         audio_a.data = audio_object.data[0]
+        audio_a.which_channel = 1
+        audio_a.num_channels = 1
         audio_b = deepcopy(audio_object)
         audio_b.data = audio_object.data[1]
+        audio_b.which_channel = 2
+        audio_b.num_channels = 1
         audio_c = deepcopy(audio_object)
         audio_c.data = audio_object.data[2]
+        audio_c.which_channel = 3
+        audio_c.num_channels = 1
         audio_d = deepcopy(audio_object)
         audio_d.data = audio_object.data[3]
+        audio_d.which_channel = 4
+        audio_d.num_channels = 1
 
         return [audio_a, audio_b, audio_c, audio_d]
 
     elif audio_object.num_channels == 3:
         audio_a = deepcopy(audio_object)
         audio_a.data = audio_object.data[0]
+        audio_a.which_channel = 1
+        audio_a.num_channels = 1
         audio_b = deepcopy(audio_object)
         audio_b.data = audio_object.data[1]
+        audio_b.which_channel = 2
+        audio_b.num_channels = 1
         audio_c = deepcopy(audio_object)
         audio_c.data = audio_object.data[2]
+        audio_c.which_channel = 3
+        audio_c.num_channels = 1
 
         return [audio_a, audio_b, audio_c]
 
     else:
         audio_a = deepcopy(audio_object)
         audio_a.data = audio_object.data[0]
+        audio_a.which_channel = 1
+        audio_a.num_channels = 1
         audio_b = deepcopy(audio_object)
         audio_b.data = audio_object.data[1]
+        audio_b.which_channel = 2
+        audio_b.num_channels = 1
 
         return [audio_a, audio_b]
 

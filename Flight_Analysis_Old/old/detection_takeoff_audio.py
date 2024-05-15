@@ -10,7 +10,7 @@ import statistics
 def takeoff_detection_audio(filepath, length=0.5, display=False):
     # LOAD DATA ------------------------------------------------------------------------
     # print('Loading Mission Audio')
-    audio_object = Audio_Abstract(filepath=filepath)
+    audio_object = Audio_Abstract(filepath=filepath, num_channels=4)
 
     # Number of samples in each interval
     samples_per_interval = int(audio_object.sample_rate * length)
@@ -21,7 +21,7 @@ def takeoff_detection_audio(filepath, length=0.5, display=False):
     # Loop over each channel in the audio data
     for channel in range(4):
         # Get the data for the current channel
-        channel_data = audio_object.data[channel]
+        channel_data = audio_object.data[channel, :]
 
         # Number of intervals in the channel data
         num_intervals = len(channel_data) // samples_per_interval

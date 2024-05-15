@@ -1,5 +1,5 @@
 
-from flight_path import Flight_Path
+from Flight_Analysis_Old.Flight_Path.flight_path import Flight_Path
 from Targets.target import Target
 
 

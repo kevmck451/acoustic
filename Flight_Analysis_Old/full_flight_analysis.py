@@ -4,24 +4,30 @@
 #   no target_object will be passed to Flight_Paht()
 
 
-
-from Flight_Analysis.old.flight_audio_sync import flight_audio
 from Acoustic.audio_abstract import Audio_Abstract
-from Flight_Analysis.Environment.environment import Environment
-from Flight_Analysis.flight_path import Flight_Path
-from Flight_Analysis.Mounts.mic_mount import Mount
 from Acoustic.utils import time_class
-from Flight_Analysis.Targets.target import Target
+from Acoustic import process
+from Flight_Analysis_Old.Environment.environment import Environment
+from Flight_Analysis_Old.Flight_Path.flight_path import Flight_Path
+from Flight_Analysis_Old.Mounts.mic_mount import Mount
+
+from Flight_Analysis_Old.Targets.target import Target
+from Flight_Analysis_Old.old.flight_audio_sync import flight_audio
 
 from pathlib import Path
 
-time_stats = time_class('Flight_Analysis')
+time_stats = time_class('Flight_Analysis_Old')
 
-mission = 'Dynamic_1a'
-# mission = 'Dynamic_1b'
+# mission = 'Dynamic_1a'
+mission = 'Dynamic_1b'
 # mission = 'Dynamic_1c'
-model_path = 'CNN_Models/CNN_Models/model_library/detect_spec_10_100_0.h5'
-sample_length = int(Path(model_path).stem.split('_')[2])
+# mission = 'Orlando_1' # shortest file
+
+bd = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py'
+# model_path = f'{bd}/Detection_Classification/Static_3_Exp/model_library/spectral_70-3000-8192_4s_3-layers_0.h5'
+# model_path = f'{bd}/Detection_Classification/Static_3_Exp/model_library/spectral_70-3000-8192_4s_3-layers_1.h5'
+model_path = f'{bd}/Detection_Classification/Static_3_Exp/model_library/spectral_300-3000-8192_4s_4-layers_0.h5'
+sample_length = int(Path(model_path).stem.split('_')[2][0])
 
 base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/'
 filepath = base_dir + mission + '.wav'
@@ -34,7 +40,9 @@ info_path = base_dir + '_info/info.csv'
 # --------------------------
 audio = Audio_Abstract(filepath=filepath, num_channels=4)
 # print(audio)
-# audio.waveform()
+# audio.waveform(display=True)
+# _ = process.spectrogram_2(audio, feature_params={'bandwidth':(70, 3000)}, display=True)
+
 environment = Environment(name=mission, filepath=info_path)
 # print(environment)
 mount = Mount(name=mission, filepath=info_path)
@@ -44,7 +52,7 @@ target = Target(name='Semi-Truck', type='speaker', flight=mission, filepath=targ
 flight = Flight_Path(name=mission, target_object=target, filepath=flight_path_dir)
 # print(flight)
 # flight.plot_flight_path(offset=1000, target_size=150, flight_path_size=15, save=False)
-flight.display_target_distance(display=True)
+# flight.display_target_distance(display=True)
 
 # --------------------------
 # Any processing
@@ -57,7 +65,7 @@ flight.display_target_distance(display=True)
 # Sync Audio with Flight Log and Make Predictions
 # --------------------------
 flight_audio_sync = flight_audio(audio, flight, environment, mount, target)
-# predictions, predict_time, flight_time = flight_audio_sync. predictions_target_distance(model_path, display=True)
+predictions, predict_time, flight_time = flight_audio_sync. predictions_target_distance(model_path, display=True)
 
 time_stats.stats()
 
