@@ -29,8 +29,8 @@ if __name__ == '__main__':
 
     # input_path = base_path + '/Investigations/Static Tests/Static Test 3/Data/Audio/4 channel'
     # output_path = base_path + '/Investigations/Static Tests/Static Test 3/Data/Audio'
-    input_path = base_path + '/Combinations/angel_hover/'
-    output_path = base_path + '/Combinations/angel_hover/backgrounds/'
+    input_path = base_path + '/Combinations/hex_dynamic/'
+    output_path = base_path + '/Combinations/hex_dynamic/backgrounds/'
 
 
     process_directory(input_path, output_path)

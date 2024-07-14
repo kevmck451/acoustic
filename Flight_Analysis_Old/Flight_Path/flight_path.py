@@ -292,7 +292,7 @@ class Flight_Path:
                             label=f'{self.target_object.name} threshold: {self.target_object.threshold_distance}m',
                             linestyle='dotted')
                 plt.legend(loc='upper left')
-            plt.ylim((0, (np.max(self.distance_from_target)+50)))
+            plt.ylim((0, (np.max(self.distance_from_target)+300)))
             plt.plot(self.time, self.distance_from_target)
             plt.tight_layout(pad=1)
 

@@ -4,7 +4,7 @@ import model_config
 
 def train_spectrogram_model():
     feature_type = 'spectral'
-    feature_params = {'bandwidth': (70, 3000), 'nperseg': 8192}
+    feature_params = {'bandwidth': (300, 3000), 'nperseg': 8192}
 
     build_model(model_config.filepath,
                 model_config.length,

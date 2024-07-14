@@ -1,7 +1,7 @@
 
 
 filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/' \
-           ''
+           'ML Model Data/Hex_Dynamic/dataset 1'
 
 # Loading Features
 length = 4
@@ -19,16 +19,16 @@ chunk_type = 'window'
 process_list = ['normalize']
 
 # Create Model
-conv_layers = [(32, (3, 3))]
+conv_layers = [(16, (3, 3), (1, 1)), (16, (3, 3), (1, 1))]
 dense_layers = [1024, 256]
 l2_value = 0.01
 dropout_rate = 0.5
 activation = 'relu'
 
 # Train Model
-patience = 6
+patience = 8
 epochs = 100
-batch_size = 400
+batch_size = 800
 test_size = 0.2
 random_state = 42
 optimizer = 'adam'

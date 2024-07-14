@@ -13,13 +13,14 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
     Path(new_path).mkdir(exist_ok=True)
 
     for nf_file in progress_bar(Path(noise_floor_path).iterdir()):
-        noise_floor = Audio_Abstract(filepath=nf_file, sample_rate=sample_rate)
-        # noise_floor.waveform()
+        if nf_file.suffix == '.wav':
+            noise_floor = Audio_Abstract(filepath=nf_file, sample_rate=sample_rate)
+            # noise_floor.waveform()
 
-        noise_floor_chunk_list, _ = process.generate_chunks(noise_floor, length=sample_length)
+            noise_floor_chunk_list, _ = process.generate_chunks(noise_floor, length=sample_length)
 
         for file in progress_bar(Path(target_path).iterdir()):
-            if 'wav' in file.suffix:
+            if file.suffix == '.wav':
                 target = Audio_Abstract(filepath=file, sample_rate=sample_rate)
 
                 if target.sample_length is None:  # or target.sample_length < sample_length
@@ -49,16 +50,16 @@ def generate_synthetic_data(noise_floor_path, target_path, new_path, sample_leng
 if __name__ == '__main__':
 
     synthetic_directory = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Synthetic'
-    range_of_target_sound = (4, 61, 2)
+    range_of_target_sound = (8, 71, 1)
     noise_floor_level = 100
     sample_rate = 24_000
-    sample_length = 16
+    sample_length = 9
 
     # Diesel Samples
-    mix_num = 7
-    noise_floor_path = af.hex_hover_combo_thick
-    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/static 3'
-    new_path = synthetic_directory + f'/diesel_hex_mix_{mix_num}'
+    mix_num = 1
+    noise_floor_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/hex_dynamic/backgrounds'
+    target_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Combinations/hex_dynamic/target'
+    new_path = synthetic_directory + f'/dynamic_hex_mix_{mix_num}'
     generate_synthetic_data(noise_floor_path, target_path, new_path, sample_length, sample_rate, noise_floor_level, range_of_target_sound)
 
 

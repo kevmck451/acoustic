@@ -44,28 +44,23 @@ class flight_audio:
 
         # Detector 2: AND Gate Predictions
         predictions_array = np.array(predictions)
-        binary_predictions = (predictions_array > 0.5).astype(int)
+        binary_predictions = (predictions_array/100 > 0.5).astype(int)
         predictions_andgate = np.all(binary_predictions, axis=0).astype(int)
 
-
-
+        predictions_avand = ((predictions_andgate*100) + predictions_averaged) // 2
 
         if display:
-
             distance_graph = 0
-            ch1_predictions = 3
-            ch2_predictions = 4
-            ch3_predictions = 5
-            ch4_predictions = 6
-            pred_average = 1
-            pred_andgate = 2
-
-
-
-
+            ch1_predictions = 4
+            ch2_predictions = 5
+            ch3_predictions = 6
+            ch4_predictions = 7
+            pred_average = 2
+            pred_andgate = 3
+            pred_average_and = 1
 
             # Display Target Distance & Predictions
-            fig, axs = plt.subplots(7, 1, figsize=(16, 10))
+            fig, axs = plt.subplots(8, 1, figsize=(18, 10))
             plt.suptitle(f'Sound Source Detection-Model: {Path(model_path).stem}')
             axs[distance_graph].set_title(f'{self.flight_object.file_name} - Distance from Target: {self.target_object.type}')
             axs[distance_graph].set_xlabel('Time (s)')
@@ -142,6 +137,14 @@ class flight_audio:
             axs[pred_andgate].set_ylabel('Predictions')
             axs[pred_andgate].set_ylim((0, 1))
             axs[pred_andgate].axhline(0.5, c='black', linestyle='dotted')
+
+            bar_colors = ['g' if value >= 50 else 'r' for value in predictions_avand]
+            axs[pred_average_and].bar(predict_time, predictions_avand, width=1, color=bar_colors)
+            axs[pred_average_and].set_title(f'Predictions Average-AND: {self.audio_object.path.stem} / Detection-Model: {Path(model_path).stem}')
+            axs[pred_average_and].set_xlabel('Time')
+            axs[pred_average_and].set_ylabel('Predictions')
+            axs[pred_average_and].set_ylim((0, 100))
+            axs[pred_average_and].axhline(50, c='black', linestyle='dotted')
 
             plt.tight_layout(pad=1)
             plt.show()

@@ -22,6 +22,7 @@ time_stats = time_class('Flight_Analysis_Old')
 mission = 'Dynamic_1b'
 # mission = 'Dynamic_1c'
 # mission = 'Orlando_1' # shortest file
+# mission = 'Agricenter_1'
 
 bd = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Acoustic_Py'
 # model_path = f'{bd}/Detection_Classification/Static_3_Exp/model_library/spectral_70-3000-8192_4s_3-layers_0.h5'

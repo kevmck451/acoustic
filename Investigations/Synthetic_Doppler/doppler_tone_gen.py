@@ -58,7 +58,7 @@ silence = np.zeros(int(fs * silence_duration))
 signal_with_silence = np.concatenate([silence, signal])
 
 # Save to WAV file (optional)
-write("doppler_effect_5.wav", fs, signal_with_silence.astype(np.float32))
+# write("doppler_effect_5.wav", fs, signal_with_silence.astype(np.float32))
 
 # Plot the signal with speed-dependent steepness
 plt.figure(figsize=(12, 4))
@@ -66,4 +66,4 @@ plt.plot(np.linspace(0, duration + silence_duration, int(fs * (duration + silenc
 plt.title('1 kHz tone with Doppler effect')
 plt.xlabel('Time [s]')
 plt.ylabel('Amplitude')
-# plt.show()
+plt.show()

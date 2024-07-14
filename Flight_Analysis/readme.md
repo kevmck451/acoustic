@@ -77,9 +77,9 @@
 		- time, lat, long, alt, speed
 		- this is exported from .bin flight log
 	- mission_name_target.csv
-		- name, type, spl, distance, lat, long
+		- name, type, spl dB(C), distance m, lat, long
 	- mission_name_environment.csv
-		- temp, humid, pressure, date
+		- temp F, humid %, barometric pressure hPa, date
 
 
 

@@ -173,18 +173,17 @@ if __name__ == '__main__':
     save_base_dir = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Analysis'
 
     # Make sure to change TEMPLATE for your current project
-    experiment_directory_name = 'Angel_Hover'
+    experiment_directory_name = 'Hex_Dynamic'
     test_directory_name = 'test 1'
-    save_directory_name = 'Angel Hover'
+    save_directory_name = 'Dynamic Hex'
 
     model_path = Path(f'{base_path}/Detection_Classification/{experiment_directory_name}/model_library')
-    test_directory_path = f'{test_base_path}/ML Model Data/Angel_Hover/{test_directory_name}'
+    test_directory_path = f'{test_base_path}/ML Model Data/{experiment_directory_name}/{test_directory_name}'
     save_directory = f'{save_base_dir}/{save_directory_name}'
 
     index_num = 0
-    layer_num = 3
+    layer_num = 4
     length = 4
-
 
     for model in model_path.iterdir():
         if 'h5' in str(model):
