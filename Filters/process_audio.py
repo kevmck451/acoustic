@@ -3,7 +3,7 @@ from Filters.noise_reduction import noise_reduction_filter
 from Filters.high_pass import high_pass_filter
 from Filters.low_pass import low_pass_filter
 from Filters.normalize import normalize
-from Actions.save_to_wav import save_to_wav
+from Filters.save_to_wav import save_to_wav
 from Filters.audio import Audio
 
 from pathlib import Path
@@ -11,23 +11,22 @@ import numpy as np
 
 if __name__ == '__main__':
 
-    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Angel_Mount_Data/2 Flights/A6_Flight_2.wav'
-    filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Angel_Mount_Data/2 Flights/A6_Flight_3.wav'
-    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/Angel_8.wav'
+    base_path = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data'
+
+    filepath = f'{base_path}/Angel Noise Red/flights/A6_Flight_3.wav'
     audio = Audio(filepath=filepath, num_channels=4)
 
-    # filepath = '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/2 FOSSN/Data/Tests/5_outdoor_testing/07-12-2024_02-49-21_chunk_1.wav'
-    # audio = Audio(filepath=filepath, num_channels=48)
-
+    filepath_noise = f'{base_path}/Angel Noise Red/profiles/angel_noise.wav'
+    angel_noise = Audio(filepath=filepath, num_channels=4)
 
     shape_og = audio.data.shape
     print(audio)
 
     # Noise Reduction
-    audio.data = noise_reduction_filter(audio)
+    audio.data = noise_reduction_filter(audio, angel_noise, std_threshold=2.5)
 
     # High Pass Filter
-    bottom_cutoff_freq = 100
+    bottom_cutoff_freq = 200
     audio.data = high_pass_filter(audio, bottom_cutoff_freq)
 
     # Low Pass Filter
@@ -37,25 +36,23 @@ if __name__ == '__main__':
     # Noise Reduction
     # audio.data = noise_reduction_filter(audio)
 
+    # Ensure the filtered data shape matches the original
+    assert audio.data.shape == shape_og, "Filtered data shape does not match original data shape"
+
     # Snip Ends which are garbage from NR
     audio.data = audio.data[:, 50000:-50000]
 
     # Normalize
     audio.data = normalize(audio)
 
-
-
-
     print(f'Max: {np.max(audio.data)}')
     print(f'Min: {np.min(audio.data)}')
 
-    # Ensure the filtered data shape matches the original
-    # assert audio.data.shape == shape_og, "Filtered data shape does not match original data shape"
-
-    # Create the new filename with "_HPF" suffix
+    # Create the new filename
     original_path = Path(filepath)
-    new_filename = original_path.stem + "_processed1" + original_path.suffix
-    new_filepath = str(original_path.parent / new_filename)
+    new_filename = original_path.stem + "_pr3" + original_path.suffix
+    filepath_save = f'{base_path}/Angel Noise Red/output'
+    new_filepath = f'{filepath_save}/{new_filename}'
 
     # Save the filtered audio to the new file
     save_to_wav(audio.data, audio.sample_rate, audio.num_channels, new_filepath)

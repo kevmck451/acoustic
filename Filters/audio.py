@@ -5,7 +5,6 @@ from pathlib import Path
 import soundfile as sf
 import numpy as np
 import librosa
-import wave
 
 
 class Audio:
