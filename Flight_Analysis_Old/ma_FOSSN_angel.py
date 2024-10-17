@@ -13,13 +13,12 @@ if __name__ == '__main__':
     # flight_name = 'Truck'
     # target = Target(name='Array', type='speaker', flight=flight_name)
 
-    flight_name = 'Angel_9'
+    flight_name = 'Dismount'
     target = Target(name='Array', type='array', flight=flight_name)
-    target.threshold_distance = 400 # beamformed
-    target.threshold_distance = 400
+    # target_threshold = 400
+    target_threshold = 100
 
-
-    flight = Flight_Path(flight_name, target_object=target, target_threshold=107)  #
+    flight = Flight_Path(flight_name, target_object=target, target_threshold=target_threshold)  #
 
     # flight.plot_flight_path(display=False, save=True)
     flight.display_target_distance(display=True, save=False)

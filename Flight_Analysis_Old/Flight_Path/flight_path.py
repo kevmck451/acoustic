@@ -1,12 +1,19 @@
 # # Setup space for flight path in relation to target
 
-import numpy as np
-import matplotlib.pyplot as plt
-from Dataset_Processing.sample_library import *
-import utils
-from utils import CSVFile
-import math
+
 from Flight_Analysis_Old.Targets.target import Target
+from Dataset_Processing.sample_library import *
+from utils import CSVFile
+import utils
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import math
+
+
+
+from matplotlib.ticker import AutoMinorLocator
 
 class Flight_Path:
     def __init__(self, name, **kwargs):
@@ -268,7 +275,7 @@ class Flight_Path:
             plt.title(f'{self.file_name} - Distance from Target: {self.target_object.type}')
             plt.xlabel('Time (s)')
             plt.ylabel('Distance (m)')
-            plt.axvline(takeoff_time, c='black', linestyle='solid', label=f'Takeoff: {takeoff_time}')
+            plt.axvline(takeoff_time, c='black', linestyle='solid', label=f'Takeoff: {takeoff_time} secs')
             # plt.ylim((0,120))
 
             # y_coordinates = [50, 52, 54, 56, 60, 88]
@@ -293,6 +300,11 @@ class Flight_Path:
                             linestyle='dotted')
                 plt.legend(loc='upper left')
             plt.ylim((0, (np.max(self.distance_from_target)+300)))
+            plt.grid(True)
+
+            plt.gca().xaxis.set_minor_locator(AutoMinorLocator())
+            plt.gca().yaxis.set_minor_locator(AutoMinorLocator())
+            plt.grid(which='minor', linestyle=':', linewidth=0.5)
             plt.plot(self.time, self.distance_from_target)
             plt.tight_layout(pad=1)
 
@@ -379,6 +391,10 @@ class Flight_Path:
             return None
 
         else:
+
+            takeoff_time, _ = self.get_takeoff_time()
+            takeoff_label = f"{takeoff_time}\t{takeoff_time + 0.1}\tTakeoff\n"
+
             num_times_inside_window = 0
             window_times = []
 
@@ -409,6 +425,7 @@ class Flight_Path:
             filepath_full = f'{filepath}/{self.file_name}_audacity_labels.txt'
 
             with open(filepath_full, 'w') as file:
+                file.write(takeoff_label)
                 for i, (center_time, window_time) in enumerate(zip(self.times_closest_to_target, window_times)):
                     if ignore_first:
                         if i == 0:
@@ -425,13 +442,13 @@ class Flight_Path:
 
 if __name__ == '__main__':
 
-    flight_name = 'Angel_3'
+    flight_name = 'Angel_10'
 
-    target = Target(name='Tone', type='speaker', flight=flight_name)
+    target = Target(name='Speaker', type='speaker', flight=flight_name)
     flight = Flight_Path(flight_name, target_object=target, target_threshold=107) #
 
     # flight.plot_flight_path(display=False, save=True)
-    # flight.display_target_distance(display=False, save=True)
+    # flight.display_target_distance(display=True, save=True)
     flight.generate_audacity_labels(ignore_first=True)
     # flight.get_takeoff_time(display=True)
     # flight.label_flight_sections()

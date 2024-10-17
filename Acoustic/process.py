@@ -32,8 +32,12 @@ def average_spectrum(audio_object, **kwargs):
     magnitude = np.abs(spectrum)
     frequency_bins = np.fft.fftfreq(len(data), d=1 / audio_object.sample_rate)
     positive_freq_mask = (frequency_bins >= frequency_range[0]) & (frequency_bins <= frequency_range[1])
-    channel_spectrums = [magnitude[positive_freq_mask][:len(frequency_bins)]]
-    average_spectrum = np.mean(channel_spectrums, axis=0)
+    # channel_spectrums = [magnitude[positive_freq_mask][:len(frequency_bins)]]
+    # average_spectrum = np.mean(channel_spectrums, axis=0)
+
+    selected_magnitude = magnitude[positive_freq_mask]
+    frequency_bins = frequency_bins[positive_freq_mask]
+    average_spectrum = selected_magnitude
 
     # Apply Min-Max normalization to the
     norm = kwargs.get('norm', True)
@@ -43,10 +47,10 @@ def average_spectrum(audio_object, **kwargs):
 
     # average_spectrum = [0 if v <= 0.1 else v for v in average_spectrum]
 
-    frequency_list = [np.round(f, 2) for f in frequency_bins]
-    frequency_list = frequency_list[:len(average_spectrum)]
-    frequency_bins = np.array(frequency_list)
-    frequency_bins = np.squeeze(frequency_bins)
+    # frequency_list = [np.round(f, 2) for f in frequency_bins]
+    # frequency_list = frequency_list[:len(average_spectrum)]
+    # frequency_bins = np.array(frequency_list)
+    # frequency_bins = np.squeeze(frequency_bins)
 
     display = kwargs.get('display', False)
     if display:

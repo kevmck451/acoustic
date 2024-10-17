@@ -14,6 +14,7 @@ class Target:
         self.flight = kwargs.get('flight', 'None')
         self.type = kwargs.get('type', 'None')
         filepath = kwargs.get('directory', '/Users/KevMcK/Dropbox/2 Work/1 Optics Lab/1 Acoustic/Data/Full Flights/_info/targets.csv')
+        self.threshold_distance = 0
 
         if 'None' not in self.flight:
             self.target_file = CSVFile(filepath)
@@ -21,7 +22,7 @@ class Target:
             self.location = ast.literal_eval(self.target_file.get_value(self.flight, 'Location'))
 
 
-        type_dict = {'tank': 88, 'decoy': 78, 'speaker': 91}
+        type_dict = {'tank': 88, 'decoy': 78, 'speaker': 91, 'array':3000}
         self.SPL_at_10m_dB = None
         self.intensity_at_10m_Wm2 = None
         if 'Untitled' not in self.name and self.name in type_dict.keys():

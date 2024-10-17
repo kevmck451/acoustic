@@ -1,5 +1,14 @@
 # Flight Analysis
 
+for distance from target files, the long and lat need to be ints with 9 digits
+
+
+
+
+
+
+
+
 
  - Type of UAV
  	- Multi-Rotor:
