@@ -1,6 +1,6 @@
 
 # Acoustic Python Module
-
+This repository contains the Acoustic module, a comprehensive toolkit designed to assist in various aspects of acoustic analysis and processing.
 
 # Directory Structure
 **Acoustic_Py**
@@ -45,10 +45,6 @@
 - __init__.py
 - audio_filepaths.py
 - readme.md
-
-
-## Getting Started
-
 
 
 
