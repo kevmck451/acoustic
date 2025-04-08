@@ -76,7 +76,11 @@ class Flight_Path:
 
         coordinate_pairs = list(zip(latitude, longitude))
 
+        print(target_location)
+        print(coordinate_pairs)
+
         self.distance_from_target = []
+        self.angles_from_target = []
 
         for pair, alt in zip(coordinate_pairs, self.altitude):
             # Convert decimal degrees to radians
@@ -100,9 +104,33 @@ class Flight_Path:
 
             # print(f'{distance_with_altitude} m')
 
+            # # Calculate azimuth (bearing)
+            # x = math.sin(lon2 - lon1) * math.cos(lat2)
+            # y = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(lon2 - lon1)
+            # azimuth = math.atan2(x, y)
+            #
+            # # Convert azimuth to degrees and normalize (-180 to 180)
+            # azimuth_degrees = math.degrees(azimuth)
+            # if azimuth_degrees > 180:
+            #     azimuth_degrees -= 360
+            #
+            # # Calculate elevation (angle in the vertical plane)
+            # self.target_object.altitude = 2
+            # horizontal_distance = distance  # horizontal distance already calculated
+            # altitude_difference = alt - self.target_object.altitude
+            # elevation = math.atan2(altitude_difference, horizontal_distance)
+            # elevation_degrees = math.degrees(elevation)
+            #
+            # # Append the tuple (azimuth, elevation) to angles_from_target
+            # self.angles_from_target.append((int(azimuth_degrees), int(elevation_degrees)))
+
         if 'TarDis' not in self.position_file.header:
             self.position_file.add_column('TarDis', self.distance_from_target)
             self.position_file.save_changes()
+
+        # if 'TarAngles' not in self.position_file.header:
+        #     self.position_file.add_column('TarAngles', self.angles_from_target)
+        #     self.position_file.save_changes()
 
         # Get Times related to closest to target position
         self.times_below_threshold = []
@@ -318,6 +346,51 @@ class Flight_Path:
 
             if display:
                 plt.show()
+
+    # Function to get distance and angle from Target if one
+    def display_target_distance_and_angles(self, display=False, save=False):
+        if self.target_object is None:
+            print('No Target')
+            return None
+
+        else:
+            takeoff_time, _ = self.get_takeoff_time()
+            plt.figure(figsize=self.FIG_SIZE_SMALL)
+            plt.title(f'{self.file_name} - Distance from Target: {self.target_object.type}')
+            plt.xlabel('Time (s)')
+            plt.ylabel('Distance (m)')
+            plt.axvline(takeoff_time, c='black', linestyle='solid', label=f'Takeoff: {takeoff_time} secs')
+
+            # Original distance plotting logic
+            if self.target_object is not None:
+                if len(self.distance_from_target) > 0:
+                    plt.plot(self.time, self.distance_from_target, label='Distance from Target', color='blue')
+                    plt.legend()
+                    if display:
+                        plt.show()
+                    if save:
+                        plt.savefig(f'{self.file_name}_distance.png')
+
+            # New plotting section for angles
+            if hasattr(self, 'angles_from_target') and len(self.angles_from_target) > 0:
+                # Unzip angles into two lists for plotting
+                azimuths, elevations = zip(*self.angles_from_target)
+
+                plt.figure(figsize=self.FIG_SIZE_SMALL)
+                plt.title(f'{self.file_name} - Angles from Target: {self.target_object.type}')
+                plt.xlabel('Time (s)')
+                plt.ylabel('Angles (degrees)')
+                plt.axvline(takeoff_time, c='black', linestyle='solid', label=f'Takeoff: {takeoff_time} secs')
+                plt.plot(self.time, azimuths, label='Azimuth', color='orange')
+                plt.plot(self.time, elevations, label='Elevation', color='green')
+                plt.legend()
+                if display:
+                    plt.show()
+                if save:
+                    plt.savefig(f'{self.file_name}_angles.png')
+
+            # Optional: close the plots to free memory if needed
+            plt.close('all')
 
     # Function to get distance from Target if one
     def target_distance(self):
