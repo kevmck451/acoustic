@@ -50,4 +50,3 @@ This repository contains the Acoustic module, a comprehensive toolkit designed t
 
 
 Kevin McKenzie
-
